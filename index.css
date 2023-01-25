@@ -1,9 +1,12 @@
 
     p{ color: blue
     }
-       
+      
     body{
     font-family: "Comic Sans";
     font-weight: 300;
     background-color: hex 842396 ;
+    }
+
+    button{ color: hex c6c6c6; 
     }
