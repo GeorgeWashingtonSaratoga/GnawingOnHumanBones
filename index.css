@@ -1,12 +1,16 @@
 
-    p{ color: blue
+    p{ 
+        color: blue;
+        font-family: "Comic Sans"
     }
       
     body{
-    font-family: "Comic Sans";
-    font-weight: 300;
-    background-color: hex 842396 ;
+        font-family: "Comic Sans";
+        font-weight: 300;
+        background-color: hex 842396
     }
 
-    button{ color: hex c6c6c6; 
+    button{ 
+        color: hex c6c6c6; 
+        font-family: "Comic Sans"
     }
