@@ -1,14 +1,25 @@
+  
+    html{
+        font-family: 'Comic Sans';
+        font-weight: 300;
+        background-color: purple
+    }
+
+    h1{ 
+        color: grey;
+        font-family: 'Comic Sans'
+    }
+
+    h2{ 
+        color: grey;
+        font-family: 'Comic Sans'
+    }
 
     p{ 
         color: grey;
         font-family: 'Comic Sans'
     }
-      
-    body{
-        font-family: 'Comic Sans';
-        font-weight: 300;
-        background-color: purple
-    }
+    
 
     button{ 
         color: grey; 
