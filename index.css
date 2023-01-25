@@ -1,27 +1,28 @@
   
     html{
-        font-family: 'Comic Sans';
+        font-family: "Comic Sans, Papyrus, arial";
         font-weight: 300;
         background-color: purple
     }
 
     h1{ 
-        color: grey;
-        font-family: 'Comic Sans'
+        font-family: "Comic Sans, Papyrus, arial";
+        color: grey
     }
 
     h2{ 
-        color: grey;
-        font-family: 'Comic Sans'
+        font-family: "Comic Sans, Papyrus, arial";
+        color: grey
     }
 
     p{ 
-        color: grey;
-        font-family: 'Comic Sans'
+        font-family: "Comic Sans, Papyrus, arial";
+        color: grey
     }
     
 
     button{ 
-        color: grey; 
-        font-family: 'Comic Sans'
+        font-family: "Comic Sans, Papyrus, arial";
+        color: grey;
+        background-color: purple
     }
