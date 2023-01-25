@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head> 
+    <link rel="stylesheet" href="index.css" />
+    Porpchat™️
+  </head>
+  <body>
+    <p>amogus</p>
+    <p> <button name="create">Create room
+    </button>
+    </p>
+    <p> <button name="join">Join room
+    </button> 
+    </p>
+    <p> <button name="acc">Sign in
+    </button>
+    </p>
+  </body>
+  <script src="javascript.js"></script>
+  </html>
