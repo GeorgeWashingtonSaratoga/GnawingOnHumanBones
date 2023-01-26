@@ -1,7 +1,7 @@
 
     html{
         font-family: "Comic Sans MS", "Comic Sans", "Papyrus";
-        color: #ffadf1;
+        color: lightpink;
         font-weight: 300;
         font-size: 40;
         background-color: purple;
@@ -9,21 +9,21 @@
 
     h1{ 
         font-family: "Comic Sans MS", "Comic Sans", "Papyrus";
-        color: #ffadf1;
+        color: lightpink;
     }
 
     h2{ 
         font-family: "Comic Sans MS", "Comic Sans", "Papyrus";
-        color: #ffadf1;
+        color: lightpink;
     }
 
     p{ 
         font-family: "Comic Sans MS", "Comic Sans", "Papyrus";
-        color: #ffadf1;
+        color: lightpink;
     }
 
     button{ 
         font-family: "Comic Sans MS", "Comic Sans", "Papyrus";
-        color: #ffadf1;
+        color: lightpink;
         background-color: purple;
     }
