@@ -23,7 +23,7 @@ function main() {
   ctx.fillRect(0,0,512,512);
   
   // draw image
-  ctx.drawImage(charImg, 0, 0, 320, 320, player.x, player.y, 16, 16);
+  ctx.drawImage(playerImg, 0, 0, 320, 320, player.x, player.y, 16, 16);
   
   // request aim frame
   window.requestAnimationFrame(main);
