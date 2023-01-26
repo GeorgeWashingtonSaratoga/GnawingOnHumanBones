@@ -14,7 +14,7 @@ class Player {
 }
 
 // init player
-var player = Player(16, 16)
+var player = new Player(16, 16)
 
 function main() { 
   // draw background
