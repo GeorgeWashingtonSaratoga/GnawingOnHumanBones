@@ -3,7 +3,7 @@ var c = document.getElementById("gamecanvas");
 var ctx = c.getContext("2d");
 
 // get char image
-var charImg = document.getElementById("character");
+var playerImg = document.getElementById("player");
 
 // define player class
 class Player {
