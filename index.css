@@ -1,28 +1,29 @@
   
     html{
-        font-family: "Comic Sans, Papyrus, arial";
+        font-family: "Comic Sans MS", "Comic Sans", cursive;
+        color: hex #ffadf1;
         font-weight: 300;
         background-color: purple
     }
 
     h1{ 
-        font-family: "Comic Sans, Papyrus, arial";
-        color: grey
+        font-family: "Comic Sans MS", "Comic Sans", cursive;
+        color: hex #ffadf1
     }
 
     h2{ 
-        font-family: "Comic Sans, Papyrus, arial";
-        color: grey
+        font-family: "Comic Sans MS", "Comic Sans", cursive;
+        color: hex #ffadf1
     }
 
     p{ 
-        font-family: "Comic Sans, Papyrus, arial";
-        color: grey
+        font-family: "Comic Sans MS", "Comic Sans", cursive;
+        color: hex #ffadf1
     }
     
 
     button{ 
-        font-family: "Comic Sans, Papyrus, arial";
-        color: grey;
+        font-family: "Comic Sans MS", "Comic Sans", cursive;
+        color: hex #ffadf1;
         background-color: purple
     }
