@@ -2,7 +2,17 @@
 var c = document.getElementById("gamecanvas");
 var ctx = c.getContext("2d");
 
+var theme = document.createElement('audio');
+var cronch = document.createElement('audio');
+
 var keys = [];
+let score = "0";
+var scoreval = '';
+
+theme.setAttribute('src', 'theme.mp3');
+theme.setAttribute('autoplay', 'autoplay');
+theme.loop=true;
+cronch.setAttribute('src', 'crunch.mp3');
 
 window.addEventListener("keydown", this.keyPressed, false);
 window.addEventListener("keyup", this.keyReleased, false);
@@ -93,7 +103,7 @@ var error = 0.1;
 function dropBone() {
     bone.vel.zero();
     bone.pos.x = Math.random() * 488;
-    bone.pos.y = 512;
+    bone.pos.y = -64;
 }
 
 function update() {
@@ -115,8 +125,7 @@ function update() {
 
     // gravity
     player.vel.y += gravity;
-
-    console.log(player.vel);
+    bone.vel.y += gravity;
 
     // friction
     if (player.vel.x > 0) {
@@ -135,13 +144,33 @@ function update() {
 
     // change position by velocity
     player.pos.add(player.vel);
+    bone.pos.add(bone.vel);
 
     // clamp position
     player.pos.clamp(0, 448);
 
+    if (bone.pos.y >= 448) {
+        console.log("urmom")
+        dropBone();
+    }
+
     if (player.pos.y == 448) {
         onGround = true;
     } 
+    if (bone.pos.x >= player.pos.x + 64 || bone.pos.x + 64 <= player.pos.x) { colliding = 0;}
+    else{
+        if (bone.pos.y >= player.pos.y + 64 || bone.pos.y + 64 <= player.pos.y) { colliding = 0;}
+            else { colliding = 1; 
+                bone.pos.y += 999;
+                cronch.play(); 
+                let score = score + 100;
+                console.log(score);
+                if(score == 6900) {
+                    alert("YOU WIN, CONGRATS!");
+                    document.location.reload();
+                    clearInterval(interval); // Needed for Chrome to end game
+                  }}
+                 }
 }
 
 function draw() {
@@ -154,11 +183,17 @@ function draw() {
     // draw bone
     ctx.drawImage(boneImg, 0, 0, 320, 320, bone.pos.x, bone.pos.y, 64, 64);
 }
+function drawScore() {
+    ctx.font = "24px Arial";
+    ctx.fillStyle = "#0095DD";
+    ctx.fillText(`Score: ${score}`, 8, 20);
+  }
 
 function main() { 
+    theme.play(); 
     update();
     draw();
-    
+    drawScore();
     // request aim frame
     window.requestAnimationFrame(main);
 }
