@@ -3,16 +3,18 @@ var c = document.getElementById("gamecanvas");
 var ctx = c.getContext("2d");
 
 var theme = document.createElement('audio');
-var cronch = document.createElement('audio');
+var cronch = document.getElementById('crunch');
+var splat = document.getElementById('splat');
 
 var keys = [];
-let score = "0";
+var score = 0;
 var scoreval = '';
+var babydeathheight = 432;
 
 theme.setAttribute('src', 'theme.mp3');
 theme.setAttribute('autoplay', 'autoplay');
 theme.loop=true;
-cronch.setAttribute('src', 'crunch.mp3');
+// cronch.setAttribute('src', 'crunch.mp3');
 
 window.addEventListener("keydown", this.keyPressed, false);
 window.addEventListener("keyup", this.keyReleased, false);
@@ -25,14 +27,7 @@ function keyReleased(event) {
     keys[event.keyCode] = false;
 }
 
-// get player image
-var playerImg = document.getElementById("player");
-
-// get bone image
-var boneImg = document.getElementById("bone");
-
-// get background image
-var bgImg = document.getElementById("bg");
+var spirtImg = document.getElementById("spirt");
 
 // define vector class
 class Vector {
@@ -82,6 +77,9 @@ var player = new Player(new Vector(64, 448), new Vector(0, 0));
 // init bone at (-9001, -9001) with velocity vector (0, 0)
 var bone = new Player(new Vector(-9001, -9001), new Vector(0, 0));
 
+// init child at (-9001, -9001) with velocity vector (0, 0)
+var child = new Player(new Vector(-9002, -9001), new Vector(0, 0));
+
 // init acceleration vector as (2, 15)
 var acceleration = new Vector(2, 15);
 
@@ -102,9 +100,21 @@ var error = 0.1;
 
 function dropBone() {
     bone.vel.zero();
-    bone.pos.x = Math.random() * 488;
+    bone.pos.x = Math.random() * 448;
     bone.pos.y = -64;
 }
+
+function dropChild() {
+    child.vel.zero();
+    child.pos.x = Math.random() * 448;
+    child.pos.y = -64;
+}
+
+var tChild = 0;
+
+var winned = false;
+
+var deadBabieX = [];
 
 function update() {
     // change velocity by acceleration if correct key pressed
@@ -125,7 +135,8 @@ function update() {
 
     // gravity
     player.vel.y += gravity;
-    bone.vel.y += gravity;
+    bone.vel.y += (gravity / 2);
+    child.vel.y += (gravity / 4);
 
     // friction
     if (player.vel.x > 0) {
@@ -145,58 +156,164 @@ function update() {
     // change position by velocity
     player.pos.add(player.vel);
     bone.pos.add(bone.vel);
+    child.pos.add(child.vel);
 
     // clamp position
     player.pos.clamp(0, 448);
 
     if (bone.pos.y >= 448) {
-        console.log("urmom")
         dropBone();
+    } 
+    
+    if (child.pos.y >= 448) {
+        if (tChild < 40) {
+            if (tChild == 0) {
+                splat.play();
+            }
+            tChild++;
+            death(tChild);
+            child.pos.y = 9001; // over 9000
+        } else {
+            tChild = 0;
+            babyDeathAnim = [0, 5];
+            deadBabieX.push(child.pos.x);
+            dropChild();
+        }
     }
 
     if (player.pos.y == 448) {
         onGround = true;
-    } 
-    if (bone.pos.x >= player.pos.x + 64 || bone.pos.x + 64 <= player.pos.x) { colliding = 0;}
-    else{
-        if (bone.pos.y >= player.pos.y + 64 || bone.pos.y + 64 <= player.pos.y) { colliding = 0;}
-            else { colliding = 1; 
-                bone.pos.y += 999;
-                cronch.play(); 
-                let score = score + 100;
-                console.log(score);
-                if(score == 6900) {
-                    alert("YOU WIN, CONGRATS!");
-                    document.location.reload();
-                    clearInterval(interval); // Needed for Chrome to end game
-                  }}
-                 }
+    }
+
+    if (AABB(player.pos.x, player.pos.y, 64, 64, bone.pos.x, bone.pos.y, 64, 64)) {
+        dropBone();
+        cronch.play();
+        score += 100;
+        if (score >= 6900) {
+            winned = true;
+        }
+    }
+
+    if (AABB(player.pos.x, player.pos.y, 64, 64, child.pos.x, child.pos.y, 64, 64)) {
+        dropChild();
+        score -= 50;
+    }
+}
+
+function AABB(x1, y1, w1, h1, x2, y2, w2, h2) {
+    if ((x1 >= x2 && x1 <= x2 + w2 && y1 >= y2 && y1 <= y2 + h2) ||
+        (x1 + w1 >= x2 && x1 + w1 <= x2 + w2 && y1 >= y2 && y1 <= y2 + h2) ||
+        (x1 >= x2 && x1 <= x2 + w2 && y1 + h1 >= y2 && y1 + h1 <= y2 + h2) ||
+        (x1 + w1 >= x2 && x1 + w1 <= x2 + w2 && y1 + h1 >= y2 && y1 + h1 <= y2 + h2)) {
+            return true;
+    } else {
+        return false;
+    }
+}
+
+var babyDeathAnim = [0, 5];
+
+function death(t) {
+    babyDeathAnim = [child.pos.x, Math.floor(t / 10)];
+}
+
+function drawDeath() {
+    switch (babyDeathAnim[1]) {
+        case 0: {
+            ctx.drawImage(spirtImg, 20, 360, 320, 320, babyDeathAnim[0], babydeathheight, 64, 64);
+            break;
+        }
+        case 1: {
+            ctx.drawImage(spirtImg, 20, 20, 320, 320, babyDeathAnim[0], babydeathheight, 64, 64);
+            break;
+        }
+        case 2: {
+            ctx.drawImage(spirtImg, 360, 20, 320, 320, babyDeathAnim[0], babydeathheight, 64, 64);
+            break;
+        }
+        case 3: {
+            ctx.drawImage(spirtImg, 360, 360, 320, 320, babyDeathAnim[0], babydeathheight, 64, 64);
+            break;
+        }
+        case 4: {
+            ctx.drawImage(spirtImg, 360, 700, 320, 320, babyDeathAnim[0], babydeathheight, 64, 64);
+            break;
+        }
+        case 5: {
+            break;
+        }
+        default: {
+            break;
+        }
+    }
 }
 
 function draw() {
     // draw background
-    ctx.drawImage(bgImg, 0, 0, 660, 660, 0, 0, 512, 512);
-
-    // draw image
-    ctx.drawImage(playerImg, 0, 0, 320, 320, player.pos.x, player.pos.y, 64, 64);
+    ctx.drawImage(spirtImg, 700, 20, 650, 650, 0, 0, 512, 512);
 
     // draw bone
-    ctx.drawImage(boneImg, 0, 0, 320, 320, bone.pos.x, bone.pos.y, 64, 64);
+    ctx.drawImage(spirtImg, 1040, 700, 319, 319, bone.pos.x, bone.pos.y, 64, 64);
+
+    // draw child
+    ctx.drawImage(spirtImg, 20, 700, 319, 319, child.pos.x, child.pos.y, 64, 64);
+
+    // dead baby anim
+    drawDeath();
+
+    // draw dead babies
+    for (var i = 0; i < deadBabieX.length; i++) {
+        ctx.drawImage(spirtImg, 360, 700, 320, 320, deadBabieX[i], babydeathheight, 64, 64);
+    }
+
+    // draw player
+    ctx.drawImage(spirtImg, 700, 700, 320, 320, player.pos.x, player.pos.y, 64, 64);
+    
+    // draw score
+    drawScore();
 }
+
 function drawScore() {
+    ctx.beginPath();
     ctx.font = "24px Arial";
     ctx.fillStyle = "#0095DD";
     ctx.fillText(`Score: ${score}`, 8, 20);
-  }
+}
 
 function main() { 
     theme.play(); 
     update();
     draw();
-    drawScore();
     // request aim frame
-    window.requestAnimationFrame(main);
+    if (!winned) {
+        window.requestAnimationFrame(main);
+    } else {
+        window.requestAnimationFrame(win);
+    }
+}
+
+function win() {
+    // draw background
+    ctx.drawImage(spirtImg, 700, 1040, 650, 650, 0, 0, 512, 512);
+
+    if (keys[32]) {
+        document.location.reload();
+        clearInterval(interval);
+    }
+
+    window.requestAnimationFrame(win);
+}
+
+function titty() {
+    // draw background
+    ctx.drawImage(spirtImg, 20, 1040, 650, 650, 0, 0, 512, 512);
+
+    if (keys[32]) {
+        window.requestAnimationFrame(main);
+    } else {
+        window.requestAnimationFrame(titty);
+    }
 }
 
 // request anim frame
-window.requestAnimationFrame(main);
+window.requestAnimationFrame(titty);
