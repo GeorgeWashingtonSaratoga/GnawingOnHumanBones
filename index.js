@@ -14,13 +14,17 @@ var babydeathheight = 432;
 var image = document.getElementById("ad1");
     image.onclick = function(e) {
       window.location.href = "https://georgewashingtonsaratoga.github.io/sillysite/";
- };
-    
+};
+
 var image = document.getElementById("ad2");
 image.onclick = function(e) {
   window.location.href = "www.pornhub.com";
 };
 
+var image = document.getElementById("ad3");
+image.onclick = function(e) {
+  window.location.href = "https://twitter.com/MinionRunHacks/status/1616460910910140419";
+};
 
 theme.setAttribute('src', 'theme.mp3');
 theme.setAttribute('autoplay', 'autoplay');
