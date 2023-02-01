@@ -11,18 +11,14 @@ var score = 0;
 var scoreval = '';
 var babydeathheight = 432;
 
-window.onload = function(){ 
-    var image = document.getElementById("ad1");
+var image = document.getElementById("ad1");
     image.onclick = function(e) {
       window.location.href = "https://georgewashingtonsaratoga.github.io/sillysite/";
-    }
-};
-
-window.onload = function(){ 
-    var image = document.getElementById("ad2");
+ };
+    
+var image = document.getElementById("ad2");
 image.onclick = function(e) {
   window.location.href = "www.pornhub.com";
-}
 };
 
 
