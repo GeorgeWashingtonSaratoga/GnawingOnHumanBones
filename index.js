@@ -18,7 +18,7 @@ var image = document.getElementById("ad1");
 
 var image = document.getElementById("ad2");
 image.onclick = function(e) {
-  window.location.href = "www.pornhub.com";
+  window.location.href = "https://pornhub.com";
 };
 
 var image = document.getElementById("ad3");
