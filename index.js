@@ -2,14 +2,23 @@
 var c = document.getElementById("gamecanvas");
 var ctx = c.getContext("2d");
 
+var mouseX, mouseY;
+
+window.addEventListener("mousemove", function(event) {
+    mouseX = event.clientX - c.getBoundingClientRect().left;
+    mouseY = event.clientY - c.getBoundingClientRect().top;
+});
+
 var theme = document.createElement('audio');
 var cronch = document.getElementById('crunch');
 var splat = document.getElementById('splat');
+var succ = document.getElementById('succ');
 
 var keys = [];
 var score = 0;
 var scoreval = '';
 var babydeathheight = 432;
+var luigi = false;
 
 var image = document.getElementById("ad1");
     image.onclick = function(e) {
@@ -18,7 +27,7 @@ var image = document.getElementById("ad1");
 
 var image = document.getElementById("ad2");
 image.onclick = function(e) {
-  window.location.href = "https://www.pornhub.com/";
+  window.location.href = "www.pornhub.com";
 };
 
 var image = document.getElementById("ad3");
@@ -108,7 +117,7 @@ var onGround = true;
 var maxVel = 15;
 
 // init friction
-var friction = 0.4;
+var friction = 0.9; // 0.4
 
 // init error
 var error = 0.1;
@@ -213,6 +222,21 @@ function update() {
         dropChild();
         score -= 50;
     }
+
+    friction = 0.9;
+    for (var i = 0; i < deadBabieX.length; i++) {
+        if (AABB(player.pos.x, player.pos.y, 64, 64, deadBabieX[i], babydeathheight, 64, 64)) {
+            friction /= 9;
+        }
+    }
+if(luigi) {
+    for (var i = 0; i < deadBabieX.length; i++) {
+        if (mouseX >= deadBabieX[i] && mouseX <= deadBabieX[i] + 64 && mouseY >= babydeathheight + 48 && mouseY <= babydeathheight + 64) {
+            deadBabieX.splice(i, 1);
+            succ.play();
+        }
+    }
+}
 }
 
 function AABB(x1, y1, w1, h1, x2, y2, w2, h2) {
@@ -282,7 +306,11 @@ function draw() {
     }
 
     // draw player
-    ctx.drawImage(spirtImg, 700, 700, 320, 320, player.pos.x, player.pos.y, 64, 64);
+    if (luigi) {
+        ctx.drawImage(spirtImg, 20, 1720, 320, 320, player.pos.x, player.pos.y, 64, 64);
+    } else { // cring
+        ctx.drawImage(spirtImg, 700, 700, 320, 320, player.pos.x, player.pos.y, 64, 64);
+    }
     
     // draw score
     drawScore();
@@ -303,8 +331,10 @@ function main() {
     if (!winned) {
         window.requestAnimationFrame(main);
     } else {
+        luigi = true;
         window.requestAnimationFrame(win);
     }
+    console.log(luigi);
 }
 
 function win() {
@@ -312,11 +342,24 @@ function win() {
     ctx.drawImage(spirtImg, 700, 1040, 650, 650, 0, 0, 512, 512);
 
     if (keys[32]) {
-        document.location.reload();
-        clearInterval(interval);
+        luigi = true;
+        score = 0;
+        scoreval = '';
+        deadBabieX = [];
+        babyDeathAnim = [0, 5];
+        winned = false;
+        tChild = 0;
+        friction = 0.9;
+        onGround = true;
+        player = new Player(new Vector(64, 448), new Vector(0, 0));
+        bone = new Player(new Vector(-9001, -9001), new Vector(0, 0));
+        child = new Player(new Vector(-9002, -9001), new Vector(0, 0));
+        acceleration = new Vector(2, 15);
+        window.requestAnimationFrame(titty);
+        document.body.style.cursor = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAD2UExURb0AAAAAABQAAGVlZdnZ2RoaGsttbcvLy70AAL0AAAAAAAAAAL0AAL0AAL0AAL0AAAAAAAAAAAAAAAAAAL0AAL0AAL0AAAAAAAAAAAAAAAAAAKkAABkAAAAAAAAAALoAAGgAAAAAAAAAAAAAANgAAL0AAMoAAMwAAAAAAP8AAL0AAL0AAL0AABoaGhoaGh0dHXR0dOjo6NnZ2b0BAb6+vr+/v8LCwtbW1tnZ2dnZ2b0AANnY2Nra2tvb29nZ2dnZ2dnZ2b0AAL0AANnZ2dnZ2dnZ2dnZ2dnZ2dnZ2b0AAL4AAKcAABYAAKYAAAAAANra2tnZ2f///1PVeSUAAABJdFJOUwAAAAAAAAAAHODgHAQZOeTkORkExub7/ebGG/vk4x/kNzfiHhviHRkdAh0fGx7i5jkZBAQd4f3mxhnhBDnk5jkcHhob++ThH+OiMhG4AAAAAWJLR0RRlGl8KgAAAAd0SU1FB+cCAg4qJTmtLxQAAAC1SURBVBjTVczZAoFAGEDhHyPCVKisWUr2fV8jskxC7/80TN3kXH4XBwAgzhL76SSSIRpACnM8BSGdyXqARUkm9svJ5QtFCnFOIoTYpbLwVioUWF7+AanW6nlVo0D82EZRVYKgN5NKAGRJbLWDwHO4owWB7UL4D/QehDRFbUcQAv/Qh+hgOBpPph5IHJ4xsfliuVpvEGy3uoiB2W32h49rHE9gmuY5BeiyNizXta438EP3h+v3BTe6JdaFCh7FAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIzLTAyLTAyVDE0OjQyOjM3KzAwOjAwZEL5EgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMy0wMi0wMlQxNDo0MjozNyswMDowMBUfQa4AAAAodEVYdGRhdGU6dGltZXN0YW1wADIwMjMtMDItMDJUMTQ6NDI6MzcrMDA6MDBCCmBxAAAAAElFTkSuQmCC), auto";
+    } else {
+        window.requestAnimationFrame(win);
     }
-
-    window.requestAnimationFrame(win);
 }
 
 function titty() {
