@@ -596,7 +596,7 @@ function aerobic() {
         console.log(key);
         console.log(playerID);
         if (key != playerID) {
-            ctx.drawImage(spirtImg, 700, 700, 320, 320, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+            ctx.drawImage(spirtImg, 360, 1720, 320, 320, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
         }
     }
     
