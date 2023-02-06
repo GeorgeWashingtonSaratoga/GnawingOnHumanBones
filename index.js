@@ -437,7 +437,6 @@ function multiInit() {
         console.log(errorCode, errorMessage);
     })
 
-    window.requestAnimationFrame(multi);
 }
 
 function init2electricboogaloo() {
@@ -466,6 +465,8 @@ function init2electricboogaloo() {
     onChildRemoved(allPlayersRef, (snapshot) => {
         delete(gamePlayers[snapshot.val().id]);
     });
+    
+    window.requestAnimationFrame(multi);
 }
 
 function multi() {
