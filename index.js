@@ -34,6 +34,16 @@ window.addEventListener("mousemove", function(event) {
     mouseY = event.clientY - c.getBoundingClientRect().top;
 });
 
+var mouseDown;
+
+window.addEventListener("mousedown", function(event) {
+    mouseDown = true;
+});
+
+window.addEventListener("mouseup", function(event) {
+    mouseDown = false;
+})
+
 var theme = document.createElement('audio');
 var cronch = document.getElementById('crunch');
 var splat = document.getElementById('splat');
@@ -44,6 +54,9 @@ var score = 0;
 var scoreval = '';
 var babydeathheight = 432;
 var luigi = false;
+
+var imgCunt = 5;
+var imgnum = 0;
 
 var image = document.getElementById("ad1");
     image.onclick = function(e) {
@@ -209,7 +222,7 @@ function update() {
     if (bone.pos.y >= 448) {
         dropBone();
     } 
-    
+
     if (child.pos.y >= 448) {
         if (tChild < 40) {
             if (tChild == 0) {
@@ -355,7 +368,7 @@ function main() {
         luigi = true;
         window.requestAnimationFrame(win);
     }
-    console.log(luigi);
+    //console.log(luigi);
 }
 
 function win() {
@@ -392,6 +405,8 @@ var playerRef;
 var gamePlayers = {};
 var gamePlayer;
 
+var playerImgs = {};
+
 function multiInit() {
     onAuthStateChanged(auth, (user) => {
         if (user) {
@@ -403,7 +418,8 @@ function multiInit() {
             set(playerRef, {
                 id: playerID,
                 x: 20,
-                y: 20
+                y: 20,
+                img: imgnum
             });
 
             onDisconnect(playerRef).remove();
@@ -431,6 +447,7 @@ function init2electricboogaloo() {
         for (var key in (snapshot.val() || {})) {
             gamePlayers[key].pos.x = snapshot.val()[key].x;
             gamePlayers[key].pos.y = snapshot.val()[key].y;
+            playerImgs[key] = snapshot.val()[key].img;
         }
     });
 
@@ -455,7 +472,7 @@ function multi() {
     theme.play();
     ferment();
     aerobic();
-    console.log(gamePlayers);
+    //console.log(gamePlayers);
     window.requestAnimationFrame(multi);
 }
 
@@ -562,7 +579,8 @@ gamePlayer.pos.y = player.pos.y;
 set(playerRef, {
         id: playerID,
         x: gamePlayer.pos.x,
-        y: gamePlayer.pos.y
+        y: gamePlayer.pos.y,
+        img: imgnum
     });
 
 }
@@ -585,18 +603,55 @@ function aerobic() {
         ctx.drawImage(spirtImg, 360, 700, 320, 320, deadBabieX[i], babydeathheight, 64, 64);
     }
 
+    /*
     // draw player
     if (luigi) {
         ctx.drawImage(spirtImg, 20, 1720, 320, 320, player.pos.x, player.pos.y, 64, 64);
     } else { // cring
         ctx.drawImage(spirtImg, 700, 700, 320, 320, player.pos.x, player.pos.y, 64, 64);
-    }
+    }*/
 
     for (var key in gamePlayers) {
-        console.log(key);
-        console.log(playerID);
+        //console.log(key);
+        //console.log(playerID);
+        //console.log(imgnum);
+        if (key == playerID) {
+                    if (playerImgs[key] == 4){
+                        ctx.drawImage(spirtImg, 1040, 1720, 320, 320, player.pos.x, player.pos.y, 64, 64);
+                    } else {
+                        if (playerImgs[key] == 3) {
+                            ctx.drawImage(spirtImg, 700, 1720, 320, 320, player.pos.x, player.pos.y, 64, 64);
+                        } else {
+                            if (playerImgs[key] == 2) {
+                                ctx.drawImage(spirtImg, 360, 1720, 320, 320, player.pos.x, player.pos.y, 64, 64);
+                            } else {
+                                if (playerImgs[key] == 1) {
+                                    ctx.drawImage(spirtImg, 20, 1720, 320, 320, player.pos.x, player.pos.y, 64, 64);
+                                } else {
+                                    ctx.drawImage(spirtImg, 700, 700, 320, 320, player.pos.x, player.pos.y, 64, 64);
+                                }
+                            }
+                        }
+                    }
+            }
         if (key != playerID) {
-            ctx.drawImage(spirtImg, 360, 1720, 320, 320, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                if (playerImgs[key] == 4){
+                    ctx.drawImage(spirtImg, 1040, 1720, 320, 320, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                } else {
+                    if (playerImgs[key] == 3) {
+                        ctx.drawImage(spirtImg, 700, 1720, 320, 320, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                    } else {
+                        if (playerImgs[key] == 2) {
+                            ctx.drawImage(spirtImg, 360, 1720, 320, 320, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                        } else {
+                            if (playerImgs[key] == 1) {
+                                ctx.drawImage(spirtImg, 20, 1720, 320, 320, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                            } else {
+                                ctx.drawImage(spirtImg, 700, 700, 320, 320, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                            }
+                        }
+                    }
+                }
         }
     }
     
@@ -604,7 +659,83 @@ function aerobic() {
     drawScore();
 }
 
+var timeimeimeimeiemeimiemiemiemikemekemieike = 0;
+
+function imgch() {
+    timeimeimeimeiemeimiemiemiemikemekemieike++;
+
+    ctx.beginPath();
+    ctx.fillStyle = "#000000";
+    ctx.fillRect(0, 0, 512, 512);
+
+
+    if (AABB(mouseX, mouseY, 5, 5, 20, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(spirtImg, 700, 700, 320, 320, 25, 20, 10, 20);
+            imgnum = 0;
+        } else {
+            ctx.drawImage(spirtImg, 700, 700, 320, 320, 15, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(spirtImg, 700, 700, 320, 320, 20, 20, 20, 20);
+    }
+
+    if (AABB(mouseX, mouseY, 5, 5, 50, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(spirtImg, 20, 1720, 320, 320, 55, 20, 10, 20);
+            imgnum = 1;
+        } else {
+            ctx.drawImage(spirtImg, 20, 1720, 320, 320, 45, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(spirtImg, 20, 1720, 320, 320, 50, 20, 20, 20);
+    }
+
+    if (AABB(mouseX, mouseY, 5, 5, 80, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(spirtImg, 360, 1720, 320, 320, 85, 20, 10, 20);
+            imgnum = 2;
+        } else {
+            ctx.drawImage(spirtImg, 360, 1720, 320, 320, 75, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(spirtImg, 360, 1720, 320, 320, 80, 20, 20, 20);
+    }
+
+    if (AABB(mouseX, mouseY, 5, 5, 110, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(spirtImg, 700, 1720, 320, 320, 115, 20, 10, 20);
+            imgnum = 3;
+        } else {
+            ctx.drawImage(spirtImg, 700, 1720, 320, 320, 105, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(spirtImg, 700, 1720, 320, 320, 110, 20, 20, 20);
+    }
+
+    if (AABB(mouseX, mouseY, 5, 5, 140, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(spirtImg, 1040, 1720, 320, 320, 145, 20, 10, 20);
+            imgnum = 4;
+        } else {
+            ctx.drawImage(spirtImg, 1040, 1720, 320, 320, 135, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(spirtImg, 1040, 1720, 320, 320, 140, 20, 20, 20);
+    }
+
+    console.log(imgnum);
+
+    if (keys[73] && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
+        timeimeimeimeiemeimiemiemiemikemekemieike = 0;
+        window.requestAnimationFrame(titty);
+    } else {
+        window.requestAnimationFrame(imgch);
+    }
+}
+
 function titty() {
+    timeimeimeimeiemeimiemiemiemikemekemieike++;
     // draw background
     ctx.drawImage(spirtImg, 20, 1040, 650, 650, 0, 0, 512, 512);
 
@@ -612,6 +743,9 @@ function titty() {
         window.requestAnimationFrame(main);
     } else if (keys[77]) {
         multiInit();
+    } else if (keys[73] && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
+        timeimeimeimeiemeimiemiemiemikemekemieike = 0;
+        window.requestAnimationFrame(imgch);
     } else {
         window.requestAnimationFrame(titty);
     }
