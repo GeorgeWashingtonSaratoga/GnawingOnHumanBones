@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.0/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.17.0/firebase-auth.js";
-import { getDatabase, ref, set, onDisconnect, onValue, onChildAdded, onChildRemoved } from "https://www.gstatic.com/firebasejs/9.17.0/firebase-database.js";
+import { getDatabase, ref, set, update, onDisconnect, onValue, onChildAdded, onChildRemoved } from "https://www.gstatic.com/firebasejs/9.17.0/firebase-database.js";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -174,7 +174,7 @@ var winned = false;
 
 var deadBabieX = [];
 
-function update() {
+function updater() {
     // change velocity by acceleration if correct key pressed
     
     // left-right motion
@@ -359,7 +359,7 @@ function drawScore() {
 
 function main() { 
     theme.play(); 
-    update();
+    updater();
     draw();
     // request aim frame
     if (!winned) {
@@ -406,6 +406,7 @@ var gamePlayers = {};
 var gamePlayer;
 
 var playerImgs = {};
+var ownerState = false;
 
 function multiInit() {
     onAuthStateChanged(auth, (user) => {
@@ -419,7 +420,8 @@ function multiInit() {
                 id: playerID,
                 x: 20,
                 y: 20,
-                img: imgnum
+                img: imgnum,
+                owner: ownerState
             });
 
             onDisconnect(playerRef).remove();
@@ -456,6 +458,15 @@ function init2electricboogaloo() {
         if (addedPlayer.id == playerID) {
             gamePlayer = new Player(new Vector(addedPlayer.x, addedPlayer.y), new Vector(0, 0));
             gamePlayers[addedPlayer.id] = gamePlayer;
+            ownerState = true;
+            for (var key in (snapshot.val() || {})) {
+                if (snapshot.val()[key].owner) {
+                    ownerState = false;
+                }
+            }
+            update(player, {
+                owner: ownerState
+            })
         } else {
             var p = new Player(new Vector(addedPlayer.x, addedPlayer.y), new Vector(0, 0));
             gamePlayers[addedPlayer.id] = p;
@@ -577,7 +588,7 @@ if(luigi) {
 
 gamePlayer.pos.x = player.pos.x;
 gamePlayer.pos.y = player.pos.y;
-set(playerRef, {
+update(playerRef, {
         id: playerID,
         x: gamePlayer.pos.x,
         y: gamePlayer.pos.y,
