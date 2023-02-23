@@ -57,7 +57,7 @@ var luigi = false;
 
 var imgCunt = 5;
 var imgnum = 0;
-var cosnum = 0
+var cosnum = null;
 
 var image = document.getElementById("ad1");
     image.onclick = function(e) {
