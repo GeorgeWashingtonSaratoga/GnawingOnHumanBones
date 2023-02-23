@@ -57,6 +57,7 @@ var luigi = false;
 
 var imgCunt = 5;
 var imgnum = 0;
+var cosnum = 0
 
 var image = document.getElementById("ad1");
     image.onclick = function(e) {
@@ -86,6 +87,7 @@ window.addEventListener("keyup", function(event) {
 }, false);
 
 var spirtImg = document.getElementById("spirt");
+var cosm = document.getElementById("cosm");
 
 // define vector class
 class Vector {
@@ -406,7 +408,8 @@ var gamePlayers = {};
 var gamePlayer;
 
 var playerImgs = {};
-var ownerState = false;
+var playerCos = {};
+var jointime = false;
 
 function multiInit() {
     onAuthStateChanged(auth, (user) => {
@@ -421,7 +424,8 @@ function multiInit() {
                 x: 20,
                 y: 20,
                 img: imgnum,
-                owner: ownerState
+                cos: cosnum,
+                jointime: jointime
             });
 
             onDisconnect(playerRef).remove();
@@ -441,6 +445,8 @@ function multiInit() {
 
 }
 
+var ownerState = false;
+
 function init2electricboogaloo() {
     allPlayersRef = ref(database, `players`);
 
@@ -449,6 +455,7 @@ function init2electricboogaloo() {
             gamePlayers[key].pos.x = snapshot.val()[key].x;
             gamePlayers[key].pos.y = snapshot.val()[key].y;
             playerImgs[key] = snapshot.val()[key].img;
+            playerCos[key] = snapshot.val()[key].cos;
         }
     });
 
@@ -458,15 +465,12 @@ function init2electricboogaloo() {
         if (addedPlayer.id == playerID) {
             gamePlayer = new Player(new Vector(addedPlayer.x, addedPlayer.y), new Vector(0, 0));
             gamePlayers[addedPlayer.id] = gamePlayer;
-            ownerState = true;
-            for (var key in (snapshot.val() || {})) {
-                if (snapshot.val()[key].owner) {
-                    ownerState = false;
-                }
-            }
-            update(player, {
-                owner: ownerState
-            })
+            console.log("e");
+            jointime = Date.now();
+
+            update(playerRef, {
+                jointime: jointime
+            });
         } else {
             var p = new Player(new Vector(addedPlayer.x, addedPlayer.y), new Vector(0, 0));
             gamePlayers[addedPlayer.id] = p;
@@ -592,7 +596,8 @@ update(playerRef, {
         id: playerID,
         x: gamePlayer.pos.x,
         y: gamePlayer.pos.y,
-        img: imgnum
+        img: imgnum,
+        cos: cosnum
     });
 
 }
@@ -628,24 +633,97 @@ function aerobic() {
         //console.log(playerID);
         //console.log(imgnum);
         if (key == playerID) {
-                    if (playerImgs[key] == 4){
-                        ctx.drawImage(spirtImg, 1040, 1720, 320, 320, player.pos.x, player.pos.y, 64, 64);
+                if (playerImgs[key] == 4){
+                    ctx.drawImage(spirtImg, 1040, 1720, 320, 320, player.pos.x, player.pos.y, 64, 64);
+                } else {
+                    if (playerImgs[key] == 3) {
+                        ctx.drawImage(spirtImg, 700, 1720, 320, 320, player.pos.x, player.pos.y, 64, 64);
                     } else {
-                        if (playerImgs[key] == 3) {
-                            ctx.drawImage(spirtImg, 700, 1720, 320, 320, player.pos.x, player.pos.y, 64, 64);
+                        if (playerImgs[key] == 2) {
+                            ctx.drawImage(spirtImg, 360, 1720, 320, 320, player.pos.x, player.pos.y, 64, 64);
                         } else {
-                            if (playerImgs[key] == 2) {
-                                ctx.drawImage(spirtImg, 360, 1720, 320, 320, player.pos.x, player.pos.y, 64, 64);
+                            if (playerImgs[key] == 1) {
+                                ctx.drawImage(spirtImg, 20, 1720, 320, 320, player.pos.x, player.pos.y, 64, 64);
                             } else {
-                                if (playerImgs[key] == 1) {
-                                    ctx.drawImage(spirtImg, 20, 1720, 320, 320, player.pos.x, player.pos.y, 64, 64);
+                                if (playerImgs[key] == 5) {
+                                    ctx.drawImage(cosm, 10, 10, 160, 160, player.pos.x, player.pos.y, 64, 64);
                                 } else {
-                                    ctx.drawImage(spirtImg, 700, 700, 320, 320, player.pos.x, player.pos.y, 64, 64);
+                                    if (playerImgs[key] == 6) {
+                                        ctx.drawImage(cosm, 180, 10, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                    } else {
+                                        if (playerImgs[key] == 7) {
+                                            ctx.drawImage(cosm, 350, 10, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                        } else {
+                                            if (playerImgs[key] == 8) {
+                                                ctx.drawImage(cosm, 10, 180, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                            } else {
+                                                if (playerImgs[key] == 9) {
+                                                    ctx.drawImage(cosm, 180, 180, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                                } else {
+                                                    if (playerImgs[key] == 10) {
+                                                        ctx.drawImage(cosm, 350, 180, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                                    } else {
+                                                        if (playerImgs[key] == 11) {
+                                                            ctx.drawImage(cosm, 10, 350, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                                        } else {
+                                                            if (playerImgs[key] == 12) {
+                                                                ctx.drawImage(cosm, 180, 350, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                                            } else {
+                                                                if (playerImgs[key] == 13) {
+                                                                    ctx.drawImage(cosm, 350, 350, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                                                } else {
+                                                                ctx.drawImage(spirtImg, 700, 700, 320, 320, player.pos.x, player.pos.y, 64, 64);
+                                                                }
+                                                            }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
+                }
             }
+            if (playerCos[key] == 1){
+                ctx.drawImage(cosm, 180, 520, 160, 160, player.pos.x, player.pos.y, 64, 64);
+            } else {
+                if (playerCos[key] == 2) {
+                    ctx.drawImage(cosm, 350, 520, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                } else {
+                    if (playerCos[key] == 3) {
+                        ctx.drawImage(cosm, 10, 690, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                    } else {
+                        if (playerCos[key] == 4) {
+                            ctx.drawImage(cosm, 180, 690, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                        } else {
+                            if (playerCos[key] == 5) {
+                                ctx.drawImage(cosm, 350, 690, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                            } else {
+                                if (playerCos[key] == 6) {
+                                    ctx.drawImage(cosm, 10, 860, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                } else {
+                                    if (playerCos[key] == 7) {
+                                        ctx.drawImage(cosm, 180, 860, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                    } else { 
+                                    if (playerCos[key] == 0) {
+                                        ctx.drawImage(cosm, 10, 520, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                    } else {
+                                    if (playerCos[key] == 8) {
+                                            ctx.drawImage(cosm, 350, 860, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                        } else { 
+                                            console.log("ERROR/NaN");
+                                    }
+                                }
+                            }
+                        }  
+                    }
+                }
+            }
+        }
+}
+        }
         if (key != playerID) {
                 if (playerImgs[key] == 4){
                     ctx.drawImage(spirtImg, 1040, 1720, 320, 320, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
@@ -659,13 +737,85 @@ function aerobic() {
                             if (playerImgs[key] == 1) {
                                 ctx.drawImage(spirtImg, 20, 1720, 320, 320, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
                             } else {
-                                ctx.drawImage(spirtImg, 700, 700, 320, 320, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                if (playerImgs[key] == 5) {
+                                    ctx.drawImage(cosm, 10, 10, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                } else {
+                                    if (playerImgs[key] == 6) {
+                                        ctx.drawImage(cosm, 180, 10, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                    } else {
+                                        if (playerImgs[key] == 7) {
+                                            ctx.drawImage(cosm, 350, 10, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                        } else {
+                                            if (playerImgs[key] == 8) {
+                                                ctx.drawImage(cosm, 10, 180, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                            } else {
+                                                if (playerImgs[key] == 9) {
+                                                    ctx.drawImage(cosm, 180, 180, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                                } else {
+                                                    if (playerImgs[key] == 10) {
+                                                        ctx.drawImage(cosm, 350, 180, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                                    } else {
+                                                        if (playerImgs[key] == 11) {
+                                                            ctx.drawImage(cosm, 10, 350, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                                        } else {
+                                                            if (playerImgs[key] == 12) {
+                                                                ctx.drawImage(cosm, 180, 350, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                                            } else {
+                                                                if (playerImgs[key] == 13) {
+                                                                    ctx.drawImage(cosm, 350, 350, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                                                } else {
+                                                                    ctx.drawImage(spirtImg, 700, 700, 320, 320, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                 }
+            }
+            if (playerCos[key] == 1){
+                ctx.drawImage(cosm, 180, 520, 160, 160, player.pos.x, player.pos.y, 64, 64);
+            } else {
+                if (playerCos[key] == 2) {
+                    ctx.drawImage(cosm, 350, 520, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                } else {
+                    if (playerCos[key] == 3) {
+                        ctx.drawImage(cosm, 10, 690, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                    } else {
+                        if (playerCos[key] == 4) {
+                            ctx.drawImage(cosm, 180, 690, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                        } else {
+                            if (playerCos[key] == 5) {
+                                ctx.drawImage(cosm, 350, 690, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                            } else {
+                                if (playerCos[key] == 6) {
+                                    ctx.drawImage(cosm, 10, 860, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                } else {
+                                    if (playerCos[key] == 7) {
+                                        ctx.drawImage(cosm, 180, 860, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                    } else {
+                                    if (playerCos[key] == 0) {
+                                        ctx.drawImage(cosm, 10, 520, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                    } else {
+                                    if (playerCos[key] == 8) {
+                                            ctx.drawImage(cosm, 350, 860, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                        } else {
+                                        }
+                                    }
+                                }
+                            } 
+                        }
+                    }
+                }
+            }
         }
     }
+}
     
     // draw score
     drawScore();
@@ -736,6 +886,105 @@ function imgch() {
         ctx.drawImage(spirtImg, 1040, 1720, 320, 320, 140, 20, 20, 20);
     }
 
+    if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(cosm, 10, 10, 160, 160, 175, 20, 10, 20);
+            imgnum = 5;
+        } else {
+            ctx.drawImage(cosm, 10, 10, 160, 160, 165, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(cosm, 10, 10, 160, 160, 170, 20, 20, 20);
+    }
+
+    if (AABB(mouseX, mouseY, 5, 5, 200, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(cosm, 180, 10, 160, 160, 205, 20, 10, 20);
+            imgnum = 6;
+        } else {
+            ctx.drawImage(cosm, 180, 10, 160, 160, 195, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(cosm, 180, 10, 160, 160, 200, 20, 20, 20);
+    }
+
+    if (AABB(mouseX, mouseY, 5, 5, 230, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(cosm, 350, 10, 160, 160, 235, 20, 10, 20);
+            imgnum = 7;
+        } else {
+            ctx.drawImage(cosm, 350, 10, 160, 160, 225, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(cosm, 350, 10, 160, 160, 230, 20, 20, 20);
+    }
+
+    if (AABB(mouseX, mouseY, 5, 5, 260, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(cosm, 10, 180, 160, 160, 265, 20, 10, 20);
+            imgnum = 8;
+        } else {
+            ctx.drawImage(cosm, 10, 180, 160, 160, 255, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(cosm, 10, 180, 160, 160, 260, 20, 20, 20);
+    }
+
+    if (AABB(mouseX, mouseY, 5, 5, 290, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(cosm, 180, 180, 160, 160, 295, 20, 10, 20);
+            imgnum = 9;
+        } else {
+            ctx.drawImage(cosm, 180, 180, 160, 160, 285, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(cosm, 180, 180, 160, 160, 290, 20, 20, 20);
+    }
+
+    if (AABB(mouseX, mouseY, 5, 5, 320, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(cosm, 350, 180, 160, 160, 325, 20, 10, 20);
+            imgnum = 10;
+        } else {
+            ctx.drawImage(cosm, 350, 180, 160, 160, 315, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(cosm, 350, 180, 160, 160, 320, 20, 20, 20);
+    }
+
+    if (AABB(mouseX, mouseY, 5, 5, 350, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(cosm, 10, 350, 160, 160, 355, 20, 10, 20);
+            imgnum = 11;
+        } else {
+            ctx.drawImage(cosm, 10, 350, 160, 160, 345, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(cosm, 10, 350, 160, 160, 350, 20, 20, 20);
+    }
+
+    if (AABB(mouseX, mouseY, 5, 5, 380, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(cosm, 180, 350, 160, 160, 385, 20, 10, 20);
+            imgnum = 12;
+        } else {
+            ctx.drawImage(cosm, 180, 350, 160, 160, 375, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(cosm, 180, 350, 160, 160, 380, 20, 20, 20);
+    }
+
+    if (AABB(mouseX, mouseY, 5, 5, 410, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(cosm, 350, 350, 160, 160, 415, 20, 10, 20);
+            imgnum = 13;
+        } else {
+            ctx.drawImage(cosm, 350, 350, 160, 160, 405, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(cosm, 350, 350, 160, 160, 410, 20, 20, 20);
+    }
+
     console.log(imgnum);
 
     if (keys[73] && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
@@ -743,6 +992,128 @@ function imgch() {
         window.requestAnimationFrame(titty);
     } else {
         window.requestAnimationFrame(imgch);
+    }
+}
+
+function imgcos() {
+    timeimeimeimeiemeimiemiemiemikemekemieike++;
+
+    ctx.beginPath();
+    ctx.fillStyle = "#248963";
+    ctx.fillRect(0, 0, 512, 512);
+    if (AABB(mouseX, mouseY, 5, 5, 20, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(cosm, 10, 520, 160, 160, 25, 20, 10, 20);
+            cosnum = 0;
+        } else {
+            ctx.drawImage(cosm, 10, 520, 160, 160, 15, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(cosm, 10, 520, 160, 160, 20, 20, 20, 20);
+    }
+ 
+ 
+    if (AABB(mouseX, mouseY, 5, 5, 50, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(cosm, 180, 520, 160, 160, 55, 20, 10, 20);
+            cosnum = 1;
+        } else {
+            ctx.drawImage(cosm, 180, 520, 160, 160, 45, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(cosm, 180, 520, 160, 160, 50, 20, 20, 20);
+    }
+ 
+ 
+    if (AABB(mouseX, mouseY, 5, 5, 80, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(cosm, 350, 520, 160, 160, 85, 20, 10, 20);
+            cosnum = 2;
+        } else {
+            ctx.drawImage(cosm, 350, 520, 160, 160, 75, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(cosm, 350, 520, 160, 160, 80, 20, 20, 20);
+    }
+ 
+ 
+    if (AABB(mouseX, mouseY, 5, 5, 110, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(cosm, 10, 690, 160, 160, 115, 20, 10, 20);
+            cosnum = 3;
+        } else {
+            ctx.drawImage(cosm, 10, 690, 160, 160, 105, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(cosm, 10, 690, 160, 160, 110, 20, 20, 20);
+    }
+ 
+ 
+    if (AABB(mouseX, mouseY, 5, 5, 140, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(cosm, 180, 690, 160, 160, 145, 20, 10, 20);
+            cosnum = 4;
+        } else {
+            ctx.drawImage(cosm, 180, 690, 160, 160, 135, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(cosm, 180, 690, 160, 160, 140, 20, 20, 20);
+    }
+ 
+ 
+    if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(cosm, 350, 690, 160, 160, 175, 20, 10, 20);
+            cosnum = 5;
+        } else {
+            ctx.drawImage(cosm, 350, 690, 160, 160, 165, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(cosm, 350, 690, 160, 160, 170, 20, 20, 20);
+    }
+ 
+ 
+    if (AABB(mouseX, mouseY, 5, 5, 200, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(cosm, 10, 860, 160, 160, 205, 20, 10, 20);
+            cosnum = 6;
+        } else {
+            ctx.drawImage(cosm, 10, 860, 160, 160, 195, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(cosm, 10, 860, 160, 160, 200, 20, 20, 20);
+    }
+ 
+ 
+    if (AABB(mouseX, mouseY, 5, 5, 230, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(cosm, 180, 860, 160, 160, 235, 20, 10, 20);
+            cosnum = 7;
+        } else {
+            ctx.drawImage(cosm, 180, 860, 160, 160, 225, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(cosm, 180, 860, 160, 160, 230, 20, 20, 20);
+    }
+ 
+ 
+    if (AABB(mouseX, mouseY, 5, 5, 260, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(cosm, 350, 860, 160, 160, 265, 20, 10, 20);
+            cosnum = 8;
+        } else {
+            ctx.drawImage(cosm, 350, 860, 160, 160, 255, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(cosm, 350, 860, 160, 160, 260, 20, 20, 20);
+    }
+  
+    console.log(cosnum);
+    if (keys[67] && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
+        timeimeimeimeiemeimiemiemiemikemekemieike = 0;
+        window.requestAnimationFrame(titty);
+    } else {
+        window.requestAnimationFrame(imgcos);
     }
 }
 
@@ -758,6 +1129,9 @@ function titty() {
     } else if (keys[73] && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
         timeimeimeimeiemeimiemiemiemikemekemieike = 0;
         window.requestAnimationFrame(imgch);
+    } else if (keys[67] && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
+        timeimeimeimeiemeimiemiemiemikemekemieike = 0;
+        window.requestAnimationFrame(imgcos);
     } else {
         window.requestAnimationFrame(titty);
     }
