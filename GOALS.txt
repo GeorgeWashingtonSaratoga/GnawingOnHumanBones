@@ -1,0 +1,5 @@
+1. New cosmetics - just add them lol.
+2. Guns - Battle Royale mode, bullet functionality, health bar, pvp functionality, loot box functionality
+3. Gun skin - loot box functionality
+4. Pets - Pet behavior, loot box functionality,
+5. Loot boxes - Shop, keys, key behavior, collectibles, collectibles behavior.
