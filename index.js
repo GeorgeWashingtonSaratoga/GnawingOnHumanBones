@@ -975,7 +975,7 @@ function aerobic() {
 }
 
 if (AABB(mouseX, mouseY, 1, 1, 316, 4, 196, 72)) {
-    if (mouseDown&& timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
+    if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
         timeimeimeimeiemeimiemiemiemikemekemieike = 0;
         ctx.drawImage(butt, 0, 720, 490, 180, 316, 4, 176, 72)
         trans = true;
