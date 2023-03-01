@@ -578,7 +578,9 @@ function multi() {
     ferment();
     aerobic();
     //console.log(gamePlayers);
-    window.requestAnimationFrame(multi);
+    if (!trans) {
+        window.requestAnimationFrame(multi);
+    }
 }
 
 function ferment() {
