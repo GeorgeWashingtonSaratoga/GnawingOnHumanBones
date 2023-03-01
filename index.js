@@ -722,6 +722,8 @@ update(playerRef, {
 }
 
 function aerobic() {
+    
+    timeimeimeimeiemeimiemiemiemikemekemieike++;
 
     trans = false; 
 
