@@ -981,7 +981,7 @@ if (AABB(mouseX, mouseY, 1, 1, 316, 4, 196, 72)) {
         timeimeimeimeiemeimiemiemiemikemekemieike = 0;
         ctx.drawImage(butt, 0, 720, 490, 180, 316, 4, 176, 72)
         trans = true;
-        consloe.log("logging your MOM");
+        console.log("logging your MOM");
         window.requestAnimationFrame(titty);
     }
     ctx.drawImage(butt, 0, 720, 490, 180, 316, 0, 196, 80)
