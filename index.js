@@ -59,11 +59,17 @@ var babydeathheight = 432;
 var luigi = false;
 
 const unlocked = [];
+const petsUnlocked = [];
+const gunsUnlocked = [0];
+const skinsUnlocked = [];
+const trophiesUnlocked = [];
 var allowKeyFall = false;
 
 var imgCunt = 5;
 var imgnum = 0;
 var cosnum = null;
+var pet = null;
+var gun = 0;
 
 var image = document.getElementById("ad1");
     image.onclick = function(e) {
@@ -315,7 +321,8 @@ function updater() {
 
     if (AABB(player.pos.x, player.pos.y, 64, 64, token.pos.x, token.pos.y, 64, 64)) {
         score += 100;
-        if (score >= 3450) {
+        if (score >= 3450&& timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
+            timeimeimeimeiemeimiemiemiemikemekemieike = 0;
             unlocked.push(keySkin);
             console.log("COLLECTED");
             allowKeyFall = false;
@@ -514,6 +521,8 @@ function multiInit() {
                 y: 20,
                 img: imgnum,
                 cos: cosnum,
+                pet: pet, 
+                gun: gun,
                 jointime: jointime
             });
 
@@ -684,7 +693,8 @@ function ferment() {
 
     if (AABB(player.pos.x, player.pos.y, 64, 64, token.pos.x, token.pos.y, 64, 64)) {
         score += 100;
-        if (score >= 3450) {
+        if (score >= 3450&& timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
+            timeimeimeimeiemeimiemiemiemikemekemieike = 0;
             unlocked.push(keySkin);
             console.log("COLLECTED");
             allowKeyFall = false;
@@ -716,7 +726,9 @@ update(playerRef, {
         x: gamePlayer.pos.x,
         y: gamePlayer.pos.y,
         img: imgnum,
-        cos: cosnum
+        cos: cosnum,
+        pet: pet,
+        gun: gun
     });
 
 }
@@ -982,6 +994,7 @@ if (AABB(mouseX, mouseY, 1, 1, 316, 4, 196, 72)) {
         ctx.drawImage(butt, 0, 720, 490, 180, 316, 4, 176, 72)
         trans = true;
         console.log("logging your MOM");
+        console.log("asshole");
         window.requestAnimationFrame(titty);
     }
     ctx.drawImage(butt, 0, 720, 490, 180, 316, 0, 196, 80)
@@ -999,7 +1012,7 @@ function imgch() {
     cosmetic = false;
     trans = false;
     ctx.beginPath();
-    ctx.fillStyle = "#000000";
+    ctx.fillStyle = "#aedca6";
     ctx.fillRect(0, 0, 512, 512);
 
 
@@ -1177,13 +1190,449 @@ function imgch() {
 
 }
 
+function petImg() {
+    timeimeimeimeiemeimiemiemiemikemekemieike++;
+
+    cosmetic = false;
+    trans = false;
+    ctx.beginPath();
+    ctx.fillStyle = "#aedca6";
+    ctx.fillRect(0, 0, 512, 512);
+
+    if (!petsUnlocked.includes(0)) {
+        ctx.drawImage(pets, 10, 10, 160, 160, 20, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 20, 20, 20, 20);
+    } else {
+    if (AABB(mouseX, mouseY, 5, 5, 20, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(pets, 10, 10, 160, 160, 25, 20, 10, 20);
+            pet = 0;
+        } else {
+            ctx.drawImage(pets, 10, 10, 160, 160, 15, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(pets, 10, 10, 160, 160, 20, 20, 20, 20);
+    }
+    }   
+
+    if (!petsUnlocked.includes(1)) {
+        ctx.drawImage(pets, 180, 10, 160, 160, 50, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 50, 20, 20, 20);
+    } else {
+    if (AABB(mouseX, mouseY, 5, 5, 50, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(pets, 180, 10, 160, 160, 55, 20, 10, 20);
+            pet = 1;
+        } else {
+            ctx.drawImage(pets, 180, 10, 160, 160, 45, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(pets, 180, 10, 160, 160, 50, 20, 20, 20);
+    }
+}
+    if (!petsUnlocked.includes(2)) {
+        ctx.drawImage(pets, 350, 10, 160, 160, 80, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 80, 20, 20, 20);
+    } else {
+    if (AABB(mouseX, mouseY, 5, 5, 80, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(pets, 350, 10, 160, 160, 85, 20, 10, 20);
+            pet = 2;
+        } else {
+            ctx.drawImage(pets, 350, 10, 160, 160, 75, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(pets, 350, 10, 160, 160, 80, 20, 20, 20);
+    }
+}
+    if (!petsUnlocked.includes(3)) {
+        ctx.drawImage(pets, 10, 180, 160, 160, 110, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 110, 20, 20, 20);
+    } else {
+    if (AABB(mouseX, mouseY, 5, 5, 110, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(pets, 10, 180, 160, 160, 115, 20, 10, 20);
+            pet = 3;
+        } else {
+            ctx.drawImage(pets, 10, 180, 160, 160, 105, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(pets, 10, 180, 160, 160, 110, 20, 20, 20);
+    }
+}
+
+    if (!petsUnlocked.includes(4)) {
+        ctx.drawImage(pets, 180, 180, 160, 160, 140, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 140, 20, 20, 20);
+    } else {
+    if (AABB(mouseX, mouseY, 5, 5, 140, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(pets, 180, 180, 160, 160, 145, 20, 10, 20);
+            pet = 4;
+        } else {
+            ctx.drawImage(pets, 180, 180, 160, 160, 135, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(pets, 180, 180, 160, 160, 140, 20, 20, 20);
+    }
+}
+
+if (!petsUnlocked.includes(5)) {
+    ctx.drawImage(pets, 350, 180, 160, 160, 170, 20, 20, 20);
+    ctx.drawImage(lock, 10, 10, 160, 160, 170, 20, 20, 20);
+} else {
+if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+    if (mouseDown) {
+        ctx.drawImage(pets, 350, 180, 160, 160, 175, 20, 10, 20);
+        pet = 5;
+    } else {
+        ctx.drawImage(pets, 350, 180, 160, 160, 165, 20, 30, 20);
+    }
+} else {
+    ctx.drawImage(pets, 350, 180, 160, 160, 170, 20, 20, 20);
+}
+}
+
+if (!petsUnlocked.includes(6)) {
+    ctx.drawImage(pets, 10, 350, 160, 160, 200, 20, 20, 20);
+    ctx.drawImage(lock, 10, 10, 160, 160, 200, 20, 20, 20);
+} else {
+if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+    if (mouseDown) {
+        ctx.drawImage(pets, 10, 350, 160, 160, 205, 20, 10, 20);
+        pet = 6;
+    } else {
+        ctx.drawImage(pets, 10, 350, 160, 160, 195, 20, 30, 20);
+    }
+} else {
+    ctx.drawImage(pets, 10, 350, 160, 160, 200, 20, 20, 20);
+}
+}
+
+if (!petsUnlocked.includes(7)) {
+    ctx.drawImage(pets, 180, 350, 160, 160, 230, 20, 20, 20);
+    ctx.drawImage(lock, 10, 10, 160, 160, 230, 20, 20, 20);
+} else {
+if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+    if (mouseDown) {
+        ctx.drawImage(pets, 180, 350, 160, 160, 235, 20, 10, 20);
+        pet = 7;
+    } else {
+        ctx.drawImage(pets, 180, 350, 160, 160, 225, 20, 30, 20);
+    }
+} else {
+    ctx.drawImage(pets, 180, 350, 160, 160, 230, 20, 20, 20);
+}
+}
+
+if (!petsUnlocked.includes(8)) {
+    ctx.drawImage(pets, 350, 350, 160, 160, 260, 20, 20, 20);
+    ctx.drawImage(lock, 10, 10, 160, 160, 260, 20, 20, 20);
+} else {
+if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+    if (mouseDown) {
+        ctx.drawImage(pets, 350, 350, 160, 160, 265, 20, 10, 20);
+        pet = 8;
+    } else {
+        ctx.drawImage(pets, 350, 350, 160, 160, 255, 20, 30, 20);
+    }
+} else {
+    ctx.drawImage(pets, 350, 350, 160, 160, 260, 20, 20, 20);
+}
+}
+
+if (!petsUnlocked.includes(9)) {
+    ctx.drawImage(pets, 10, 520, 160, 160, 290, 20, 20, 20);
+    ctx.drawImage(lock, 10, 10, 160, 160, 290, 20, 20, 20);
+} else {
+if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+    if (mouseDown) {
+        ctx.drawImage(pets, 10, 520, 160, 160, 295, 20, 10, 20);
+        pet = 9;
+    } else {
+        ctx.drawImage(pets, 10, 520, 160, 160, 285, 20, 30, 20);
+    }
+} else {
+    ctx.drawImage(pets, 10, 520, 160, 160, 290, 20, 20, 20);
+}
+}
+
+if (!petsUnlocked.includes(10)) {
+    ctx.drawImage(pets, 180, 520, 160, 160, 320, 20, 20, 20);
+    ctx.drawImage(lock, 10, 10, 160, 160, 320, 20, 20, 20);
+} else {
+if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+    if (mouseDown) {
+        ctx.drawImage(pets, 180, 520, 160, 160, 325, 20, 10, 20);
+        pet = 10;
+    } else {
+        ctx.drawImage(pets, 180, 520, 160, 160, 315, 20, 30, 20);
+    }
+} else {
+    ctx.drawImage(pets, 180, 520, 160, 160, 320, 20, 20, 20);
+}
+}
+
+if (!petsUnlocked.includes(11)) {
+    ctx.drawImage(pets, 350, 520, 160, 160, 350, 20, 20, 20);
+    ctx.drawImage(lock, 10, 10, 160, 160, 350, 20, 20, 20);
+} else {
+if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+    if (mouseDown) {
+        ctx.drawImage(pets, 350, 520, 160, 160, 355, 20, 10, 20);
+        pet = 11;
+    } else {
+        ctx.drawImage(pets, 350, 520, 160, 160, 345, 20, 30, 20);
+    }
+} else {
+    ctx.drawImage(pets, 350, 520, 160, 160, 350, 20, 20, 20);
+}
+}
+
+    if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
+        if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
+            timeimeimeimeiemeimiemiemiemikemekemieike = 0;
+            ctx.drawImage(butt, 0, 720, 490, 180, 286, 444, 176, 72)
+            cosmetic = true;
+            window.requestAnimationFrame(imgSelec);
+        }
+        ctx.drawImage(butt, 0, 720, 490, 180, 276, 440, 196, 80)
+    } else {
+        ctx.drawImage(butt, 0, 720, 490, 180, 276, 444, 196, 72)
+    }
+
+    if (!cosmetic) {
+        window.requestAnimationFrame(petImg);
+    } else {
+        
+    }
+}
+
+function gunImg() {
+    timeimeimeimeiemeimiemiemiemikemekemieike++;
+
+    cosmetic = false;
+    trans = false;
+    ctx.beginPath();
+    ctx.fillStyle = "#aedca6";
+    ctx.fillRect(0, 0, 512, 512);
+
+    if (!gunsUnlocked.includes(0)) {
+        ctx.drawImage(guns, 10, 10, 160, 160, 20, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 20, 20, 20, 20);
+    } else {
+    if (AABB(mouseX, mouseY, 5, 5, 20, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(guns, 10, 10, 160, 160, 25, 20, 10, 20);
+            gun = 0;
+        } else {
+            ctx.drawImage(guns, 10, 10, 160, 160, 15, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(guns, 10, 10, 160, 160, 20, 20, 20, 20);
+    }
+    }   
+
+    if (!gunsUnlocked.includes(1)) {
+        ctx.drawImage(guns, 180, 10, 160, 160, 50, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 50, 20, 20, 20);
+    } else {
+    if (AABB(mouseX, mouseY, 5, 5, 50, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(guns, 180, 10, 160, 160, 55, 20, 10, 20);
+            gun = 1;
+        } else {
+            ctx.drawImage(guns, 180, 10, 160, 160, 45, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(guns, 180, 10, 160, 160, 50, 20, 20, 20);
+    }
+}
+    if (!gunsUnlocked.includes(2)) {
+        ctx.drawImage(guns, 350, 10, 160, 160, 80, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 80, 20, 20, 20);
+    } else {
+    if (AABB(mouseX, mouseY, 5, 5, 80, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(guns, 350, 10, 160, 160, 85, 20, 10, 20);
+            gun = 2;
+        } else {
+            ctx.drawImage(guns, 350, 10, 160, 160, 75, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(guns, 350, 10, 160, 160, 80, 20, 20, 20);
+    }
+}
+    if (!gunsUnlocked.includes(3)) {
+        ctx.drawImage(guns, 10, 350, 160, 160, 110, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 110, 20, 20, 20);
+    } else {
+    if (AABB(mouseX, mouseY, 5, 5, 110, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(guns, 10, 350, 160, 160, 115, 20, 10, 20);
+            gun = 3;
+        } else {
+            ctx.drawImage(guns, 10, 350, 160, 160, 105, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(guns, 10, 350, 160, 160, 110, 20, 20, 20);
+    }
+}
+
+    if (!gunsUnlocked.includes(4)) {
+        ctx.drawImage(guns, 180, 350, 160, 160, 140, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 140, 20, 20, 20);
+    } else {
+    if (AABB(mouseX, mouseY, 5, 5, 140, 20, 20, 20)) {
+        if (mouseDown) {
+            ctx.drawImage(guns, 180, 350, 160, 160, 145, 20, 10, 20);
+            gun = 4;
+        } else {
+            ctx.drawImage(guns, 180, 350, 160, 160, 135, 20, 30, 20);
+        }
+    } else {
+        ctx.drawImage(guns, 180, 350, 160, 160, 140, 20, 20, 20);
+    }
+}
+
+if (!gunsUnlocked.includes(5)) {
+    ctx.drawImage(guns, 350, 350, 160, 160, 170, 20, 20, 20);
+    ctx.drawImage(lock, 10, 10, 160, 160, 170, 20, 20, 20);
+} else {
+if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+    if (mouseDown) {
+        ctx.drawImage(guns, 350, 350, 160, 160, 175, 20, 10, 20);
+        gun = 5;
+    } else {
+        ctx.drawImage(guns, 350, 350, 160, 160, 165, 20, 30, 20);
+    }
+} else {
+    ctx.drawImage(guns, 350, 350, 160, 160, 170, 20, 20, 20);
+}
+}
+
+if (!gunsUnlocked.includes(6)) {
+    ctx.drawImage(skins, 10, 10, 160, 160, 200, 20, 20, 20);
+    ctx.drawImage(lock, 10, 10, 160, 160, 200, 20, 20, 20);
+} else {
+if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+    if (mouseDown) {
+        ctx.drawImage(skins, 10, 10, 160, 160, 205, 20, 10, 20);
+        gun = 6;
+    } else {
+        ctx.drawImage(skins, 10, 10, 160, 160, 195, 20, 30, 20);
+    }
+} else {
+    ctx.drawImage(skins, 10, 10, 160, 160, 200, 20, 20, 20);
+}
+}
+
+if (!gunsUnlocked.includes(7)) {
+    ctx.drawImage(skins, 180, 10, 160, 160, 230, 20, 20, 20);
+    ctx.drawImage(lock, 10, 10, 160, 160, 230, 20, 20, 20);
+} else {
+if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+    if (mouseDown) {
+        ctx.drawImage(skins, 180, 10, 160, 160, 235, 20, 10, 20);
+        gun = 7;
+    } else {
+        ctx.drawImage(skins, 180, 10, 160, 160, 225, 20, 30, 20);
+    }
+} else {
+    ctx.drawImage(skins, 180, 10, 160, 160, 230, 20, 20, 20);
+}
+}
+
+if (!gunsUnlocked.includes(8)) {
+    ctx.drawImage(skins, 350, 10, 160, 160, 260, 20, 20, 20);
+    ctx.drawImage(lock, 10, 10, 160, 160, 260, 20, 20, 20);
+} else {
+if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+    if (mouseDown) {
+        ctx.drawImage(skins, 350, 10, 160, 160, 265, 20, 10, 20);
+        gun = 8;
+    } else {
+        ctx.drawImage(skins, 350, 10, 160, 160, 255, 20, 30, 20);
+    }
+} else {
+    ctx.drawImage(skins, 350, 10, 160, 160, 260, 20, 20, 20);
+}
+}
+
+if (!gunsUnlocked.includes(9)) {
+    ctx.drawImage(skins, 10, 350, 160, 160, 290, 20, 20, 20);
+    ctx.drawImage(lock, 10, 10, 160, 160, 290, 20, 20, 20);
+} else {
+if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+    if (mouseDown) {
+        ctx.drawImage(skins, 10, 350, 160, 160, 295, 20, 10, 20);
+        gun = 9;
+    } else {
+        ctx.drawImage(skins, 10, 350, 160, 160, 285, 20, 30, 20);
+    }
+} else {
+    ctx.drawImage(skins, 10, 350, 160, 160, 290, 20, 20, 20);
+}
+}
+
+if (!gunsUnlocked.includes(10)) {
+    ctx.drawImage(skins, 180, 350, 160, 160, 320, 20, 20, 20);
+    ctx.drawImage(lock, 10, 10, 160, 160, 320, 20, 20, 20);
+} else {
+if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+    if (mouseDown) {
+        ctx.drawImage(skins, 180, 350, 160, 160, 325, 20, 10, 20);
+        gun = 10;
+    } else {
+        ctx.drawImage(skins, 180, 350, 160, 160, 315, 20, 30, 20);
+    }
+} else {
+    ctx.drawImage(skins, 180, 350, 160, 160, 320, 20, 20, 20);
+}
+}
+
+if (!gunsUnlocked.includes(11)) {
+    ctx.drawImage(skins, 350, 350, 160, 160, 350, 20, 20, 20);
+    ctx.drawImage(lock, 10, 10, 160, 160, 350, 20, 20, 20);
+} else {
+if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+    if (mouseDown) {
+        ctx.drawImage(skins, 350, 350, 160, 160, 355, 20, 10, 20);
+        gun = 11;
+    } else {
+        ctx.drawImage(skins, 350, 350, 160, 160, 345, 20, 30, 20);
+    }
+} else {
+    ctx.drawImage(skins, 350, 350, 160, 160, 350, 20, 20, 20);
+}
+}
+
+    if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
+        if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
+            timeimeimeimeiemeimiemiemiemikemekemieike = 0;
+            ctx.drawImage(butt, 0, 720, 490, 180, 286, 444, 176, 72)
+            cosmetic = true;
+            window.requestAnimationFrame(imgSelec);
+        }
+        ctx.drawImage(butt, 0, 720, 490, 180, 276, 440, 196, 80)
+    } else {
+        ctx.drawImage(butt, 0, 720, 490, 180, 276, 444, 196, 72)
+    }
+
+    if (!cosmetic) {
+        window.requestAnimationFrame(gunImg);
+    } else {
+        
+    }
+}
+
 function imgcos() {
     timeimeimeimeiemeimiemiemiemikemekemieike++;
 
     cosmetic = false;
     trans = false;
     ctx.beginPath();
-    ctx.fillStyle = "#248963";
+    ctx.fillStyle = "#aedca6";
     ctx.fillRect(0, 0, 512, 512);
     if (AABB(mouseX, mouseY, 5, 5, 20, 20, 20, 20)) {
         if (mouseDown) {
@@ -1353,30 +1802,56 @@ function imgSelec() {
     ctx.fillStyle = "#aedca6";
     ctx.fillRect(0, 0, 512, 512);
 
-    if (AABB(mouseX, mouseY, 1, 1, 0, 0, 196, 72)) {
+    if (AABB(mouseX, mouseY, 1, 1, 0, 4, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
-            ctx.drawImage(butt, 0, 900, 490, 180, 0, 0, 176, 72)
+            ctx.drawImage(butt, 0, 900, 490, 180, 0, 4, 176, 72)
             cosmetic = false;
             trans = true;
             window.requestAnimationFrame(imgcos);
         }
-        ctx.drawImage(butt, 0, 900, 490, 180, 0, 4, 196, 80)
+        ctx.drawImage(butt, 0, 900, 490, 180, 0, 0, 196, 80)
     } else {
-        ctx.drawImage(butt, 0, 900, 490, 180, 0, 0, 196, 72)
+        ctx.drawImage(butt, 0, 900, 490, 180, 0, 4, 196, 72)
     }
 
-    if (AABB(mouseX, mouseY, 1, 1, 200, 0, 196, 72)) {
+    if (AABB(mouseX, mouseY, 1, 1, 200, 4, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
-            ctx.drawImage(butt, 0, 1080, 490, 180, 200, 0, 176, 72)
+            ctx.drawImage(butt, 0, 1080, 490, 180, 200, 4, 176, 72)
             cosmetic = false;
             trans = true;
             window.requestAnimationFrame(imgch);
         }
-        ctx.drawImage(butt, 0, 1080, 490, 180, 200, 4, 196, 80)
+        ctx.drawImage(butt, 0, 1080, 490, 180, 200, 0, 196, 80)
     } else {
-        ctx.drawImage(butt, 0, 1080, 490, 180, 200, 0, 196, 72)
+        ctx.drawImage(butt, 0, 1080, 490, 180, 200, 4, 196, 72)
+    }
+
+    if (AABB(mouseX, mouseY, 1, 1, 0, 78, 196, 72)) {
+        if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
+            timeimeimeimeiemeimiemiemiemikemekemieike = 0;
+            ctx.drawImage(butt, 0, 1620, 490, 180, 0, 78, 176, 72)
+            cosmetic = false;
+            trans = true;
+            window.requestAnimationFrame(gunImg);
+        }
+        ctx.drawImage(butt, 0, 1620, 490, 180, 0, 76, 196, 80)
+    } else {
+        ctx.drawImage(butt, 0, 1620, 490, 180, 0, 78, 196, 72)
+    }
+
+    if (AABB(mouseX, mouseY, 1, 1, 200, 78, 196, 72)) {
+        if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
+            timeimeimeimeiemeimiemiemiemikemekemieike = 0;
+            ctx.drawImage(butt, 0, 1800, 490, 180, 200, 78, 176, 72)
+            cosmetic = false;
+            trans = true;
+            window.requestAnimationFrame(petImg);
+        }
+        ctx.drawImage(butt, 0, 1800, 490, 180, 200, 76, 196, 80)
+    } else {
+        ctx.drawImage(butt, 0, 1800, 490, 180, 200, 78, 196, 72)
     }
 
     if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
