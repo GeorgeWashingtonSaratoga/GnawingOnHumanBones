@@ -61,9 +61,13 @@ var luigi = false;
 const unlocked = [];
 const petsUnlocked = [];
 const gunsUnlocked = [0];
-const skinsUnlocked = [];
-const trophiesUnlocked = [];
+const trosUnlocked = [];
+const commonLoot = ["pet0", "pet1", "pet2", "gun1", "gun2", "tro0"];
+const uncommonLoot = ["pet3", "pet4", "pet5", "gun3", "gun4", "gun5", "tro1"];
+const rareLoot = ["pet6", "pet7", "pet8", "gun6", "gun7", "gun8", "tro2"];
+const epicLoot = ["pet9", "pet10", "pet11", "gun9", "gun10", "gun11", "tro3"];
 var allowKeyFall = false;
+var fortniting = false;
 
 var imgCunt = 5;
 var imgnum = 0;
@@ -178,6 +182,10 @@ var friction = 0.9; // 0.4
 
 // init error
 var error = 0.1;
+
+function get_random (list) {
+    return list[Math.floor((Math.random()*list.length))];
+  }
 
 function dropBone() {
     bone.vel.zero();
@@ -513,7 +521,12 @@ function multiInit() {
             // logged in
             playerID = user.uid;
 
-            playerRef = ref(database, `players/${playerID}`);
+            if (fortniting == true) {
+            playerRef = ref(database, `battle/${playerID}`);
+            } else {
+                if (fortniting == false)
+                playerRef = ref(database, `multi/${playerID}`);
+            }
 
             set(playerRef, {
                 id: playerID,
@@ -546,7 +559,13 @@ function multiInit() {
 var ownerState = false;
 
 function init2electricboogaloo() {
-    allPlayersRef = ref(database, `players`);
+
+    if (fortniting == true) {
+        allPlayersRef = ref(database, `battle`);
+        } else {
+            if (fortniting == false)
+            allPlayersRef = ref(database, `multi`);
+        }
 
     onValue(allPlayersRef, (snapshot) => {
         for (var key in (snapshot.val() || {})) {
@@ -1297,7 +1316,7 @@ if (!petsUnlocked.includes(6)) {
     ctx.drawImage(pets, 10, 350, 160, 160, 200, 20, 20, 20);
     ctx.drawImage(lock, 10, 10, 160, 160, 200, 20, 20, 20);
 } else {
-if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+if (AABB(mouseX, mouseY, 5, 5, 200, 20, 20, 20)) {
     if (mouseDown) {
         ctx.drawImage(pets, 10, 350, 160, 160, 205, 20, 10, 20);
         pet = 6;
@@ -1313,7 +1332,7 @@ if (!petsUnlocked.includes(7)) {
     ctx.drawImage(pets, 180, 350, 160, 160, 230, 20, 20, 20);
     ctx.drawImage(lock, 10, 10, 160, 160, 230, 20, 20, 20);
 } else {
-if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+if (AABB(mouseX, mouseY, 5, 5, 230, 20, 20, 20)) {
     if (mouseDown) {
         ctx.drawImage(pets, 180, 350, 160, 160, 235, 20, 10, 20);
         pet = 7;
@@ -1329,7 +1348,7 @@ if (!petsUnlocked.includes(8)) {
     ctx.drawImage(pets, 350, 350, 160, 160, 260, 20, 20, 20);
     ctx.drawImage(lock, 10, 10, 160, 160, 260, 20, 20, 20);
 } else {
-if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+if (AABB(mouseX, mouseY, 5, 5, 260, 20, 20, 20)) {
     if (mouseDown) {
         ctx.drawImage(pets, 350, 350, 160, 160, 265, 20, 10, 20);
         pet = 8;
@@ -1345,7 +1364,7 @@ if (!petsUnlocked.includes(9)) {
     ctx.drawImage(pets, 10, 520, 160, 160, 290, 20, 20, 20);
     ctx.drawImage(lock, 10, 10, 160, 160, 290, 20, 20, 20);
 } else {
-if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+if (AABB(mouseX, mouseY, 5, 5, 290, 20, 20, 20)) {
     if (mouseDown) {
         ctx.drawImage(pets, 10, 520, 160, 160, 295, 20, 10, 20);
         pet = 9;
@@ -1361,7 +1380,7 @@ if (!petsUnlocked.includes(10)) {
     ctx.drawImage(pets, 180, 520, 160, 160, 320, 20, 20, 20);
     ctx.drawImage(lock, 10, 10, 160, 160, 320, 20, 20, 20);
 } else {
-if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+if (AABB(mouseX, mouseY, 5, 5, 320, 20, 20, 20)) {
     if (mouseDown) {
         ctx.drawImage(pets, 180, 520, 160, 160, 325, 20, 10, 20);
         pet = 10;
@@ -1377,7 +1396,7 @@ if (!petsUnlocked.includes(11)) {
     ctx.drawImage(pets, 350, 520, 160, 160, 350, 20, 20, 20);
     ctx.drawImage(lock, 10, 10, 160, 160, 350, 20, 20, 20);
 } else {
-if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+if (AABB(mouseX, mouseY, 5, 5, 350, 20, 20, 20)) {
     if (mouseDown) {
         ctx.drawImage(pets, 350, 520, 160, 160, 355, 20, 10, 20);
         pet = 11;
@@ -1515,7 +1534,7 @@ if (!gunsUnlocked.includes(6)) {
     ctx.drawImage(skins, 10, 10, 160, 160, 200, 20, 20, 20);
     ctx.drawImage(lock, 10, 10, 160, 160, 200, 20, 20, 20);
 } else {
-if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+if (AABB(mouseX, mouseY, 5, 5, 200, 20, 20, 20)) {
     if (mouseDown) {
         ctx.drawImage(skins, 10, 10, 160, 160, 205, 20, 10, 20);
         gun = 6;
@@ -1531,7 +1550,7 @@ if (!gunsUnlocked.includes(7)) {
     ctx.drawImage(skins, 180, 10, 160, 160, 230, 20, 20, 20);
     ctx.drawImage(lock, 10, 10, 160, 160, 230, 20, 20, 20);
 } else {
-if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+if (AABB(mouseX, mouseY, 5, 5, 230, 20, 20, 20)) {
     if (mouseDown) {
         ctx.drawImage(skins, 180, 10, 160, 160, 235, 20, 10, 20);
         gun = 7;
@@ -1547,7 +1566,7 @@ if (!gunsUnlocked.includes(8)) {
     ctx.drawImage(skins, 350, 10, 160, 160, 260, 20, 20, 20);
     ctx.drawImage(lock, 10, 10, 160, 160, 260, 20, 20, 20);
 } else {
-if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+if (AABB(mouseX, mouseY, 5, 5, 260, 20, 20, 20)) {
     if (mouseDown) {
         ctx.drawImage(skins, 350, 10, 160, 160, 265, 20, 10, 20);
         gun = 8;
@@ -1563,7 +1582,7 @@ if (!gunsUnlocked.includes(9)) {
     ctx.drawImage(skins, 10, 350, 160, 160, 290, 20, 20, 20);
     ctx.drawImage(lock, 10, 10, 160, 160, 290, 20, 20, 20);
 } else {
-if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+if (AABB(mouseX, mouseY, 5, 5, 290, 20, 20, 20)) {
     if (mouseDown) {
         ctx.drawImage(skins, 10, 350, 160, 160, 295, 20, 10, 20);
         gun = 9;
@@ -1579,7 +1598,7 @@ if (!gunsUnlocked.includes(10)) {
     ctx.drawImage(skins, 180, 350, 160, 160, 320, 20, 20, 20);
     ctx.drawImage(lock, 10, 10, 160, 160, 320, 20, 20, 20);
 } else {
-if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+if (AABB(mouseX, mouseY, 5, 5, 320, 20, 20, 20)) {
     if (mouseDown) {
         ctx.drawImage(skins, 180, 350, 160, 160, 325, 20, 10, 20);
         gun = 10;
@@ -1595,7 +1614,7 @@ if (!gunsUnlocked.includes(11)) {
     ctx.drawImage(skins, 350, 350, 160, 160, 350, 20, 20, 20);
     ctx.drawImage(lock, 10, 10, 160, 160, 350, 20, 20, 20);
 } else {
-if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+if (AABB(mouseX, mouseY, 5, 5, 350, 20, 20, 20)) {
     if (mouseDown) {
         ctx.drawImage(skins, 350, 350, 160, 160, 355, 20, 10, 20);
         gun = 11;
@@ -1867,6 +1886,21 @@ function imgSelec() {
         ctx.drawImage(butt, 0, 720, 490, 180, 276, 444, 196, 72)
     }
 
+    if (trosUnlocked != ""){
+        if (trosUnlocked.includes(0)) {
+            ctx.drawImage(loot, 350, 10, 160, 160, 30, 470, 32, 32)
+        }
+        if (trosUnlocked.includes(1)) {
+            ctx.drawImage(loot, 350, 180, 160, 160, 92, 470, 32, 32)
+        }
+        if (trosUnlocked.includes(2)) {
+            ctx.drawImage(loot, 350, 350, 160, 160, 154, 470, 32, 32)
+        }
+        if (trosUnlocked.includes(3)) {
+            ctx.drawImage(loot, 350, 520, 160, 160, 216, 470, 32, 32)
+        }
+    }
+
     if (!trans) {
         window.requestAnimationFrame(imgSelec);
     }
@@ -1889,7 +1923,39 @@ function shop() {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
             ctx.drawImage(loot, 10, 10, 160, 160, 35, 40, 30, 40);
             if (unlocked.includes("common")) {
-                unlocked.splice("common", 1);
+                var unlockedItem = "NULL";
+                unlocked.splice(unlocked.indexOf('common'), 1);
+                unlockedItem = get_random(commonLoot);
+                var item = unlockedItem.substr(0, 3);
+                if (unlockedItem.length == 5) {
+                var itemType = +unlockedItem.substr(3, 2);
+                } else {
+                var itemType = +unlockedItem.substr(3, 1);
+                }
+                const stroll = item + 'sCollected';
+                const type = item + itemType;
+                switch (item) {
+                    case ("pet"): {
+                        petsUnlocked.push(itemType);
+                        console.log(petsUnlocked);
+                        break;
+                    }
+                    case ("gun"): {
+                        gunsUnlocked.push(itemType);
+                        console.log(gunsUnlocked);
+                        break;
+                    }
+                    case ("tro"): {
+                        trosUnlocked.push(itemType);
+                        console.log(trosUnlocked);
+                        break;
+                    }
+                    default: {
+                        console.log("fuck you idiot")
+                        break;
+                    }
+                }
+                console.log(stroll, type);
                 console.log(unlocked);
             } else {
                 alert("YOU DON'T HAVE THE KEY IDIOT")
@@ -1907,7 +1973,39 @@ function shop() {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
             ctx.drawImage(loot, 10, 180, 160, 160, 85, 40, 30, 40);
             if (unlocked.includes("uncommon")) {
-                unlocked.splice("uncommon", 1);
+                var unlockedItem = "NULL";
+                unlocked.splice(unlocked.indexOf('uncommon'), 1);
+                unlockedItem = get_random(uncommonLoot);
+                var item = unlockedItem.substr(0, 3);
+                if (unlockedItem.length == 5) {
+                var itemType = +unlockedItem.substr(3, 2);
+                } else {
+                var itemType = +unlockedItem.substr(3, 1);
+                }
+                const stroll = item + 'sCollected';
+                const type = item + itemType;
+                switch (item) {
+                    case ("pet"): {
+                        petsUnlocked.push(itemType);
+                        console.log(petsUnlocked);
+                        break;
+                    }
+                    case ("gun"): {
+                        gunsUnlocked.push(itemType);
+                        console.log(gunsUnlocked);
+                        break;
+                    }
+                    case ("tro"): {
+                        trosUnlocked.push(itemType);
+                        console.log(trosUnlocked);
+                        break;
+                    }
+                    default: {
+                        console.log("fuck you idiot")
+                        break;
+                    }
+                }
+                console.log(stroll, type);
                 console.log(unlocked);
             } else {
                 alert("YOU DON'T HAVE THE KEY IDIOT")
@@ -1925,8 +2023,41 @@ function shop() {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
             ctx.drawImage(loot, 10, 350, 160, 160, 135, 40, 30, 40);
             if (unlocked.includes("rare")) {
-                unlocked.splice("rare", 1);
+                var unlockedItem = "NULL";
+                unlocked.splice(unlocked.indexOf('rare'), 1);
+                unlockedItem = get_random(rareLoot);
+                var item = unlockedItem.substr(0, 3);
+                if (unlockedItem.length == 5) {
+                var itemType = +unlockedItem.substr(3, 2);
+                } else {
+                var itemType = +unlockedItem.substr(3, 1);
+                }
+                const stroll = item + 'sCollected';
+                const type = item + itemType;
+                switch (item) {
+                    case ("pet"): {
+                        petsUnlocked.push(itemType);
+                        console.log(petsUnlocked);
+                        break;
+                    }
+                    case ("gun"): {
+                        gunsUnlocked.push(itemType);
+                        console.log(gunsUnlocked);
+                        break;
+                    }
+                    case ("tro"): {
+                        trosUnlocked.push(itemType);
+                        console.log(trosUnlocked);
+                        break;
+                    }
+                    default: {
+                        console.log("fuck you idiot")
+                        break;
+                    }
+                }
+                console.log(stroll, type);
                 console.log(unlocked);
+
             } else {
                 alert("YOU DON'T HAVE THE KEY IDIOT")
                 console.log(unlocked);
@@ -1943,7 +2074,39 @@ function shop() {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
             ctx.drawImage(loot, 10, 520, 160, 160, 185, 40, 30, 40);
             if (unlocked.includes("epic")) {
-                unlocked.splice("epic", 1);
+                var unlockedItem = "NULL";
+                unlocked.splice(unlocked.indexOf('epic'), 1);
+                unlockedItem = get_random(epicLoot);
+                var item = unlockedItem.substr(0, 3);
+                if (unlockedItem.length == 5) {
+                var itemType = +unlockedItem.substr(3, 2);
+                } else {
+                var itemType = +unlockedItem.substr(3, 1);
+                }
+                const stroll = item + 'sCollected';
+                const type = item + itemType;
+                switch (item) {
+                    case ("pet"): {
+                        petsUnlocked.push(itemType);
+                        console.log(petsUnlocked);
+                        break;
+                    }
+                    case ("gun"): {
+                        gunsUnlocked.push(itemType);
+                        console.log(gunsUnlocked);
+                        break;
+                    }
+                    case ("tro"): {
+                        trosUnlocked.push(itemType);
+                        console.log(trosUnlocked);
+                        break;
+                    }
+                    default: {
+                        console.log("fuck you idiot")
+                        break;
+                    }
+                }
+                console.log(stroll, type);
                 console.log(unlocked);
             } else {
                 alert("YOU DON'T HAVE THE KEY IDIOT")
@@ -1986,6 +2149,7 @@ function multiPG() {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
             ctx.drawImage(butt, 0, 1440, 490, 180, 0, 0, 176, 72)
             trans = true;
+            fortniting = false;
             window.requestAnimationFrame(multiInit);
         }
         ctx.drawImage(butt, 0, 1440, 490, 180, 0, 4, 196, 80)
@@ -1998,6 +2162,8 @@ function multiPG() {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
             ctx.drawImage(butt, 0, 1260, 490, 180, 200, 0, 176, 72)
             trans = true;
+            fortniting = true;
+            window.requestAnimationFrame(multiInit);
         }
         ctx.drawImage(butt, 0, 1260, 490, 180, 200, 4, 196, 80)
     } else {
