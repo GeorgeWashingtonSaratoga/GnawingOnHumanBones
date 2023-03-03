@@ -102,6 +102,7 @@ window.addEventListener("keyup", function(event) {
     keys[event.keyCode] = false;
 }, false);
 
+//images
 var spirtImg = document.getElementById("spirt");
 var cosm = document.getElementById("cosm");
 var loot = document.getElementById("loot");
