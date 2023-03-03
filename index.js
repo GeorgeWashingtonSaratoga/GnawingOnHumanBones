@@ -110,6 +110,8 @@ var pets = document.getElementById("pets");
 var guns = document.getElementById("guns");
 var skins = document.getElementById("skins");
 var lock = document.getElementById("lock");
+var devSkin = document.getElementById("ping");
+var hole = document.getElementById("hole");
 
 // define vector class
 class Vector {
@@ -205,19 +207,15 @@ function dropKey() {
     token.pos.y = -64;
     if(score >= 3450 && score <= 6900) {
         keySkin = "common"
-        console.log("common")
     } else {
         if(score >= 6900 && score <= 10350) {
             keySkin = "uncommon"
-            console.log("uncommon")
         } else {
             if(score >= 10350 && score <= 13800) {
                 keySkin = "rare"
-                console.log("rare")
             } else {
                 if(score >= 13800) {
                     keySkin = "epic"
-                    console.log("epic")
                 } else {
                     keySkin = "NULL"
                     console.log("error: null-skin")
@@ -303,8 +301,7 @@ function updater() {
     if (token.pos.y >= 448 && score >= 3450 && allowKeyFall == true) {
         dropKey();
         if (token.pos.y <= 448) {
-            allowKeyFall = false
-            console.log("NO KEY >:(");
+            allowKeyFall = false;
         }
     }
     if (player.pos.y == 448) {
@@ -319,7 +316,6 @@ function updater() {
             if (score >= 3450) {
                 allowKeyFall = true;
                 dropKey();
-                console.log("DROPPING KEY");
             }
         }
         if (score >= 6900) {
@@ -332,7 +328,6 @@ function updater() {
         if (score >= 3450&& timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
             unlocked.push(keySkin);
-            console.log("COLLECTED");
             allowKeyFall = false;
         }
         if (score >= 6900) {
@@ -454,6 +449,8 @@ function draw() {
     
     // draw score
     drawScore();
+
+    
 }
 
 function drawScore() {
@@ -474,6 +471,7 @@ function main() {
         luigi = true;
         window.requestAnimationFrame(win);
     }
+    
 }
 
 function win() {
@@ -513,6 +511,7 @@ var gamePlayer;
 
 var playerImgs = {};
 var playerCos = {};
+var playerPet = {};
 var jointime = false;
 
 function multiInit() {
@@ -573,16 +572,15 @@ function init2electricboogaloo() {
             gamePlayers[key].pos.y = snapshot.val()[key].y;
             playerImgs[key] = snapshot.val()[key].img;
             playerCos[key] = snapshot.val()[key].cos;
+            playerPet[key] = snapshot.val()[key].pet;
         }
     });
-
     onChildAdded(allPlayersRef, (snapshot) => {
         var addedPlayer = snapshot.val();
 
         if (addedPlayer.id == playerID) {
             gamePlayer = new Player(new Vector(addedPlayer.x, addedPlayer.y), new Vector(0, 0));
             gamePlayers[addedPlayer.id] = gamePlayer;
-            console.log("e");
             jointime = Date.now();
 
             update(playerRef, {
@@ -605,7 +603,6 @@ function multi() {
     theme.play();
     ferment();
     aerobic();
-    //console.log(gamePlayers);
     if (!trans) {
         window.requestAnimationFrame(multi);
     }
@@ -681,8 +678,7 @@ function ferment() {
     if (token.pos.y >= 448 && score >= 3450 && allowKeyFall == true) {
         dropKey();
         if (token.pos.y <= 448) {
-            allowKeyFall = false
-            console.log("NO KEY >:(");
+            allowKeyFall = false;
         }
     }
 
@@ -700,7 +696,6 @@ function ferment() {
         if (Math.floor((Math.random() * 10) + 1) == 10) {
             if (score >= 3450) {
                 allowKeyFall = true;
-                console.log("DROPPING KEY");
             }
         }
     }
@@ -715,7 +710,6 @@ function ferment() {
         if (score >= 3450&& timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
             unlocked.push(keySkin);
-            console.log("COLLECTED");
             allowKeyFall = false;
         }
         if (score >= 6900) {
@@ -793,7 +787,205 @@ function aerobic() {
     }
 
     for (var key in gamePlayers) {
+        if (key == playerID && playerPet != "") {
+            if (player.pos.x >= 256) {
+            if (playerPet[key] == 1){
+                ctx.drawImage(pets, 180, 10, 160, 160, player.pos.x - 25, 480, 32, 32);
+            } else {
+                if (playerPet[key] == 2) {
+                    ctx.drawImage(pets, 350, 180, 320, 320, player.pos.x - 25, 480, 32, 32);
+                } else {
+                    if (playerPet[key] == 3) {
+                        ctx.drawImage(pets, 10, 180, 320, 320, player.pos.x - 25, 480, 32, 32);
+                    } else {
+                        if (playerPet[key] == 4) {
+                            ctx.drawImage(pets, 180, 180, 320, 320, player.pos.x - 25, 480, 32, 32);
+                        } else {
+                            if (playerPet[key] == 5) {
+                                ctx.drawImage(pets, 350, 180, 160, 160, player.pos.x - 25, 480, 32, 32);
+                            } else {
+                                if (playerPet[key] == 6) {
+                                    ctx.drawImage(pets, 10, 350, 160, 160, player.pos.x - 25, 480, 32, 32);
+                                } else {
+                                    if (playerPet[key] == 7) {
+                                        ctx.drawImage(pets, 180, 350, 160, 160, player.pos.x - 25, 480, 32, 32);
+                                    } else {
+                                        if (playerPet[key] == 8) {
+                                            ctx.drawImage(pets, 350, 350, 160, 160, player.pos.x - 25, 480, 32, 32);
+                                        } else {
+                                            if (playerPet[key] == 9) {
+                                                ctx.drawImage(pets, 10, 520, 160, 160, player.pos.x - 25, 480, 32, 32);
+                                            } else {
+                                                if (playerPet[key] == 10) {
+                                                    ctx.drawImage(pets, 180, 520, 160, 160, player.pos.x - 25, 480, 32, 32);
+                                                } else {
+                                                    if (playerPet[key] == 11) {
+                                                        ctx.drawImage(pets, 350, 520, 160, 160, player.pos.x - 25, 480, 32, 32);
+                                                    } else {
+                                                        if (playerPet[key] == 0) {
+                                                            ctx.drawImage(pets, 10, 10, 160, 160, player.pos.x - 25, 480, 32, 32);
+                                                        } 
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            if (playerPet[key] == 1){
+                ctx.drawImage(pets, 180, 10, 160, 160, player.pos.x + 64, 480, 32, 32);
+            } else {
+                if (playerPet[key] == 2) {
+                    ctx.drawImage(pets, 350, 180, 160, 160, player.pos.x + 64, 480, 32, 32);
+                } else {
+                    if (playerPet[key] == 3) {
+                        ctx.drawImage(pets, 10, 180, 160, 160, player.pos.x + 64, 480, 32, 32);
+                    } else {
+                        if (playerPet[key] == 4) {
+                            ctx.drawImage(pets, 180, 180, 160, 160, player.pos.x + 64, 480, 32, 32);
+                        } else {
+                            if (playerPet[key] == 5) {
+                                ctx.drawImage(pets, 350, 180, 160, 160, player.pos.x + 64, 480, 32, 32);
+                            } else {
+                                if (playerPet[key] == 6) {
+                                    ctx.drawImage(pets, 10, 350, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                } else {
+                                    if (playerPet[key] == 7) {
+                                        ctx.drawImage(pets, 180, 350, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                    } else {
+                                        if (playerPet[key] == 8) {
+                                            ctx.drawImage(pets, 350, 350, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                        } else {
+                                            if (playerPet[key] == 9) {
+                                                ctx.drawImage(pets, 10, 520, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                            } else {
+                                                if (playerPet[key] == 10) {
+                                                    ctx.drawImage(pets, 180, 520, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                                } else {
+                                                    if (playerPet[key] == 11) {
+                                                        ctx.drawImage(pets, 350, 520, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                                    } else {
+                                                        if (playerPet[key] == 0) {
+                                                            ctx.drawImage(pets, 10, 10, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                                        } 
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
+    if (key != playerID && playerPet != "") {
+        if (player.pos.x >= 256) {
+        if (playerPet[key] == 1){
+            ctx.drawImage(pets, 180, 10, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+        } else {
+            if (playerPet[key] == 2) {
+                ctx.drawImage(pets, 350, 180, 320, 320, gamePlayers[key].pos.x - 32, 480, 32, 32);
+            } else {
+                if (playerPet[key] == 3) {
+                    ctx.drawImage(pets, 10, 180, 320, 320, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                } else {
+                    if (playerPet[key] == 4) {
+                        ctx.drawImage(pets, 180, 180, 320, 320, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                    } else {
+                        if (playerPet[key] == 5) {
+                            ctx.drawImage(pets, 350, 180, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                        } else {
+                            if (playerPet[key] == 6) {
+                                ctx.drawImage(pets, 10, 350, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                            } else {
+                                if (playerPet[key] == 7) {
+                                    ctx.drawImage(pets, 180, 350, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                } else {
+                                    if (playerPet[key] == 8) {
+                                        ctx.drawImage(pets, 350, 350, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                    } else {
+                                        if (playerPet[key] == 9) {
+                                            ctx.drawImage(pets, 10, 520, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                        } else {
+                                            if (playerPet[key] == 10) {
+                                                ctx.drawImage(pets, 180, 520, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                            } else {
+                                                if (playerPet[key] == 11) {
+                                                    ctx.drawImage(pets, 350, 520, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                                } else {
+                                                    if (playerPet[key] == 0) {
+                                                        ctx.drawImage(pets, 10, 10, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    } else {
+        if (playerPet[key] == 1){
+            ctx.drawImage(pets, 180, 10, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+        } else {
+            if (playerPet[key] == 2) {
+                ctx.drawImage(pets, 350, 180, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+            } else {
+                if (playerPet[key] == 3) {
+                    ctx.drawImage(pets, 10, 180, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                } else {
+                    if (playerPet[key] == 4) {
+                        ctx.drawImage(pets, 180, 180, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                    } else {
+                        if (playerPet[key] == 5) {
+                            ctx.drawImage(pets, 350, 180, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                        } else {
+                            if (playerPet[key] == 6) {
+                                ctx.drawImage(pets, 10, 350, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                            } else {
+                                if (playerPet[key] == 7) {
+                                    ctx.drawImage(pets, 180, 350, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                } else {
+                                    if (playerPet[key] == 8) {
+                                        ctx.drawImage(pets, 350, 350, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                    } else {
+                                        if (playerPet[key] == 9) {
+                                            ctx.drawImage(pets, 10, 520, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                        } else {
+                                            if (playerPet[key] == 10) {
+                                                ctx.drawImage(pets, 180, 520, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                            } else {
+                                                if (playerPet[key] == 11) {
+                                                    ctx.drawImage(pets, 350, 520, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                                } else {
+                                                    if (playerPet[key] == 0) {
+                                                        ctx.drawImage(pets, 10, 10, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
         if (key == playerID) {
                 if (playerImgs[key] == 4){
                     ctx.drawImage(spirtImg, 1040, 1720, 320, 320, player.pos.x, player.pos.y, 64, 64);
@@ -834,9 +1026,13 @@ function aerobic() {
                                                                 if (playerImgs[key] == 13) {
                                                                     ctx.drawImage(cosm, 340, 350, 160, 160, player.pos.x, player.pos.y, 64, 64);
                                                                 } else {
+                                                                    if (playerImgs[key] == "PING") {
+                                                                        ctx.drawImage(devSkin, 0, 0, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                                                    } else {
                                                                 ctx.drawImage(spirtImg, 700, 700, 320, 320, player.pos.x, player.pos.y, 64, 64);
                                                                 }
                                                             }
+                                                        }
                                                     }
                                                 }
                                             }
@@ -938,8 +1134,11 @@ function aerobic() {
                                                                 if (playerImgs[key] == 13) {
                                                                     ctx.drawImage(cosm, 340, 350, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
                                                                 } else {
+                                                                    if (playerImgs[key] == "PING") {
+                                                                        ctx.drawImage(devSkin, 0, 0, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                                                    } else {
                                                                     ctx.drawImage(spirtImg, 700, 700, 320, 320, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
-                                                            }
+                                                            }   }
                                                         }
                                                     }
                                                 }
@@ -1002,7 +1201,7 @@ function aerobic() {
         }
     }
 }
-    
+
     // draw score
     drawScore();
 }
@@ -1012,13 +1211,25 @@ if (AABB(mouseX, mouseY, 1, 1, 316, 4, 196, 72)) {
         timeimeimeimeiemeimiemiemiemikemekemieike = 0;
         ctx.drawImage(butt, 0, 720, 490, 180, 316, 4, 176, 72)
         trans = true;
-        console.log("logging your MOM");
-        console.log("asshole");
         window.requestAnimationFrame(titty);
     }
     ctx.drawImage(butt, 0, 720, 490, 180, 316, 0, 196, 80)
 } else {
     ctx.drawImage(butt, 0, 720, 490, 180, 316, 4, 196, 72)
+}
+
+if (fortniting == true) {
+    if (AABB(mouseX, mouseY, 1, 1, 482, 495, 30, 17)) {
+        if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
+            timeimeimeimeiemeimiemiemiemikemekemieike = 0;
+            ctx.drawImage(hole, 0, 160, 270, 150, 482, 495, 30, 17)
+            trans = true;
+            window.requestAnimationFrame(titty);
+        }
+        ctx.drawImage(hole, 0, 160, 270, 150, 482, 495, 30, 17)
+    } else {
+        ctx.drawImage(hole, 0, 0, 270, 150, 482, 495, 30, 17)
+    }
 }
     
 }
@@ -1873,6 +2084,22 @@ function imgSelec() {
         ctx.drawImage(butt, 0, 1800, 490, 180, 200, 78, 196, 72)
     }
 
+    if (AABB(mouseX, mouseY, 1, 1, 114, 452, 112, 60)) {
+        if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
+            timeimeimeimeiemeimiemiemiemikemekemieike = 0;
+            ctx.drawImage(hole, 280, 160, 270, 150, 114, 452, 112, 60);
+            let person = prompt("Enter your code", "Code Here");
+            if (person == "señorPinguino") {
+                imgnum = "PING";
+            } else {
+                alert("INCORRECT IDIOT");
+            }
+        }
+        ctx.drawImage(hole, 280, 160, 270, 150, 114, 452, 112, 60);
+    } else {
+        ctx.drawImage(hole, 280, 0, 270, 150, 114, 452, 112, 60);
+    }
+
     if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
@@ -1937,17 +2164,14 @@ function shop() {
                 switch (item) {
                     case ("pet"): {
                         petsUnlocked.push(itemType);
-                        console.log(petsUnlocked);
                         break;
                     }
                     case ("gun"): {
                         gunsUnlocked.push(itemType);
-                        console.log(gunsUnlocked);
                         break;
                     }
                     case ("tro"): {
                         trosUnlocked.push(itemType);
-                        console.log(trosUnlocked);
                         break;
                     }
                     default: {
@@ -1955,11 +2179,8 @@ function shop() {
                         break;
                     }
                 }
-                console.log(stroll, type);
-                console.log(unlocked);
             } else {
                 alert("YOU DON'T HAVE THE KEY IDIOT")
-                console.log(unlocked);
             }
         } else {
             ctx.drawImage(loot, 10, 10, 160, 160, 45, 40, 50, 40);
@@ -1987,17 +2208,14 @@ function shop() {
                 switch (item) {
                     case ("pet"): {
                         petsUnlocked.push(itemType);
-                        console.log(petsUnlocked);
                         break;
                     }
                     case ("gun"): {
                         gunsUnlocked.push(itemType);
-                        console.log(gunsUnlocked);
                         break;
                     }
                     case ("tro"): {
                         trosUnlocked.push(itemType);
-                        console.log(trosUnlocked);
                         break;
                     }
                     default: {
@@ -2005,11 +2223,8 @@ function shop() {
                         break;
                     }
                 }
-                console.log(stroll, type);
-                console.log(unlocked);
             } else {
-                alert("YOU DON'T HAVE THE KEY IDIOT")
-                console.log(unlocked);
+                alert("YOU DON'T HAVE THE KEY IDIOT");
             }
         } else {
             ctx.drawImage(loot, 10, 180, 160, 160, 95, 40, 50, 40);
@@ -2037,17 +2252,14 @@ function shop() {
                 switch (item) {
                     case ("pet"): {
                         petsUnlocked.push(itemType);
-                        console.log(petsUnlocked);
                         break;
                     }
                     case ("gun"): {
                         gunsUnlocked.push(itemType);
-                        console.log(gunsUnlocked);
                         break;
                     }
                     case ("tro"): {
                         trosUnlocked.push(itemType);
-                        console.log(trosUnlocked);
                         break;
                     }
                     default: {
@@ -2055,12 +2267,9 @@ function shop() {
                         break;
                     }
                 }
-                console.log(stroll, type);
-                console.log(unlocked);
 
             } else {
-                alert("YOU DON'T HAVE THE KEY IDIOT")
-                console.log(unlocked);
+                alert("YOU DON'T HAVE THE KEY IDIOT");
             }
         } else {
             ctx.drawImage(loot, 10, 350, 160, 160, 145, 40, 50, 40);
@@ -2088,17 +2297,14 @@ function shop() {
                 switch (item) {
                     case ("pet"): {
                         petsUnlocked.push(itemType);
-                        console.log(petsUnlocked);
                         break;
                     }
                     case ("gun"): {
                         gunsUnlocked.push(itemType);
-                        console.log(gunsUnlocked);
                         break;
                     }
                     case ("tro"): {
                         trosUnlocked.push(itemType);
-                        console.log(trosUnlocked);
                         break;
                     }
                     default: {
@@ -2106,11 +2312,8 @@ function shop() {
                         break;
                     }
                 }
-                console.log(stroll, type);
-                console.log(unlocked);
             } else {
-                alert("YOU DON'T HAVE THE KEY IDIOT")
-                console.log(unlocked);
+                alert("YOU DON'T HAVE THE KEY IDIOT");
             }
         } else {
             ctx.drawImage(loot, 10, 520, 160, 160, 195, 40, 50, 40);
@@ -2150,6 +2353,9 @@ function multiPG() {
             ctx.drawImage(butt, 0, 1440, 490, 180, 0, 0, 176, 72)
             trans = true;
             fortniting = false;
+            if (playerRef == ref(database, `battle/${playerID}`)) {
+                playerRef = ref(database, `multi/${playerID}`);
+            }
             window.requestAnimationFrame(multiInit);
         }
         ctx.drawImage(butt, 0, 1440, 490, 180, 0, 4, 196, 80)
@@ -2163,6 +2369,9 @@ function multiPG() {
             ctx.drawImage(butt, 0, 1260, 490, 180, 200, 0, 176, 72)
             trans = true;
             fortniting = true;
+            if (playerRef == ref(database, `multi/${playerID}`)) {
+                playerRef = ref(database, `battle/${playerID}`);
+            }
             window.requestAnimationFrame(multiInit);
         }
         ctx.drawImage(butt, 0, 1260, 490, 180, 200, 4, 196, 80)
@@ -2185,7 +2394,6 @@ function multiPG() {
     if (!trans) {
         window.requestAnimationFrame(multiPG);
     }
-
 }
 
 var trans = false;
