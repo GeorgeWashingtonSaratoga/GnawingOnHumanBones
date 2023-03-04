@@ -1,7 +1,22 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.0/firebase-app.js";
-import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.17.0/firebase-auth.js";
-import { getDatabase, ref, set, update, onDisconnect, onValue, onChildAdded, onChildRemoved } from "https://www.gstatic.com/firebasejs/9.17.0/firebase-database.js";
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/9.17.0/firebase-app.js";
+import {
+    getAuth,
+    signInAnonymously,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/9.17.0/firebase-auth.js";
+import {
+    getDatabase,
+    ref,
+    set,
+    update,
+    onDisconnect,
+    onValue,
+    onChildAdded,
+    onChildRemoved
+} from "https://www.gstatic.com/firebasejs/9.17.0/firebase-database.js";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -29,6 +44,7 @@ var ctx = c.getContext("2d");
 
 var mouseX, mouseY;
 
+
 window.addEventListener("mousemove", function(event) {
     mouseX = event.clientX - c.getBoundingClientRect().left;
     mouseY = event.clientY - c.getBoundingClientRect().top;
@@ -42,7 +58,7 @@ window.addEventListener("mousedown", function(event) {
 
 window.addEventListener("mouseup", function(event) {
     mouseDown = false;
-})
+});
 
 var theme = document.createElement('audio');
 var cronch = document.getElementById('crunch');
@@ -69,30 +85,31 @@ const epicLoot = ["pet9", "pet10", "pet11", "gun9", "gun10", "gun11", "tro3"];
 var allowKeyFall = false;
 var fortniting = false;
 
-var imgCunt = 5;
 var imgnum = 0;
 var cosnum = null;
 var pet = null;
 var gun = 0;
+var health = 100;
+var kills = 0;
 
 var image = document.getElementById("ad1");
-    image.onclick = function(e) {
-      window.location.href = "https://georgewashingtonsaratoga.github.io/sillysite/";
+image.onclick = function(e) {
+    window.location.href = "https://georgewashingtonsaratoga.github.io/sillysite/";
 };
 
 var image = document.getElementById("ad2");
 image.onclick = function(e) {
-  window.location.href = "www.pornhub.com";
+    window.location.href = "www.pornhub.com";
 };
 
 var image = document.getElementById("ad3");
 image.onclick = function(e) {
-  window.location.href = "https://twitter.com/MinionRunHacks/status/1616460910910140419";
+    window.location.href = "https://twitter.com/MinionRunHacks/status/1616460910910140419";
 };
 
 theme.setAttribute('src', 'theme.mp3');
 theme.setAttribute('autoplay', 'autoplay');
-theme.loop=true;
+theme.loop = true;
 // cronch.setAttribute('src', 'crunch.mp3');
 
 window.addEventListener("keydown", function(event) {
@@ -102,7 +119,6 @@ window.addEventListener("keyup", function(event) {
     keys[event.keyCode] = false;
 }, false);
 
-//images
 var spirtImg = document.getElementById("spirt");
 var cosm = document.getElementById("cosm");
 var loot = document.getElementById("loot");
@@ -113,6 +129,7 @@ var skins = document.getElementById("skins");
 var lock = document.getElementById("lock");
 var devSkin = document.getElementById("ping");
 var hole = document.getElementById("hole");
+var z = document.getElementById("z");
 
 // define vector class
 class Vector {
@@ -171,6 +188,9 @@ var token = new Player(new Vector(-9002, -9001), new Vector(0, 0));
 // init acceleration vector as (2, 15)
 var acceleration = new Vector(2, 15);
 
+//init gun atgravity (64, 64) with velocity vector (0, 0)
+var gunEntity = new Player(new Vector(64, 448), new Vector(0, 0));
+
 // init gravity
 var gravity = 0.9;
 
@@ -186,9 +206,13 @@ var friction = 0.9; // 0.4
 // init error
 var error = 0.1;
 
-function get_random (list) {
-    return list[Math.floor((Math.random()*list.length))];
-  }
+function get_random(list) {
+    return list[Math.floor((Math.random() * list.length))];
+}
+
+var targetX = mouseX - player.pos.x;
+var targetY = mouseY - player.pos.y;
+var rotation = Math.atan2(targetY, targetX);
 
 function dropBone() {
     bone.vel.zero();
@@ -206,20 +230,20 @@ function dropKey() {
     token.vel.zero();
     token.pos.x = Math.random() * 448;
     token.pos.y = -64;
-    if(score >= 3450 && score <= 6900) {
-        keySkin = "common"
+    if (score >= 3450 && score <= 6900) {
+        keySkin = "common";
     } else {
-        if(score >= 6900 && score <= 10350) {
-            keySkin = "uncommon"
+        if (score >= 6900 && score <= 10350) {
+            keySkin = "uncommon";
         } else {
-            if(score >= 10350 && score <= 13800) {
-                keySkin = "rare"
+            if (score >= 10350 && score <= 13800) {
+                keySkin = "rare";
             } else {
-                if(score >= 13800) {
-                    keySkin = "epic"
+                if (score >= 13800) {
+                    keySkin = "epic";
                 } else {
-                    keySkin = "NULL"
-                    console.log("error: null-skin")
+                    keySkin = "NULL";
+                    console.log("error: null-skin");
                 }
             }
         }
@@ -234,7 +258,7 @@ var deadBabieX = [];
 
 function updater() {
     // change velocity by acceleration if correct key pressed
-    
+
     // left-right motion
     if (keys[39] || keys[68]) {
         player.vel.x += acceleration.x;
@@ -253,7 +277,8 @@ function updater() {
     player.vel.y += gravity;
     bone.vel.y += (gravity / 2);
     child.vel.y += (gravity / 4);
-    token.vel.y += (gravity /4);
+    token.vel.y += (gravity / 4);
+    
 
     // friction
     if (player.vel.x > 0) {
@@ -275,13 +300,14 @@ function updater() {
     bone.pos.add(bone.vel);
     child.pos.add(child.vel);
     token.pos.add(token.vel);
+    
 
     // clamp position
     player.pos.clamp(0, 448);
 
     if (bone.pos.y >= 448) {
         dropBone();
-    } 
+    }
 
     if (child.pos.y >= 448) {
         if (tChild < 40) {
@@ -326,7 +352,7 @@ function updater() {
 
     if (AABB(player.pos.x, player.pos.y, 64, 64, token.pos.x, token.pos.y, 64, 64)) {
         score += 100;
-        if (score >= 3450&& timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
+        if (score >= 3450 && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
             unlocked.push(keySkin);
             allowKeyFall = false;
@@ -347,14 +373,14 @@ function updater() {
             friction /= 9;
         }
     }
-if(luigi) {
-    for (var i = 0; i < deadBabieX.length; i++) {
-        if (mouseX >= deadBabieX[i] && mouseX <= deadBabieX[i] + 64 && mouseY >= babydeathheight + 48 && mouseY <= babydeathheight + 64) {
-            deadBabieX.splice(i, 1);
-            succ.play();
+    if (luigi) {
+        for (var i = 0; i < deadBabieX.length; i++) {
+            if (mouseX >= deadBabieX[i] && mouseX <= deadBabieX[i] + 64 && mouseY >= babydeathheight + 48 && mouseY <= babydeathheight + 64) {
+                deadBabieX.splice(i, 1);
+                succ.play();
+            }
         }
     }
-}
 }
 
 function AABB(x1, y1, w1, h1, x2, y2, w2, h2) {
@@ -362,7 +388,7 @@ function AABB(x1, y1, w1, h1, x2, y2, w2, h2) {
         (x1 + w1 >= x2 && x1 + w1 <= x2 + w2 && y1 >= y2 && y1 <= y2 + h2) ||
         (x1 >= x2 && x1 <= x2 + w2 && y1 + h1 >= y2 && y1 + h1 <= y2 + h2) ||
         (x1 + w1 >= x2 && x1 + w1 <= x2 + w2 && y1 + h1 >= y2 && y1 + h1 <= y2 + h2)) {
-            return true;
+        return true;
     } else {
         return false;
     }
@@ -416,22 +442,22 @@ function draw() {
     ctx.drawImage(spirtImg, 20, 700, 319, 319, child.pos.x, child.pos.y, 64, 64);
 
     // draw token
-    if(keySkin == "common") {
+    if (keySkin == "common") {
         ctx.drawImage(loot, 520, 10, 160, 160, token.pos.x, token.pos.y, 64, 64);
     } else {
-        if(keySkin == "uncommon") {
+        if (keySkin == "uncommon") {
             ctx.drawImage(loot, 520, 180, 160, 160, token.pos.x, token.pos.y, 64, 64);
         } else {
-            if(keySkin == "rare") {
+            if (keySkin == "rare") {
                 ctx.drawImage(loot, 520, 350, 160, 160, token.pos.x, token.pos.y, 64, 64);
             } else {
-                if(keySkin == "epic") {
+                if (keySkin == "epic") {
                     ctx.drawImage(loot, 520, 520, 160, 160, token.pos.x, token.pos.y, 64, 64);
                 }
             }
         }
     }
-    
+
 
     // dead baby anim
     drawDeath();
@@ -447,11 +473,11 @@ function draw() {
     } else { // cring
         ctx.drawImage(spirtImg, 700, 700, 320, 320, player.pos.x, player.pos.y, 64, 64);
     }
-    
+
     // draw score
     drawScore();
 
-    
+
 }
 
 function drawScore() {
@@ -461,8 +487,8 @@ function drawScore() {
     ctx.fillText(`Score: ${score}`, 8, 20);
 }
 
-function main() { 
-    theme.play(); 
+function main() {
+    theme.play();
     updater();
     draw();
     // request aim frame
@@ -472,7 +498,7 @@ function main() {
         luigi = true;
         window.requestAnimationFrame(win);
     }
-    
+
 }
 
 function win() {
@@ -507,12 +533,21 @@ var allPlayersRef;
 var playerID;
 var playerRef;
 
+var bullet;
+
 var gamePlayers = {};
 var gamePlayer;
+var gameGuns = {};
+var gameGun;
+var gameBullets = {};
+var gameBullet;
 
 var playerImgs = {};
 var playerCos = {};
 var playerPet = {};
+var playerGun = {};
+var playerHP = {};
+var playerKills = {};
 var jointime = false;
 
 function multiInit() {
@@ -522,10 +557,10 @@ function multiInit() {
             playerID = user.uid;
 
             if (fortniting == true) {
-            playerRef = ref(database, `battle/${playerID}`);
+                playerRef = ref(database, `battle/${playerID}`);
             } else {
                 if (fortniting == false)
-                playerRef = ref(database, `multi/${playerID}`);
+                    playerRef = ref(database, `multi/${playerID}`);
             }
 
             set(playerRef, {
@@ -534,8 +569,7 @@ function multiInit() {
                 y: 20,
                 img: imgnum,
                 cos: cosnum,
-                pet: pet, 
-                gun: gun,
+                pet: pet,
                 jointime: jointime
             });
 
@@ -552,28 +586,45 @@ function multiInit() {
         const errorMessage = error.message;
 
         console.log(errorCode, errorMessage);
-    })
+    });
 
 }
-
-var ownerState = false;
 
 function init2electricboogaloo() {
 
     if (fortniting == true) {
         allPlayersRef = ref(database, `battle`);
-        } else {
-            if (fortniting == false)
+        player.health = 100;
+    } else {
+        if (fortniting == false)
             allPlayersRef = ref(database, `multi`);
-        }
+    }
 
     onValue(allPlayersRef, (snapshot) => {
         for (var key in (snapshot.val() || {})) {
-            gamePlayers[key].pos.x = snapshot.val()[key].x;
-            gamePlayers[key].pos.y = snapshot.val()[key].y;
-            playerImgs[key] = snapshot.val()[key].img;
-            playerCos[key] = snapshot.val()[key].cos;
-            playerPet[key] = snapshot.val()[key].pet;
+            if (fortniting == false) {
+                gamePlayers[key].pos.x = snapshot.val()[key].x;
+                gamePlayers[key].pos.y = snapshot.val()[key].y;
+                playerImgs[key] = snapshot.val()[key].img;
+                playerCos[key] = snapshot.val()[key].cos;
+                playerPet[key] = snapshot.val()[key].pet;
+            } else {
+                if (fortniting == true) {
+                    gamePlayers[key].pos.x = snapshot.val()[key].x;
+                    gamePlayers[key].pos.y = snapshot.val()[key].y;
+                    gameGuns[key].pos.x = snapshot.val()[key].x;
+                    gameGuns[key].pos.y = snapshot.val()[key].y;
+                    gameGuns[key].pos.r = snapshot.val()[key].rotation;
+                    gameBullets[key].pos.x = snapshot.val()[key].bx;
+                    gameBullets[key].pos.y = snapshot.val()[key].by;
+                    playerImgs[key] = snapshot.val()[key].img;
+                    playerCos[key] = snapshot.val()[key].cos;
+                    playerPet[key] = snapshot.val()[key].pet;
+                    playerGun[key] = snapshot.val()[key].gun;
+                    playerHP[key] = snapshot.val()[key].health;
+                    playerKills[key] = snapshot.val()[key].kills;
+                }
+            }
         }
     });
     onChildAdded(allPlayersRef, (snapshot) => {
@@ -581,7 +632,11 @@ function init2electricboogaloo() {
 
         if (addedPlayer.id == playerID) {
             gamePlayer = new Player(new Vector(addedPlayer.x, addedPlayer.y), new Vector(0, 0));
+            gameGun = new Player(new Vector(addedPlayer.x, addedPlayer.y), new Vector(0, 0));
+            gameBullet = new Player(new Vector(addedPlayer.x, addedPlayer.y), new Vector(0, 0));
             gamePlayers[addedPlayer.id] = gamePlayer;
+            gameGuns[addedPlayer.id] = gameGun;
+            gameBullets[addedPlayer.id] = gameBullet;
             jointime = Date.now();
 
             update(playerRef, {
@@ -590,13 +645,14 @@ function init2electricboogaloo() {
         } else {
             var p = new Player(new Vector(addedPlayer.x, addedPlayer.y), new Vector(0, 0));
             gamePlayers[addedPlayer.id] = p;
+
         }
     });
 
     onChildRemoved(allPlayersRef, (snapshot) => {
         delete(gamePlayers[snapshot.val().id]);
     });
-    
+
     window.requestAnimationFrame(multi);
 }
 
@@ -611,7 +667,8 @@ function multi() {
 
 function ferment() {
     // change velocity by acceleration if correct key pressed
-    
+    bullet = new Player(new Vector(64, 448), new Vector(0, 0));
+
     // left-right motion
     if (keys[39] || keys[68]) {
         player.vel.x += acceleration.x;
@@ -632,6 +689,8 @@ function ferment() {
     child.vel.y += (gravity / 4);
     token.vel.y += (gravity / 4);
 
+
+
     // friction
     if (player.vel.x > 0) {
         player.vel.x -= friction;
@@ -644,6 +703,10 @@ function ferment() {
         player.vel.x = 0;
     }
 
+    function bulletGo() {
+    bullet.vel += rotation;
+    }
+
     // clamp velocity
     player.vel.clamp(-maxVel, maxVel);
 
@@ -652,14 +715,15 @@ function ferment() {
     bone.pos.add(bone.vel);
     child.pos.add(child.vel);
     token.pos.add(token.vel);
+    bullet.pos.add(bullet.vel)
 
     // clamp position
     player.pos.clamp(0, 448);
 
     if (bone.pos.y >= 448) {
         dropBone();
-    } 
-    
+    }
+
     if (child.pos.y >= 448) {
         if (tChild < 40) {
             if (tChild == 0) {
@@ -675,6 +739,8 @@ function ferment() {
             dropChild();
         }
     }
+
+
 
     if (token.pos.y >= 448 && score >= 3450 && allowKeyFall == true) {
         dropKey();
@@ -708,7 +774,7 @@ function ferment() {
 
     if (AABB(player.pos.x, player.pos.y, 64, 64, token.pos.x, token.pos.y, 64, 64)) {
         score += 100;
-        if (score >= 3450&& timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
+        if (score >= 3450 && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
             unlocked.push(keySkin);
             allowKeyFall = false;
@@ -724,108 +790,183 @@ function ferment() {
             friction /= 9;
         }
     }
-if(luigi) {
-    for (var i = 0; i < deadBabieX.length; i++) {
-        if (mouseX >= deadBabieX[i] && mouseX <= deadBabieX[i] + 64 && mouseY >= babydeathheight + 48 && mouseY <= babydeathheight + 64) {
-            deadBabieX.splice(i, 1);
-            succ.play();
+    if (luigi) {
+        for (var i = 0; i < deadBabieX.length; i++) {
+            if (mouseX >= deadBabieX[i] && mouseX <= deadBabieX[i] + 64 && mouseY >= babydeathheight + 48 && mouseY <= babydeathheight + 64) {
+                deadBabieX.splice(i, 1);
+                succ.play();
+            }
         }
     }
-}
 
-gamePlayer.pos.x = player.pos.x;
-gamePlayer.pos.y = player.pos.y;
-update(playerRef, {
-        id: playerID,
-        x: gamePlayer.pos.x,
-        y: gamePlayer.pos.y,
-        img: imgnum,
-        cos: cosnum,
-        pet: pet,
-        gun: gun
-    });
+    gamePlayer.pos.x = player.pos.x;
+    gamePlayer.pos.y = player.pos.y;
+    gameGun.pos.x = player.pos.x;
+    gameGun.pos.y = player.pos.y;
+    gameBullet.pos.x = bullet.pos.x;
+    gameBullet.pos.y = bullet.pos.y;
 
+    if (fortniting == false) {
+        update(playerRef, {
+            id: playerID,
+            x: gamePlayer.pos.x,
+            y: gamePlayer.pos.y,
+            img: imgnum,
+            cos: cosnum,
+            pet: pet
+        });
+
+    } else {
+        if (fortniting == true) {
+            update(playerRef, {
+                id: playerID,
+                x: gamePlayer.pos.x,
+                y: gamePlayer.pos.y,
+                gx: gameGun.pos.x,
+                gy: gameGun.pos.y,
+                bx: gameBullet.pos.x,
+                by: gameBullet.pos.y,
+                img: imgnum,
+                cos: cosnum,
+                pet: pet,
+                gun: gun,
+                health: health,
+                kills: kills
+            });
+        }
+    }
 }
 
 function aerobic() {
-    
+
     timeimeimeimeiemeimiemiemiemikemekemieike++;
 
-    trans = false; 
+    trans = false;
 
-    if (trans == false) {   
-   // draw background
-    ctx.drawImage(spirtImg, 700, 20, 650, 650, 0, 0, 512, 512);
+    if (trans == false) {
+        // draw background
+        ctx.drawImage(spirtImg, 700, 20, 650, 650, 0, 0, 512, 512);
 
-    // draw bone
-    ctx.drawImage(spirtImg, 1040, 700, 319, 319, bone.pos.x, bone.pos.y, 64, 64);
+        // draw bone
+        ctx.drawImage(spirtImg, 1040, 700, 319, 319, bone.pos.x, bone.pos.y, 64, 64);
 
-    // draw child
-    ctx.drawImage(spirtImg, 20, 700, 319, 319, child.pos.x, child.pos.y, 64, 64);
+        // draw child
+        ctx.drawImage(spirtImg, 20, 700, 319, 319, child.pos.x, child.pos.y, 64, 64);
 
-    // draw token
-    if(keySkin == "common") {
-        ctx.drawImage(loot, 520, 10, 160, 160, token.pos.x, token.pos.y, 64, 64);
-    } else {
-        if(keySkin == "uncommon") {
-            ctx.drawImage(loot, 520, 180, 160, 160, token.pos.x, token.pos.y, 64, 64);
+        // draw token
+        if (keySkin == "common") {
+            ctx.drawImage(loot, 520, 10, 160, 160, token.pos.x, token.pos.y, 64, 64);
         } else {
-            if(keySkin == "rare") {
-                ctx.drawImage(loot, 520, 350, 160, 160, token.pos.x, token.pos.y, 64, 64);
+            if (keySkin == "uncommon") {
+                ctx.drawImage(loot, 520, 180, 160, 160, token.pos.x, token.pos.y, 64, 64);
             } else {
-                if(keySkin == "epic") {
-                    ctx.drawImage(loot, 520, 520, 160, 160, token.pos.x, token.pos.y, 64, 64);
+                if (keySkin == "rare") {
+                    ctx.drawImage(loot, 520, 350, 160, 160, token.pos.x, token.pos.y, 64, 64);
+                } else {
+                    if (keySkin == "epic") {
+                        ctx.drawImage(loot, 520, 520, 160, 160, token.pos.x, token.pos.y, 64, 64);
+                    }
                 }
             }
         }
-    }
-    // dead baby anim
-    drawDeath();
+        // dead baby anim
+        drawDeath();
 
-    // draw dead babies
-    for (var i = 0; i < deadBabieX.length; i++) {
-        ctx.drawImage(spirtImg, 360, 700, 320, 320, deadBabieX[i], babydeathheight, 64, 64);
-    }
 
-    for (var key in gamePlayers) {
-        if (key == playerID && playerPet != "") {
-            if (player.pos.x >= 256) {
-            if (playerPet[key] == 1){
-                ctx.drawImage(pets, 180, 10, 160, 160, player.pos.x - 25, 480, 32, 32);
-            } else {
-                if (playerPet[key] == 2) {
-                    ctx.drawImage(pets, 350, 180, 320, 320, player.pos.x - 25, 480, 32, 32);
-                } else {
-                    if (playerPet[key] == 3) {
-                        ctx.drawImage(pets, 10, 180, 320, 320, player.pos.x - 25, 480, 32, 32);
+        // draw dead babies
+        for (var i = 0; i < deadBabieX.length; i++) {
+            ctx.drawImage(spirtImg, 360, 700, 320, 320, deadBabieX[i], babydeathheight, 64, 64);
+        }
+
+        for (var key in gamePlayers) {
+            if (key == playerID && playerPet != "") {
+                if (player.pos.x >= 256) {
+                    if (playerPet[key] == 1) {
+                        ctx.drawImage(pets, 180, 10, 160, 160, player.pos.x - 25, 480, 32, 32);
                     } else {
-                        if (playerPet[key] == 4) {
-                            ctx.drawImage(pets, 180, 180, 320, 320, player.pos.x - 25, 480, 32, 32);
+                        if (playerPet[key] == 2) {
+                            ctx.drawImage(pets, 350, 180, 320, 320, player.pos.x - 25, 480, 32, 32);
                         } else {
-                            if (playerPet[key] == 5) {
-                                ctx.drawImage(pets, 350, 180, 160, 160, player.pos.x - 25, 480, 32, 32);
+                            if (playerPet[key] == 3) {
+                                ctx.drawImage(pets, 10, 180, 320, 320, player.pos.x - 25, 480, 32, 32);
                             } else {
-                                if (playerPet[key] == 6) {
-                                    ctx.drawImage(pets, 10, 350, 160, 160, player.pos.x - 25, 480, 32, 32);
+                                if (playerPet[key] == 4) {
+                                    ctx.drawImage(pets, 180, 180, 320, 320, player.pos.x - 25, 480, 32, 32);
                                 } else {
-                                    if (playerPet[key] == 7) {
-                                        ctx.drawImage(pets, 180, 350, 160, 160, player.pos.x - 25, 480, 32, 32);
+                                    if (playerPet[key] == 5) {
+                                        ctx.drawImage(pets, 350, 180, 160, 160, player.pos.x - 25, 480, 32, 32);
                                     } else {
-                                        if (playerPet[key] == 8) {
-                                            ctx.drawImage(pets, 350, 350, 160, 160, player.pos.x - 25, 480, 32, 32);
+                                        if (playerPet[key] == 6) {
+                                            ctx.drawImage(pets, 10, 350, 160, 160, player.pos.x - 25, 480, 32, 32);
                                         } else {
-                                            if (playerPet[key] == 9) {
-                                                ctx.drawImage(pets, 10, 520, 160, 160, player.pos.x - 25, 480, 32, 32);
+                                            if (playerPet[key] == 7) {
+                                                ctx.drawImage(pets, 180, 350, 160, 160, player.pos.x - 25, 480, 32, 32);
                                             } else {
-                                                if (playerPet[key] == 10) {
-                                                    ctx.drawImage(pets, 180, 520, 160, 160, player.pos.x - 25, 480, 32, 32);
+                                                if (playerPet[key] == 8) {
+                                                    ctx.drawImage(pets, 350, 350, 160, 160, player.pos.x - 25, 480, 32, 32);
                                                 } else {
-                                                    if (playerPet[key] == 11) {
-                                                        ctx.drawImage(pets, 350, 520, 160, 160, player.pos.x - 25, 480, 32, 32);
+                                                    if (playerPet[key] == 9) {
+                                                        ctx.drawImage(pets, 10, 520, 160, 160, player.pos.x - 25, 480, 32, 32);
                                                     } else {
-                                                        if (playerPet[key] == 0) {
-                                                            ctx.drawImage(pets, 10, 10, 160, 160, player.pos.x - 25, 480, 32, 32);
-                                                        } 
+                                                        if (playerPet[key] == 10) {
+                                                            ctx.drawImage(pets, 180, 520, 160, 160, player.pos.x - 25, 480, 32, 32);
+                                                        } else {
+                                                            if (playerPet[key] == 11) {
+                                                                ctx.drawImage(pets, 350, 520, 160, 160, player.pos.x - 25, 480, 32, 32);
+                                                            } else {
+                                                                if (playerPet[key] == 0) {
+                                                                    ctx.drawImage(pets, 10, 10, 160, 160, player.pos.x - 25, 480, 32, 32);
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    if (playerPet[key] == 1) {
+                        ctx.drawImage(pets, 180, 10, 160, 160, player.pos.x + 64, 480, 32, 32);
+                    } else {
+                        if (playerPet[key] == 2) {
+                            ctx.drawImage(pets, 350, 180, 160, 160, player.pos.x + 64, 480, 32, 32);
+                        } else {
+                            if (playerPet[key] == 3) {
+                                ctx.drawImage(pets, 10, 180, 160, 160, player.pos.x + 64, 480, 32, 32);
+                            } else {
+                                if (playerPet[key] == 4) {
+                                    ctx.drawImage(pets, 180, 180, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                } else {
+                                    if (playerPet[key] == 5) {
+                                        ctx.drawImage(pets, 350, 180, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                    } else {
+                                        if (playerPet[key] == 6) {
+                                            ctx.drawImage(pets, 10, 350, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                        } else {
+                                            if (playerPet[key] == 7) {
+                                                ctx.drawImage(pets, 180, 350, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                            } else {
+                                                if (playerPet[key] == 8) {
+                                                    ctx.drawImage(pets, 350, 350, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                                } else {
+                                                    if (playerPet[key] == 9) {
+                                                        ctx.drawImage(pets, 10, 520, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                                    } else {
+                                                        if (playerPet[key] == 10) {
+                                                            ctx.drawImage(pets, 180, 520, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                                        } else {
+                                                            if (playerPet[key] == 11) {
+                                                                ctx.drawImage(pets, 350, 520, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                                            } else {
+                                                                if (playerPet[key] == 0) {
+                                                                    ctx.drawImage(pets, 10, 10, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                                                }
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
@@ -837,43 +978,47 @@ function aerobic() {
                     }
                 }
             }
-        } else {
-            if (playerPet[key] == 1){
-                ctx.drawImage(pets, 180, 10, 160, 160, player.pos.x + 64, 480, 32, 32);
-            } else {
-                if (playerPet[key] == 2) {
-                    ctx.drawImage(pets, 350, 180, 160, 160, player.pos.x + 64, 480, 32, 32);
-                } else {
-                    if (playerPet[key] == 3) {
-                        ctx.drawImage(pets, 10, 180, 160, 160, player.pos.x + 64, 480, 32, 32);
+
+            if (key != playerID && playerPet != "") {
+                if (player.pos.x >= 256) {
+                    if (playerPet[key] == 1) {
+                        ctx.drawImage(pets, 180, 10, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
                     } else {
-                        if (playerPet[key] == 4) {
-                            ctx.drawImage(pets, 180, 180, 160, 160, player.pos.x + 64, 480, 32, 32);
+                        if (playerPet[key] == 2) {
+                            ctx.drawImage(pets, 350, 180, 320, 320, gamePlayers[key].pos.x - 32, 480, 32, 32);
                         } else {
-                            if (playerPet[key] == 5) {
-                                ctx.drawImage(pets, 350, 180, 160, 160, player.pos.x + 64, 480, 32, 32);
+                            if (playerPet[key] == 3) {
+                                ctx.drawImage(pets, 10, 180, 320, 320, gamePlayers[key].pos.x - 32, 480, 32, 32);
                             } else {
-                                if (playerPet[key] == 6) {
-                                    ctx.drawImage(pets, 10, 350, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                if (playerPet[key] == 4) {
+                                    ctx.drawImage(pets, 180, 180, 320, 320, gamePlayers[key].pos.x - 32, 480, 32, 32);
                                 } else {
-                                    if (playerPet[key] == 7) {
-                                        ctx.drawImage(pets, 180, 350, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                    if (playerPet[key] == 5) {
+                                        ctx.drawImage(pets, 350, 180, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
                                     } else {
-                                        if (playerPet[key] == 8) {
-                                            ctx.drawImage(pets, 350, 350, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                        if (playerPet[key] == 6) {
+                                            ctx.drawImage(pets, 10, 350, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
                                         } else {
-                                            if (playerPet[key] == 9) {
-                                                ctx.drawImage(pets, 10, 520, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                            if (playerPet[key] == 7) {
+                                                ctx.drawImage(pets, 180, 350, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
                                             } else {
-                                                if (playerPet[key] == 10) {
-                                                    ctx.drawImage(pets, 180, 520, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                                if (playerPet[key] == 8) {
+                                                    ctx.drawImage(pets, 350, 350, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
                                                 } else {
-                                                    if (playerPet[key] == 11) {
-                                                        ctx.drawImage(pets, 350, 520, 160, 160, player.pos.x + 64, 480, 32, 32);
+                                                    if (playerPet[key] == 9) {
+                                                        ctx.drawImage(pets, 10, 520, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
                                                     } else {
-                                                        if (playerPet[key] == 0) {
-                                                            ctx.drawImage(pets, 10, 10, 160, 160, player.pos.x + 64, 480, 32, 32);
-                                                        } 
+                                                        if (playerPet[key] == 10) {
+                                                            ctx.drawImage(pets, 180, 520, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                                        } else {
+                                                            if (playerPet[key] == 11) {
+                                                                ctx.drawImage(pets, 350, 520, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                                            } else {
+                                                                if (playerPet[key] == 0) {
+                                                                    ctx.drawImage(pets, 10, 10, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                                                }
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
@@ -883,48 +1028,45 @@ function aerobic() {
                             }
                         }
                     }
-                }
-            }
-        }
-    }
-
-    if (key != playerID && playerPet != "") {
-        if (player.pos.x >= 256) {
-        if (playerPet[key] == 1){
-            ctx.drawImage(pets, 180, 10, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
-        } else {
-            if (playerPet[key] == 2) {
-                ctx.drawImage(pets, 350, 180, 320, 320, gamePlayers[key].pos.x - 32, 480, 32, 32);
-            } else {
-                if (playerPet[key] == 3) {
-                    ctx.drawImage(pets, 10, 180, 320, 320, gamePlayers[key].pos.x - 32, 480, 32, 32);
                 } else {
-                    if (playerPet[key] == 4) {
-                        ctx.drawImage(pets, 180, 180, 320, 320, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                    if (playerPet[key] == 1) {
+                        ctx.drawImage(pets, 180, 10, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
                     } else {
-                        if (playerPet[key] == 5) {
+                        if (playerPet[key] == 2) {
                             ctx.drawImage(pets, 350, 180, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
                         } else {
-                            if (playerPet[key] == 6) {
-                                ctx.drawImage(pets, 10, 350, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                            if (playerPet[key] == 3) {
+                                ctx.drawImage(pets, 10, 180, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
                             } else {
-                                if (playerPet[key] == 7) {
-                                    ctx.drawImage(pets, 180, 350, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                if (playerPet[key] == 4) {
+                                    ctx.drawImage(pets, 180, 180, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
                                 } else {
-                                    if (playerPet[key] == 8) {
-                                        ctx.drawImage(pets, 350, 350, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                    if (playerPet[key] == 5) {
+                                        ctx.drawImage(pets, 350, 180, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
                                     } else {
-                                        if (playerPet[key] == 9) {
-                                            ctx.drawImage(pets, 10, 520, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                        if (playerPet[key] == 6) {
+                                            ctx.drawImage(pets, 10, 350, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
                                         } else {
-                                            if (playerPet[key] == 10) {
-                                                ctx.drawImage(pets, 180, 520, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                            if (playerPet[key] == 7) {
+                                                ctx.drawImage(pets, 180, 350, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
                                             } else {
-                                                if (playerPet[key] == 11) {
-                                                    ctx.drawImage(pets, 350, 520, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                                if (playerPet[key] == 8) {
+                                                    ctx.drawImage(pets, 350, 350, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
                                                 } else {
-                                                    if (playerPet[key] == 0) {
-                                                        ctx.drawImage(pets, 10, 10, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                                    if (playerPet[key] == 9) {
+                                                        ctx.drawImage(pets, 10, 520, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                                    } else {
+                                                        if (playerPet[key] == 10) {
+                                                            ctx.drawImage(pets, 180, 520, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                                        } else {
+                                                            if (playerPet[key] == 11) {
+                                                                ctx.drawImage(pets, 350, 520, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                                            } else {
+                                                                if (playerPet[key] == 0) {
+                                                                    ctx.drawImage(pets, 10, 10, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
+                                                                }
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
@@ -936,59 +1078,8 @@ function aerobic() {
                     }
                 }
             }
-        }
-    } else {
-        if (playerPet[key] == 1){
-            ctx.drawImage(pets, 180, 10, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
-        } else {
-            if (playerPet[key] == 2) {
-                ctx.drawImage(pets, 350, 180, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
-            } else {
-                if (playerPet[key] == 3) {
-                    ctx.drawImage(pets, 10, 180, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
-                } else {
-                    if (playerPet[key] == 4) {
-                        ctx.drawImage(pets, 180, 180, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
-                    } else {
-                        if (playerPet[key] == 5) {
-                            ctx.drawImage(pets, 350, 180, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
-                        } else {
-                            if (playerPet[key] == 6) {
-                                ctx.drawImage(pets, 10, 350, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
-                            } else {
-                                if (playerPet[key] == 7) {
-                                    ctx.drawImage(pets, 180, 350, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
-                                } else {
-                                    if (playerPet[key] == 8) {
-                                        ctx.drawImage(pets, 350, 350, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
-                                    } else {
-                                        if (playerPet[key] == 9) {
-                                            ctx.drawImage(pets, 10, 520, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
-                                        } else {
-                                            if (playerPet[key] == 10) {
-                                                ctx.drawImage(pets, 180, 520, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
-                                            } else {
-                                                if (playerPet[key] == 11) {
-                                                    ctx.drawImage(pets, 350, 520, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
-                                                } else {
-                                                    if (playerPet[key] == 0) {
-                                                        ctx.drawImage(pets, 10, 10, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-        if (key == playerID) {
-                if (playerImgs[key] == 4){
+            if (key == playerID) {
+                if (playerImgs[key] == 4) {
                     ctx.drawImage(spirtImg, 1040, 1720, 320, 320, player.pos.x, player.pos.y, 64, 64);
                 } else {
                     if (playerImgs[key] == 3) {
@@ -1029,8 +1120,12 @@ function aerobic() {
                                                                 } else {
                                                                     if (playerImgs[key] == "PING") {
                                                                         ctx.drawImage(devSkin, 0, 0, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                                                    } else
+                                                                    if (playerImgs[key] == "Z") {
+                                                                        ctx.drawImage(z, 0, 0, 160, 160, player.pos.x, player.pos.y, 64, 64);
                                                                     } else {
-                                                                ctx.drawImage(spirtImg, 700, 700, 320, 320, player.pos.x, player.pos.y, 64, 64);
+                                                                        ctx.drawImage(spirtImg, 700, 700, 320, 320, player.pos.x, player.pos.y, 64, 64);
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -1044,59 +1139,116 @@ function aerobic() {
                         }
                     }
                 }
-            }
-            if (playerCos[key] == 1){
-                ctx.drawImage(cosm, 170, 520, 160, 160, player.pos.x, player.pos.y, 64, 64);
-            } else {
-                if (playerCos[key] == 2) {
-                    ctx.drawImage(cosm, 340, 520, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                if (playerCos[key] == 1) {
+                    ctx.drawImage(cosm, 170, 520, 160, 160, player.pos.x, player.pos.y, 64, 64);
                 } else {
-                    if (playerCos[key] == 3) {
-                        ctx.drawImage(cosm, 0, 690, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                    if (playerCos[key] == 2) {
+                        ctx.drawImage(cosm, 340, 520, 160, 160, player.pos.x, player.pos.y, 64, 64);
                     } else {
-                        if (playerCos[key] == 4) {
-                            ctx.drawImage(cosm, 170, 690, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                        if (playerCos[key] == 3) {
+                            ctx.drawImage(cosm, 0, 690, 160, 160, player.pos.x, player.pos.y, 64, 64);
                         } else {
-                            if (playerCos[key] == 5) {
-                                ctx.drawImage(cosm, 340, 690, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                            if (playerCos[key] == 4) {
+                                ctx.drawImage(cosm, 170, 690, 160, 160, player.pos.x, player.pos.y, 64, 64);
                             } else {
-                                if (playerCos[key] == 6) {
-                                    ctx.drawImage(cosm, 0, 860, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                if (playerCos[key] == 5) {
+                                    ctx.drawImage(cosm, 340, 690, 160, 160, player.pos.x, player.pos.y, 64, 64);
                                 } else {
-                                    if (playerCos[key] == 7) {
-                                        ctx.drawImage(cosm, 170, 860, 160, 160, player.pos.x, player.pos.y, 64, 64);
-                                    } else { 
-                                    if (playerCos[key] == 0) {
-                                        ctx.drawImage(cosm, 0, 520, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                    if (playerCos[key] == 6) {
+                                        ctx.drawImage(cosm, 0, 860, 160, 160, player.pos.x, player.pos.y, 64, 64);
                                     } else {
-                                    if (playerCos[key] == 8) {
-                                            ctx.drawImage(cosm, 340, 860, 160, 160, player.pos.x, player.pos.y, 64, 64);
-                                        } else { 
-                                            if (playerCos[key] == 9) {
-                                                ctx.drawImage(cosm, 0, 1030, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                        if (playerCos[key] == 7) {
+                                            ctx.drawImage(cosm, 170, 860, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                        } else {
+                                            if (playerCos[key] == 0) {
+                                                ctx.drawImage(cosm, 0, 520, 160, 160, player.pos.x, player.pos.y, 64, 64);
                                             } else {
-                                                if (playerCos[key] == 10) {
-                                                    ctx.drawImage(cosm, 170, 1030, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                                if (playerCos[key] == 8) {
+                                                    ctx.drawImage(cosm, 340, 860, 160, 160, player.pos.x, player.pos.y, 64, 64);
                                                 } else {
-                                                    if (playerCos[key] == 11) {
-                                                        ctx.drawImage(cosm, 340, 1030, 160, 160, player.pos.x, player.pos.y, 64, 64);
-                                                    } else 
-                                                    {
+                                                    if (playerCos[key] == 9) {
+                                                        ctx.drawImage(cosm, 0, 1030, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                                    } else {
+                                                        if (playerCos[key] == 10) {
+                                                            ctx.drawImage(cosm, 170, 1030, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                                        } else {
+                                                            if (playerCos[key] == 11) {
+                                                                ctx.drawImage(cosm, 340, 1030, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                                            } else {}
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
-                        }  
+                        }
+                    }
+                }
+                if (playerGun[key] == 0) {
+                    ctx.rotate(rotation*Math.PI/180);
+                    ctx.drawImage(guns, 10, 10, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                } else {
+                    if (playerGun[key] == 1) {
+                        ctx.rotate(rotation*Math.PI/180);
+                        ctx.drawImage(guns, 180, 10, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                    } else {
+                        if (playerGun[key] == 2) {
+                            ctx.rotate(rotation*Math.PI/180);
+                            ctx.drawImage(guns, 350, 10, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                        } else {
+                            if (playerGun[key] == 3) {
+                                ctx.rotate(rotation*Math.PI/180);
+                                ctx.drawImage(guns, 10, 350, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                            } else {
+                                if (playerGun[key] == 4) {
+                                    ctx.rotate(rotation*Math.PI/180);
+                                    ctx.drawImage(guns, 180, 350, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                } else {
+                                    if (playerGun[key] == 5) {
+                                        ctx.rotate(rotation*Math.PI/180);
+                                        ctx.drawImage(guns, 350, 350, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                    } else {
+                                        if (playerGun[key] == 6) {
+                                            ctx.rotate(rotation*Math.PI/180);
+                                            ctx.drawImage(skins, 10, 10, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                        } else {
+                                            if (playerGun[key] == 7) {
+                                                ctx.rotate(rotation*Math.PI/180);
+                                                ctx.drawImage(skins, 180, 10, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                            } else {
+                                                if (playerGun[key] == 8) {
+                                                    ctx.rotate(rotation*Math.PI/180);
+                                                    ctx.drawImage(skins, 350, 10, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                                } else {
+                                                    if (playerGun[key] == 9) {
+                                                        ctx.rotate(rotation*Math.PI/180);
+                                                        ctx.drawImage(skins, 10, 350, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                                    } else {
+                                                        if (playerGun[key] == 10) {
+                                                            ctx.rotate(rotation*Math.PI/180);
+                                                            ctx.drawImage(skins, 180, 350, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                                        } else {
+                                                            if (playerGun[key] == 11) {
+                                                                ctx.rotate(rotation*Math.PI/180);
+                                                                ctx.drawImage(skins, 350, 350, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
-        }
-}
-        }
-        if (key != playerID) {
-                if (playerImgs[key] == 4){
+
+            if (key != playerID) {
+                if (playerImgs[key] == 4) {
                     ctx.drawImage(spirtImg, 1040, 1720, 320, 320, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
                 } else {
                     if (playerImgs[key] == 3) {
@@ -1137,9 +1289,108 @@ function aerobic() {
                                                                 } else {
                                                                     if (playerImgs[key] == "PING") {
                                                                         ctx.drawImage(devSkin, 0, 0, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                                                    } else
+                                                                    if (playerImgs[key] == "Z") {
+                                                                        ctx.drawImage(z, 0, 0, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
                                                                     } else {
-                                                                    ctx.drawImage(spirtImg, 700, 700, 320, 320, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
-                                                            }   }
+                                                                        ctx.drawImage(spirtImg, 700, 700, 320, 320, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (playerCos[key] == 1) {
+                    ctx.drawImage(cosm, 170, 520, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                } else {
+                    if (playerCos[key] == 2) {
+                        ctx.drawImage(cosm, 340, 520, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                    } else {
+                        if (playerCos[key] == 3) {
+                            ctx.drawImage(cosm, 0, 690, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                        } else {
+                            if (playerCos[key] == 4) {
+                                ctx.drawImage(cosm, 170, 690, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                            } else {
+                                if (playerCos[key] == 5) {
+                                    ctx.drawImage(cosm, 340, 690, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                } else {
+                                    if (playerCos[key] == 6) {
+                                        ctx.drawImage(cosm, 0, 860, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                    } else {
+                                        if (playerCos[key] == 7) {
+                                            ctx.drawImage(cosm, 170, 860, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                        } else {
+                                            if (playerCos[key] == 0) {
+                                                ctx.drawImage(cosm, 0, 520, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                            } else {
+                                                if (playerCos[key] == 8) {
+                                                    ctx.drawImage(cosm, 340, 860, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                                } else {
+                                                    if (playerCos[key] == 9) {
+                                                        ctx.drawImage(cosm, 0, 1020, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                                    } else {
+                                                        if (playerCos[key] == 10) {
+                                                            ctx.drawImage(cosm, 170, 1020, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                                        } else {
+                                                            if (playerCos[key] == 11) {
+                                                                ctx.drawImage(cosm, 340, 1020, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                                            } else {}
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (playerGun[key] == 0) {
+                    ctx.drawImage(guns, 10, 10, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                } else {
+                    if (playerGun[key] == 1) {
+                        ctx.drawImage(guns, 180, 10, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                    } else {
+                        if (playerGun[key] == 2) {
+                            ctx.drawImage(guns, 350, 10, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                        } else {
+                            if (playerGun[key] == 3) {
+                                ctx.drawImage(guns, 10, 350, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                            } else {
+                                if (playerGun[key] == 4) {
+                                    ctx.drawImage(guns, 180, 350, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                                } else {
+                                    if (playerGun[key] == 5) {
+                                        ctx.drawImage(guns, 350, 350, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                                    } else {
+                                        if (playerGun[key] == 6) {
+                                            ctx.drawImage(skins, 10, 10, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                                        } else {
+                                            if (playerGun[key] == 7) {
+                                                ctx.drawImage(skins, 180, 10, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                                            } else {
+                                                if (playerGun[key] == 8) {
+                                                    ctx.drawImage(skins, 350, 10, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                                                } else {
+                                                    if (playerGun[key] == 9) {
+                                                        ctx.drawImage(skins, 10, 350, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                                                    } else {
+                                                        if (playerGun[key] == 10) {
+                                                            ctx.drawImage(skins, 180, 350, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                                                        } else {
+                                                            if (playerGun[key] == 11) {
+                                                                ctx.drawImage(skins, 350, 350, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -1152,88 +1403,45 @@ function aerobic() {
                     }
                 }
             }
-            if (playerCos[key] == 1){
-                ctx.drawImage(cosm, 170, 520, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
-            } else {
-                if (playerCos[key] == 2) {
-                    ctx.drawImage(cosm, 340, 520, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
-                } else {
-                    if (playerCos[key] == 3) {
-                        ctx.drawImage(cosm, 0, 690, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
-                    } else {
-                        if (playerCos[key] == 4) {
-                            ctx.drawImage(cosm, 170, 690, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
-                        } else {
-                            if (playerCos[key] == 5) {
-                                ctx.drawImage(cosm, 340, 690, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
-                            } else {
-                                if (playerCos[key] == 6) {
-                                    ctx.drawImage(cosm, 0, 860, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
-                                } else {
-                                    if (playerCos[key] == 7) {
-                                        ctx.drawImage(cosm, 170, 860, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
-                                    } else {
-                                    if (playerCos[key] == 0) {
-                                        ctx.drawImage(cosm, 0, 520, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
-                                    } else {
-                                    if (playerCos[key] == 8) {
-                                            ctx.drawImage(cosm, 340, 860, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
-                                        } else {
-                                            if (playerCos[key] == 9) {
-                                                ctx.drawImage(cosm, 0, 1020, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
-                                            } else {
-                                                if (playerCos[key] == 10) {
-                                                    ctx.drawImage(cosm, 170, 1020, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
-                                                } else {
-                                                    if (playerCos[key] == 11) {
-                                                        ctx.drawImage(cosm, 340, 1020, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
-                                                    } else {
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            } 
-                        }
-                    }
-                }
-            }
         }
+
+        // draw score
+        drawScore();
     }
-}
 
-    // draw score
-    drawScore();
-}
-
-if (AABB(mouseX, mouseY, 1, 1, 316, 4, 196, 72)) {
-    if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
-        timeimeimeimeiemeimiemiemiemikemekemieike = 0;
-        ctx.drawImage(butt, 0, 720, 490, 180, 316, 4, 176, 72)
-        trans = true;
-        window.requestAnimationFrame(titty);
-    }
-    ctx.drawImage(butt, 0, 720, 490, 180, 316, 0, 196, 80)
-} else {
-    ctx.drawImage(butt, 0, 720, 490, 180, 316, 4, 196, 72)
-}
-
-if (fortniting == true) {
-    if (AABB(mouseX, mouseY, 1, 1, 482, 495, 30, 17)) {
+    if (AABB(mouseX, mouseY, 1, 1, 316, 4, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
-            ctx.drawImage(hole, 0, 160, 270, 150, 482, 495, 30, 17)
+            ctx.drawImage(butt, 0, 720, 490, 180, 316, 4, 176, 72);
             trans = true;
             window.requestAnimationFrame(titty);
         }
-        ctx.drawImage(hole, 0, 160, 270, 150, 482, 495, 30, 17)
+        ctx.drawImage(butt, 0, 720, 490, 180, 316, 0, 196, 80);
     } else {
-        ctx.drawImage(hole, 0, 0, 270, 150, 482, 495, 30, 17)
+        ctx.drawImage(butt, 0, 720, 490, 180, 316, 4, 196, 72);
     }
+
+    if (fortniting == true) {
+        if (AABB(mouseX, mouseY, 1, 1, 482, 495, 30, 17)) {
+            if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
+                timeimeimeimeiemeimiemiemiemikemekemieike = 0;
+                ctx.drawImage(hole, 0, 160, 270, 150, 482, 495, 30, 17);
+                player.health = 0;
+            }
+            ctx.drawImage(hole, 0, 160, 270, 150, 482, 495, 30, 17);
+        } else {
+            ctx.drawImage(hole, 0, 0, 270, 150, 482, 495, 30, 17);
+        }
+
+        if (player.health <= 0) {
+            trans = true;
+            window.requestAnimationFrame(titty);
+            alert("YOU DIED IDIOT");
+        }
+    }
+
 }
-    
-}
+
 
 var timeimeimeimeiemeimiemiemiemikemekemieike = 0;
 
@@ -1404,19 +1612,19 @@ function imgch() {
     if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
-            ctx.drawImage(butt, 0, 720, 490, 180, 286, 444, 176, 72)
-            cosmetic = true;
+            ctx.drawImage(butt, 0, 720, 490, 180, 286, 444, 176, 72);
             window.requestAnimationFrame(imgSelec);
+            cosmetic = true;
         }
-        ctx.drawImage(butt, 0, 720, 490, 180, 276, 440, 196, 80)
+        ctx.drawImage(butt, 0, 720, 490, 180, 276, 440, 196, 80);
     } else {
-        ctx.drawImage(butt, 0, 720, 490, 180, 276, 444, 196, 72)
+        ctx.drawImage(butt, 0, 720, 490, 180, 276, 444, 196, 72);
     }
 
     if (!cosmetic) {
         window.requestAnimationFrame(imgch);
     } else {
-        
+
     }
 
 }
@@ -1434,208 +1642,208 @@ function petImg() {
         ctx.drawImage(pets, 10, 10, 160, 160, 20, 20, 20, 20);
         ctx.drawImage(lock, 10, 10, 160, 160, 20, 20, 20, 20);
     } else {
-    if (AABB(mouseX, mouseY, 5, 5, 20, 20, 20, 20)) {
-        if (mouseDown) {
-            ctx.drawImage(pets, 10, 10, 160, 160, 25, 20, 10, 20);
-            pet = 0;
+        if (AABB(mouseX, mouseY, 5, 5, 20, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(pets, 10, 10, 160, 160, 25, 20, 10, 20);
+                pet = 0;
+            } else {
+                ctx.drawImage(pets, 10, 10, 160, 160, 15, 20, 30, 20);
+            }
         } else {
-            ctx.drawImage(pets, 10, 10, 160, 160, 15, 20, 30, 20);
+            ctx.drawImage(pets, 10, 10, 160, 160, 20, 20, 20, 20);
         }
-    } else {
-        ctx.drawImage(pets, 10, 10, 160, 160, 20, 20, 20, 20);
     }
-    }   
 
     if (!petsUnlocked.includes(1)) {
         ctx.drawImage(pets, 180, 10, 160, 160, 50, 20, 20, 20);
         ctx.drawImage(lock, 10, 10, 160, 160, 50, 20, 20, 20);
     } else {
-    if (AABB(mouseX, mouseY, 5, 5, 50, 20, 20, 20)) {
-        if (mouseDown) {
-            ctx.drawImage(pets, 180, 10, 160, 160, 55, 20, 10, 20);
-            pet = 1;
+        if (AABB(mouseX, mouseY, 5, 5, 50, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(pets, 180, 10, 160, 160, 55, 20, 10, 20);
+                pet = 1;
+            } else {
+                ctx.drawImage(pets, 180, 10, 160, 160, 45, 20, 30, 20);
+            }
         } else {
-            ctx.drawImage(pets, 180, 10, 160, 160, 45, 20, 30, 20);
+            ctx.drawImage(pets, 180, 10, 160, 160, 50, 20, 20, 20);
         }
-    } else {
-        ctx.drawImage(pets, 180, 10, 160, 160, 50, 20, 20, 20);
     }
-}
     if (!petsUnlocked.includes(2)) {
         ctx.drawImage(pets, 350, 10, 160, 160, 80, 20, 20, 20);
         ctx.drawImage(lock, 10, 10, 160, 160, 80, 20, 20, 20);
     } else {
-    if (AABB(mouseX, mouseY, 5, 5, 80, 20, 20, 20)) {
-        if (mouseDown) {
-            ctx.drawImage(pets, 350, 10, 160, 160, 85, 20, 10, 20);
-            pet = 2;
+        if (AABB(mouseX, mouseY, 5, 5, 80, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(pets, 350, 10, 160, 160, 85, 20, 10, 20);
+                pet = 2;
+            } else {
+                ctx.drawImage(pets, 350, 10, 160, 160, 75, 20, 30, 20);
+            }
         } else {
-            ctx.drawImage(pets, 350, 10, 160, 160, 75, 20, 30, 20);
+            ctx.drawImage(pets, 350, 10, 160, 160, 80, 20, 20, 20);
         }
-    } else {
-        ctx.drawImage(pets, 350, 10, 160, 160, 80, 20, 20, 20);
     }
-}
     if (!petsUnlocked.includes(3)) {
         ctx.drawImage(pets, 10, 180, 160, 160, 110, 20, 20, 20);
         ctx.drawImage(lock, 10, 10, 160, 160, 110, 20, 20, 20);
     } else {
-    if (AABB(mouseX, mouseY, 5, 5, 110, 20, 20, 20)) {
-        if (mouseDown) {
-            ctx.drawImage(pets, 10, 180, 160, 160, 115, 20, 10, 20);
-            pet = 3;
+        if (AABB(mouseX, mouseY, 5, 5, 110, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(pets, 10, 180, 160, 160, 115, 20, 10, 20);
+                pet = 3;
+            } else {
+                ctx.drawImage(pets, 10, 180, 160, 160, 105, 20, 30, 20);
+            }
         } else {
-            ctx.drawImage(pets, 10, 180, 160, 160, 105, 20, 30, 20);
+            ctx.drawImage(pets, 10, 180, 160, 160, 110, 20, 20, 20);
         }
-    } else {
-        ctx.drawImage(pets, 10, 180, 160, 160, 110, 20, 20, 20);
     }
-}
 
     if (!petsUnlocked.includes(4)) {
         ctx.drawImage(pets, 180, 180, 160, 160, 140, 20, 20, 20);
         ctx.drawImage(lock, 10, 10, 160, 160, 140, 20, 20, 20);
     } else {
-    if (AABB(mouseX, mouseY, 5, 5, 140, 20, 20, 20)) {
-        if (mouseDown) {
-            ctx.drawImage(pets, 180, 180, 160, 160, 145, 20, 10, 20);
-            pet = 4;
+        if (AABB(mouseX, mouseY, 5, 5, 140, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(pets, 180, 180, 160, 160, 145, 20, 10, 20);
+                pet = 4;
+            } else {
+                ctx.drawImage(pets, 180, 180, 160, 160, 135, 20, 30, 20);
+            }
         } else {
-            ctx.drawImage(pets, 180, 180, 160, 160, 135, 20, 30, 20);
+            ctx.drawImage(pets, 180, 180, 160, 160, 140, 20, 20, 20);
         }
-    } else {
-        ctx.drawImage(pets, 180, 180, 160, 160, 140, 20, 20, 20);
     }
-}
 
-if (!petsUnlocked.includes(5)) {
-    ctx.drawImage(pets, 350, 180, 160, 160, 170, 20, 20, 20);
-    ctx.drawImage(lock, 10, 10, 160, 160, 170, 20, 20, 20);
-} else {
-if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
-    if (mouseDown) {
-        ctx.drawImage(pets, 350, 180, 160, 160, 175, 20, 10, 20);
-        pet = 5;
+    if (!petsUnlocked.includes(5)) {
+        ctx.drawImage(pets, 350, 180, 160, 160, 170, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 170, 20, 20, 20);
     } else {
-        ctx.drawImage(pets, 350, 180, 160, 160, 165, 20, 30, 20);
+        if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(pets, 350, 180, 160, 160, 175, 20, 10, 20);
+                pet = 5;
+            } else {
+                ctx.drawImage(pets, 350, 180, 160, 160, 165, 20, 30, 20);
+            }
+        } else {
+            ctx.drawImage(pets, 350, 180, 160, 160, 170, 20, 20, 20);
+        }
     }
-} else {
-    ctx.drawImage(pets, 350, 180, 160, 160, 170, 20, 20, 20);
-}
-}
 
-if (!petsUnlocked.includes(6)) {
-    ctx.drawImage(pets, 10, 350, 160, 160, 200, 20, 20, 20);
-    ctx.drawImage(lock, 10, 10, 160, 160, 200, 20, 20, 20);
-} else {
-if (AABB(mouseX, mouseY, 5, 5, 200, 20, 20, 20)) {
-    if (mouseDown) {
-        ctx.drawImage(pets, 10, 350, 160, 160, 205, 20, 10, 20);
-        pet = 6;
+    if (!petsUnlocked.includes(6)) {
+        ctx.drawImage(pets, 10, 350, 160, 160, 200, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 200, 20, 20, 20);
     } else {
-        ctx.drawImage(pets, 10, 350, 160, 160, 195, 20, 30, 20);
+        if (AABB(mouseX, mouseY, 5, 5, 200, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(pets, 10, 350, 160, 160, 205, 20, 10, 20);
+                pet = 6;
+            } else {
+                ctx.drawImage(pets, 10, 350, 160, 160, 195, 20, 30, 20);
+            }
+        } else {
+            ctx.drawImage(pets, 10, 350, 160, 160, 200, 20, 20, 20);
+        }
     }
-} else {
-    ctx.drawImage(pets, 10, 350, 160, 160, 200, 20, 20, 20);
-}
-}
 
-if (!petsUnlocked.includes(7)) {
-    ctx.drawImage(pets, 180, 350, 160, 160, 230, 20, 20, 20);
-    ctx.drawImage(lock, 10, 10, 160, 160, 230, 20, 20, 20);
-} else {
-if (AABB(mouseX, mouseY, 5, 5, 230, 20, 20, 20)) {
-    if (mouseDown) {
-        ctx.drawImage(pets, 180, 350, 160, 160, 235, 20, 10, 20);
-        pet = 7;
+    if (!petsUnlocked.includes(7)) {
+        ctx.drawImage(pets, 180, 350, 160, 160, 230, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 230, 20, 20, 20);
     } else {
-        ctx.drawImage(pets, 180, 350, 160, 160, 225, 20, 30, 20);
+        if (AABB(mouseX, mouseY, 5, 5, 230, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(pets, 180, 350, 160, 160, 235, 20, 10, 20);
+                pet = 7;
+            } else {
+                ctx.drawImage(pets, 180, 350, 160, 160, 225, 20, 30, 20);
+            }
+        } else {
+            ctx.drawImage(pets, 180, 350, 160, 160, 230, 20, 20, 20);
+        }
     }
-} else {
-    ctx.drawImage(pets, 180, 350, 160, 160, 230, 20, 20, 20);
-}
-}
 
-if (!petsUnlocked.includes(8)) {
-    ctx.drawImage(pets, 350, 350, 160, 160, 260, 20, 20, 20);
-    ctx.drawImage(lock, 10, 10, 160, 160, 260, 20, 20, 20);
-} else {
-if (AABB(mouseX, mouseY, 5, 5, 260, 20, 20, 20)) {
-    if (mouseDown) {
-        ctx.drawImage(pets, 350, 350, 160, 160, 265, 20, 10, 20);
-        pet = 8;
+    if (!petsUnlocked.includes(8)) {
+        ctx.drawImage(pets, 350, 350, 160, 160, 260, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 260, 20, 20, 20);
     } else {
-        ctx.drawImage(pets, 350, 350, 160, 160, 255, 20, 30, 20);
+        if (AABB(mouseX, mouseY, 5, 5, 260, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(pets, 350, 350, 160, 160, 265, 20, 10, 20);
+                pet = 8;
+            } else {
+                ctx.drawImage(pets, 350, 350, 160, 160, 255, 20, 30, 20);
+            }
+        } else {
+            ctx.drawImage(pets, 350, 350, 160, 160, 260, 20, 20, 20);
+        }
     }
-} else {
-    ctx.drawImage(pets, 350, 350, 160, 160, 260, 20, 20, 20);
-}
-}
 
-if (!petsUnlocked.includes(9)) {
-    ctx.drawImage(pets, 10, 520, 160, 160, 290, 20, 20, 20);
-    ctx.drawImage(lock, 10, 10, 160, 160, 290, 20, 20, 20);
-} else {
-if (AABB(mouseX, mouseY, 5, 5, 290, 20, 20, 20)) {
-    if (mouseDown) {
-        ctx.drawImage(pets, 10, 520, 160, 160, 295, 20, 10, 20);
-        pet = 9;
+    if (!petsUnlocked.includes(9)) {
+        ctx.drawImage(pets, 10, 520, 160, 160, 290, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 290, 20, 20, 20);
     } else {
-        ctx.drawImage(pets, 10, 520, 160, 160, 285, 20, 30, 20);
+        if (AABB(mouseX, mouseY, 5, 5, 290, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(pets, 10, 520, 160, 160, 295, 20, 10, 20);
+                pet = 9;
+            } else {
+                ctx.drawImage(pets, 10, 520, 160, 160, 285, 20, 30, 20);
+            }
+        } else {
+            ctx.drawImage(pets, 10, 520, 160, 160, 290, 20, 20, 20);
+        }
     }
-} else {
-    ctx.drawImage(pets, 10, 520, 160, 160, 290, 20, 20, 20);
-}
-}
 
-if (!petsUnlocked.includes(10)) {
-    ctx.drawImage(pets, 180, 520, 160, 160, 320, 20, 20, 20);
-    ctx.drawImage(lock, 10, 10, 160, 160, 320, 20, 20, 20);
-} else {
-if (AABB(mouseX, mouseY, 5, 5, 320, 20, 20, 20)) {
-    if (mouseDown) {
-        ctx.drawImage(pets, 180, 520, 160, 160, 325, 20, 10, 20);
-        pet = 10;
+    if (!petsUnlocked.includes(10)) {
+        ctx.drawImage(pets, 180, 520, 160, 160, 320, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 320, 20, 20, 20);
     } else {
-        ctx.drawImage(pets, 180, 520, 160, 160, 315, 20, 30, 20);
+        if (AABB(mouseX, mouseY, 5, 5, 320, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(pets, 180, 520, 160, 160, 325, 20, 10, 20);
+                pet = 10;
+            } else {
+                ctx.drawImage(pets, 180, 520, 160, 160, 315, 20, 30, 20);
+            }
+        } else {
+            ctx.drawImage(pets, 180, 520, 160, 160, 320, 20, 20, 20);
+        }
     }
-} else {
-    ctx.drawImage(pets, 180, 520, 160, 160, 320, 20, 20, 20);
-}
-}
 
-if (!petsUnlocked.includes(11)) {
-    ctx.drawImage(pets, 350, 520, 160, 160, 350, 20, 20, 20);
-    ctx.drawImage(lock, 10, 10, 160, 160, 350, 20, 20, 20);
-} else {
-if (AABB(mouseX, mouseY, 5, 5, 350, 20, 20, 20)) {
-    if (mouseDown) {
-        ctx.drawImage(pets, 350, 520, 160, 160, 355, 20, 10, 20);
-        pet = 11;
+    if (!petsUnlocked.includes(11)) {
+        ctx.drawImage(pets, 350, 520, 160, 160, 350, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 350, 20, 20, 20);
     } else {
-        ctx.drawImage(pets, 350, 520, 160, 160, 345, 20, 30, 20);
+        if (AABB(mouseX, mouseY, 5, 5, 350, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(pets, 350, 520, 160, 160, 355, 20, 10, 20);
+                pet = 11;
+            } else {
+                ctx.drawImage(pets, 350, 520, 160, 160, 345, 20, 30, 20);
+            }
+        } else {
+            ctx.drawImage(pets, 350, 520, 160, 160, 350, 20, 20, 20);
+        }
     }
-} else {
-    ctx.drawImage(pets, 350, 520, 160, 160, 350, 20, 20, 20);
-}
-}
 
     if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
-            ctx.drawImage(butt, 0, 720, 490, 180, 286, 444, 176, 72)
+            ctx.drawImage(butt, 0, 720, 490, 180, 286, 444, 176, 72);
             cosmetic = true;
             window.requestAnimationFrame(imgSelec);
         }
-        ctx.drawImage(butt, 0, 720, 490, 180, 276, 440, 196, 80)
+        ctx.drawImage(butt, 0, 720, 490, 180, 276, 440, 196, 80);
     } else {
-        ctx.drawImage(butt, 0, 720, 490, 180, 276, 444, 196, 72)
+        ctx.drawImage(butt, 0, 720, 490, 180, 276, 444, 196, 72);
     }
 
     if (!cosmetic) {
         window.requestAnimationFrame(petImg);
     } else {
-        
+
     }
 }
 
@@ -1652,208 +1860,208 @@ function gunImg() {
         ctx.drawImage(guns, 10, 10, 160, 160, 20, 20, 20, 20);
         ctx.drawImage(lock, 10, 10, 160, 160, 20, 20, 20, 20);
     } else {
-    if (AABB(mouseX, mouseY, 5, 5, 20, 20, 20, 20)) {
-        if (mouseDown) {
-            ctx.drawImage(guns, 10, 10, 160, 160, 25, 20, 10, 20);
-            gun = 0;
+        if (AABB(mouseX, mouseY, 5, 5, 20, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(guns, 10, 10, 160, 160, 25, 20, 10, 20);
+                gun = 0;
+            } else {
+                ctx.drawImage(guns, 10, 10, 160, 160, 15, 20, 30, 20);
+            }
         } else {
-            ctx.drawImage(guns, 10, 10, 160, 160, 15, 20, 30, 20);
+            ctx.drawImage(guns, 10, 10, 160, 160, 20, 20, 20, 20);
         }
-    } else {
-        ctx.drawImage(guns, 10, 10, 160, 160, 20, 20, 20, 20);
     }
-    }   
 
     if (!gunsUnlocked.includes(1)) {
         ctx.drawImage(guns, 180, 10, 160, 160, 50, 20, 20, 20);
         ctx.drawImage(lock, 10, 10, 160, 160, 50, 20, 20, 20);
     } else {
-    if (AABB(mouseX, mouseY, 5, 5, 50, 20, 20, 20)) {
-        if (mouseDown) {
-            ctx.drawImage(guns, 180, 10, 160, 160, 55, 20, 10, 20);
-            gun = 1;
+        if (AABB(mouseX, mouseY, 5, 5, 50, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(guns, 180, 10, 160, 160, 55, 20, 10, 20);
+                gun = 1;
+            } else {
+                ctx.drawImage(guns, 180, 10, 160, 160, 45, 20, 30, 20);
+            }
         } else {
-            ctx.drawImage(guns, 180, 10, 160, 160, 45, 20, 30, 20);
+            ctx.drawImage(guns, 180, 10, 160, 160, 50, 20, 20, 20);
         }
-    } else {
-        ctx.drawImage(guns, 180, 10, 160, 160, 50, 20, 20, 20);
     }
-}
     if (!gunsUnlocked.includes(2)) {
         ctx.drawImage(guns, 350, 10, 160, 160, 80, 20, 20, 20);
         ctx.drawImage(lock, 10, 10, 160, 160, 80, 20, 20, 20);
     } else {
-    if (AABB(mouseX, mouseY, 5, 5, 80, 20, 20, 20)) {
-        if (mouseDown) {
-            ctx.drawImage(guns, 350, 10, 160, 160, 85, 20, 10, 20);
-            gun = 2;
+        if (AABB(mouseX, mouseY, 5, 5, 80, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(guns, 350, 10, 160, 160, 85, 20, 10, 20);
+                gun = 2;
+            } else {
+                ctx.drawImage(guns, 350, 10, 160, 160, 75, 20, 30, 20);
+            }
         } else {
-            ctx.drawImage(guns, 350, 10, 160, 160, 75, 20, 30, 20);
+            ctx.drawImage(guns, 350, 10, 160, 160, 80, 20, 20, 20);
         }
-    } else {
-        ctx.drawImage(guns, 350, 10, 160, 160, 80, 20, 20, 20);
     }
-}
     if (!gunsUnlocked.includes(3)) {
         ctx.drawImage(guns, 10, 350, 160, 160, 110, 20, 20, 20);
         ctx.drawImage(lock, 10, 10, 160, 160, 110, 20, 20, 20);
     } else {
-    if (AABB(mouseX, mouseY, 5, 5, 110, 20, 20, 20)) {
-        if (mouseDown) {
-            ctx.drawImage(guns, 10, 350, 160, 160, 115, 20, 10, 20);
-            gun = 3;
+        if (AABB(mouseX, mouseY, 5, 5, 110, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(guns, 10, 350, 160, 160, 115, 20, 10, 20);
+                gun = 3;
+            } else {
+                ctx.drawImage(guns, 10, 350, 160, 160, 105, 20, 30, 20);
+            }
         } else {
-            ctx.drawImage(guns, 10, 350, 160, 160, 105, 20, 30, 20);
+            ctx.drawImage(guns, 10, 350, 160, 160, 110, 20, 20, 20);
         }
-    } else {
-        ctx.drawImage(guns, 10, 350, 160, 160, 110, 20, 20, 20);
     }
-}
 
     if (!gunsUnlocked.includes(4)) {
         ctx.drawImage(guns, 180, 350, 160, 160, 140, 20, 20, 20);
         ctx.drawImage(lock, 10, 10, 160, 160, 140, 20, 20, 20);
     } else {
-    if (AABB(mouseX, mouseY, 5, 5, 140, 20, 20, 20)) {
-        if (mouseDown) {
-            ctx.drawImage(guns, 180, 350, 160, 160, 145, 20, 10, 20);
-            gun = 4;
+        if (AABB(mouseX, mouseY, 5, 5, 140, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(guns, 180, 350, 160, 160, 145, 20, 10, 20);
+                gun = 4;
+            } else {
+                ctx.drawImage(guns, 180, 350, 160, 160, 135, 20, 30, 20);
+            }
         } else {
-            ctx.drawImage(guns, 180, 350, 160, 160, 135, 20, 30, 20);
+            ctx.drawImage(guns, 180, 350, 160, 160, 140, 20, 20, 20);
         }
-    } else {
-        ctx.drawImage(guns, 180, 350, 160, 160, 140, 20, 20, 20);
     }
-}
 
-if (!gunsUnlocked.includes(5)) {
-    ctx.drawImage(guns, 350, 350, 160, 160, 170, 20, 20, 20);
-    ctx.drawImage(lock, 10, 10, 160, 160, 170, 20, 20, 20);
-} else {
-if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
-    if (mouseDown) {
-        ctx.drawImage(guns, 350, 350, 160, 160, 175, 20, 10, 20);
-        gun = 5;
+    if (!gunsUnlocked.includes(5)) {
+        ctx.drawImage(guns, 350, 350, 160, 160, 170, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 170, 20, 20, 20);
     } else {
-        ctx.drawImage(guns, 350, 350, 160, 160, 165, 20, 30, 20);
+        if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(guns, 350, 350, 160, 160, 175, 20, 10, 20);
+                gun = 5;
+            } else {
+                ctx.drawImage(guns, 350, 350, 160, 160, 165, 20, 30, 20);
+            }
+        } else {
+            ctx.drawImage(guns, 350, 350, 160, 160, 170, 20, 20, 20);
+        }
     }
-} else {
-    ctx.drawImage(guns, 350, 350, 160, 160, 170, 20, 20, 20);
-}
-}
 
-if (!gunsUnlocked.includes(6)) {
-    ctx.drawImage(skins, 10, 10, 160, 160, 200, 20, 20, 20);
-    ctx.drawImage(lock, 10, 10, 160, 160, 200, 20, 20, 20);
-} else {
-if (AABB(mouseX, mouseY, 5, 5, 200, 20, 20, 20)) {
-    if (mouseDown) {
-        ctx.drawImage(skins, 10, 10, 160, 160, 205, 20, 10, 20);
-        gun = 6;
+    if (!gunsUnlocked.includes(6)) {
+        ctx.drawImage(skins, 10, 10, 160, 160, 200, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 200, 20, 20, 20);
     } else {
-        ctx.drawImage(skins, 10, 10, 160, 160, 195, 20, 30, 20);
+        if (AABB(mouseX, mouseY, 5, 5, 200, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(skins, 10, 10, 160, 160, 205, 20, 10, 20);
+                gun = 6;
+            } else {
+                ctx.drawImage(skins, 10, 10, 160, 160, 195, 20, 30, 20);
+            }
+        } else {
+            ctx.drawImage(skins, 10, 10, 160, 160, 200, 20, 20, 20);
+        }
     }
-} else {
-    ctx.drawImage(skins, 10, 10, 160, 160, 200, 20, 20, 20);
-}
-}
 
-if (!gunsUnlocked.includes(7)) {
-    ctx.drawImage(skins, 180, 10, 160, 160, 230, 20, 20, 20);
-    ctx.drawImage(lock, 10, 10, 160, 160, 230, 20, 20, 20);
-} else {
-if (AABB(mouseX, mouseY, 5, 5, 230, 20, 20, 20)) {
-    if (mouseDown) {
-        ctx.drawImage(skins, 180, 10, 160, 160, 235, 20, 10, 20);
-        gun = 7;
+    if (!gunsUnlocked.includes(7)) {
+        ctx.drawImage(skins, 180, 10, 160, 160, 230, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 230, 20, 20, 20);
     } else {
-        ctx.drawImage(skins, 180, 10, 160, 160, 225, 20, 30, 20);
+        if (AABB(mouseX, mouseY, 5, 5, 230, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(skins, 180, 10, 160, 160, 235, 20, 10, 20);
+                gun = 7;
+            } else {
+                ctx.drawImage(skins, 180, 10, 160, 160, 225, 20, 30, 20);
+            }
+        } else {
+            ctx.drawImage(skins, 180, 10, 160, 160, 230, 20, 20, 20);
+        }
     }
-} else {
-    ctx.drawImage(skins, 180, 10, 160, 160, 230, 20, 20, 20);
-}
-}
 
-if (!gunsUnlocked.includes(8)) {
-    ctx.drawImage(skins, 350, 10, 160, 160, 260, 20, 20, 20);
-    ctx.drawImage(lock, 10, 10, 160, 160, 260, 20, 20, 20);
-} else {
-if (AABB(mouseX, mouseY, 5, 5, 260, 20, 20, 20)) {
-    if (mouseDown) {
-        ctx.drawImage(skins, 350, 10, 160, 160, 265, 20, 10, 20);
-        gun = 8;
+    if (!gunsUnlocked.includes(8)) {
+        ctx.drawImage(skins, 350, 10, 160, 160, 260, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 260, 20, 20, 20);
     } else {
-        ctx.drawImage(skins, 350, 10, 160, 160, 255, 20, 30, 20);
+        if (AABB(mouseX, mouseY, 5, 5, 260, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(skins, 350, 10, 160, 160, 265, 20, 10, 20);
+                gun = 8;
+            } else {
+                ctx.drawImage(skins, 350, 10, 160, 160, 255, 20, 30, 20);
+            }
+        } else {
+            ctx.drawImage(skins, 350, 10, 160, 160, 260, 20, 20, 20);
+        }
     }
-} else {
-    ctx.drawImage(skins, 350, 10, 160, 160, 260, 20, 20, 20);
-}
-}
 
-if (!gunsUnlocked.includes(9)) {
-    ctx.drawImage(skins, 10, 350, 160, 160, 290, 20, 20, 20);
-    ctx.drawImage(lock, 10, 10, 160, 160, 290, 20, 20, 20);
-} else {
-if (AABB(mouseX, mouseY, 5, 5, 290, 20, 20, 20)) {
-    if (mouseDown) {
-        ctx.drawImage(skins, 10, 350, 160, 160, 295, 20, 10, 20);
-        gun = 9;
+    if (!gunsUnlocked.includes(9)) {
+        ctx.drawImage(skins, 10, 350, 160, 160, 290, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 290, 20, 20, 20);
     } else {
-        ctx.drawImage(skins, 10, 350, 160, 160, 285, 20, 30, 20);
+        if (AABB(mouseX, mouseY, 5, 5, 290, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(skins, 10, 350, 160, 160, 295, 20, 10, 20);
+                gun = 9;
+            } else {
+                ctx.drawImage(skins, 10, 350, 160, 160, 285, 20, 30, 20);
+            }
+        } else {
+            ctx.drawImage(skins, 10, 350, 160, 160, 290, 20, 20, 20);
+        }
     }
-} else {
-    ctx.drawImage(skins, 10, 350, 160, 160, 290, 20, 20, 20);
-}
-}
 
-if (!gunsUnlocked.includes(10)) {
-    ctx.drawImage(skins, 180, 350, 160, 160, 320, 20, 20, 20);
-    ctx.drawImage(lock, 10, 10, 160, 160, 320, 20, 20, 20);
-} else {
-if (AABB(mouseX, mouseY, 5, 5, 320, 20, 20, 20)) {
-    if (mouseDown) {
-        ctx.drawImage(skins, 180, 350, 160, 160, 325, 20, 10, 20);
-        gun = 10;
+    if (!gunsUnlocked.includes(10)) {
+        ctx.drawImage(skins, 180, 350, 160, 160, 320, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 320, 20, 20, 20);
     } else {
-        ctx.drawImage(skins, 180, 350, 160, 160, 315, 20, 30, 20);
+        if (AABB(mouseX, mouseY, 5, 5, 320, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(skins, 180, 350, 160, 160, 325, 20, 10, 20);
+                gun = 10;
+            } else {
+                ctx.drawImage(skins, 180, 350, 160, 160, 315, 20, 30, 20);
+            }
+        } else {
+            ctx.drawImage(skins, 180, 350, 160, 160, 320, 20, 20, 20);
+        }
     }
-} else {
-    ctx.drawImage(skins, 180, 350, 160, 160, 320, 20, 20, 20);
-}
-}
 
-if (!gunsUnlocked.includes(11)) {
-    ctx.drawImage(skins, 350, 350, 160, 160, 350, 20, 20, 20);
-    ctx.drawImage(lock, 10, 10, 160, 160, 350, 20, 20, 20);
-} else {
-if (AABB(mouseX, mouseY, 5, 5, 350, 20, 20, 20)) {
-    if (mouseDown) {
-        ctx.drawImage(skins, 350, 350, 160, 160, 355, 20, 10, 20);
-        gun = 11;
+    if (!gunsUnlocked.includes(11)) {
+        ctx.drawImage(skins, 350, 350, 160, 160, 350, 20, 20, 20);
+        ctx.drawImage(lock, 10, 10, 160, 160, 350, 20, 20, 20);
     } else {
-        ctx.drawImage(skins, 350, 350, 160, 160, 345, 20, 30, 20);
+        if (AABB(mouseX, mouseY, 5, 5, 350, 20, 20, 20)) {
+            if (mouseDown) {
+                ctx.drawImage(skins, 350, 350, 160, 160, 355, 20, 10, 20);
+                gun = 11;
+            } else {
+                ctx.drawImage(skins, 350, 350, 160, 160, 345, 20, 30, 20);
+            }
+        } else {
+            ctx.drawImage(skins, 350, 350, 160, 160, 350, 20, 20, 20);
+        }
     }
-} else {
-    ctx.drawImage(skins, 350, 350, 160, 160, 350, 20, 20, 20);
-}
-}
 
     if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
-            ctx.drawImage(butt, 0, 720, 490, 180, 286, 444, 176, 72)
+            ctx.drawImage(butt, 0, 720, 490, 180, 286, 444, 176, 72);
             cosmetic = true;
             window.requestAnimationFrame(imgSelec);
         }
-        ctx.drawImage(butt, 0, 720, 490, 180, 276, 440, 196, 80)
+        ctx.drawImage(butt, 0, 720, 490, 180, 276, 440, 196, 80);
     } else {
-        ctx.drawImage(butt, 0, 720, 490, 180, 276, 444, 196, 72)
+        ctx.drawImage(butt, 0, 720, 490, 180, 276, 444, 196, 72);
     }
 
     if (!cosmetic) {
         window.requestAnimationFrame(gunImg);
     } else {
-        
+
     }
 }
 
@@ -1875,8 +2083,8 @@ function imgcos() {
     } else {
         ctx.drawImage(cosm, 0, 520, 160, 160, 20, 20, 20, 20);
     }
- 
- 
+
+
     if (AABB(mouseX, mouseY, 5, 5, 50, 20, 20, 20)) {
         if (mouseDown) {
             ctx.drawImage(cosm, 170, 520, 160, 160, 55, 20, 10, 20);
@@ -1887,8 +2095,8 @@ function imgcos() {
     } else {
         ctx.drawImage(cosm, 170, 520, 160, 160, 50, 20, 20, 20);
     }
- 
- 
+
+
     if (AABB(mouseX, mouseY, 5, 5, 80, 20, 20, 20)) {
         if (mouseDown) {
             ctx.drawImage(cosm, 340, 520, 160, 160, 85, 20, 10, 20);
@@ -1899,8 +2107,8 @@ function imgcos() {
     } else {
         ctx.drawImage(cosm, 340, 520, 160, 160, 80, 20, 20, 20);
     }
- 
- 
+
+
     if (AABB(mouseX, mouseY, 5, 5, 110, 20, 20, 20)) {
         if (mouseDown) {
             ctx.drawImage(cosm, 0, 690, 160, 160, 115, 20, 10, 20);
@@ -1911,8 +2119,8 @@ function imgcos() {
     } else {
         ctx.drawImage(cosm, 0, 690, 160, 160, 110, 20, 20, 20);
     }
- 
- 
+
+
     if (AABB(mouseX, mouseY, 5, 5, 140, 20, 20, 20)) {
         if (mouseDown) {
             ctx.drawImage(cosm, 170, 690, 160, 160, 145, 20, 10, 20);
@@ -1923,8 +2131,8 @@ function imgcos() {
     } else {
         ctx.drawImage(cosm, 170, 690, 160, 160, 140, 20, 20, 20);
     }
- 
- 
+
+
     if (AABB(mouseX, mouseY, 5, 5, 170, 20, 20, 20)) {
         if (mouseDown) {
             ctx.drawImage(cosm, 340, 690, 160, 160, 175, 20, 10, 20);
@@ -1935,8 +2143,8 @@ function imgcos() {
     } else {
         ctx.drawImage(cosm, 340, 690, 160, 160, 170, 20, 20, 20);
     }
- 
- 
+
+
     if (AABB(mouseX, mouseY, 5, 5, 200, 20, 20, 20)) {
         if (mouseDown) {
             ctx.drawImage(cosm, 0, 860, 160, 160, 205, 20, 10, 20);
@@ -1947,8 +2155,8 @@ function imgcos() {
     } else {
         ctx.drawImage(cosm, 0, 860, 160, 160, 200, 20, 20, 20);
     }
- 
- 
+
+
     if (AABB(mouseX, mouseY, 5, 5, 230, 20, 20, 20)) {
         if (mouseDown) {
             ctx.drawImage(cosm, 170, 860, 160, 160, 235, 20, 10, 20);
@@ -1959,8 +2167,8 @@ function imgcos() {
     } else {
         ctx.drawImage(cosm, 170, 860, 160, 160, 230, 20, 20, 20);
     }
- 
- 
+
+
     if (AABB(mouseX, mouseY, 5, 5, 260, 20, 20, 20)) {
         if (mouseDown) {
             ctx.drawImage(cosm, 340, 860, 160, 160, 265, 20, 10, 20);
@@ -2008,19 +2216,19 @@ function imgcos() {
     if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
-            ctx.drawImage(butt, 0, 720, 490, 180, 286, 444, 176, 72)
+            ctx.drawImage(butt, 0, 720, 490, 180, 286, 444, 176, 72);
             cosmetic = true;
             window.requestAnimationFrame(imgSelec);
         }
-        ctx.drawImage(butt, 0, 720, 490, 180, 276, 440, 196, 80)
+        ctx.drawImage(butt, 0, 720, 490, 180, 276, 440, 196, 80);
     } else {
-        ctx.drawImage(butt, 0, 720, 490, 180, 276, 444, 196, 72)
+        ctx.drawImage(butt, 0, 720, 490, 180, 276, 444, 196, 72);
     }
 
     if (!cosmetic) {
         window.requestAnimationFrame(imgcos);
     } else {
-        
+
     }
 
 }
@@ -2036,53 +2244,53 @@ function imgSelec() {
     if (AABB(mouseX, mouseY, 1, 1, 0, 4, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
-            ctx.drawImage(butt, 0, 900, 490, 180, 0, 4, 176, 72)
+            ctx.drawImage(butt, 0, 900, 490, 180, 0, 4, 176, 72);
             cosmetic = false;
             trans = true;
             window.requestAnimationFrame(imgcos);
         }
-        ctx.drawImage(butt, 0, 900, 490, 180, 0, 0, 196, 80)
+        ctx.drawImage(butt, 0, 900, 490, 180, 0, 0, 196, 80);
     } else {
-        ctx.drawImage(butt, 0, 900, 490, 180, 0, 4, 196, 72)
+        ctx.drawImage(butt, 0, 900, 490, 180, 0, 4, 196, 72);
     }
 
     if (AABB(mouseX, mouseY, 1, 1, 200, 4, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
-            ctx.drawImage(butt, 0, 1080, 490, 180, 200, 4, 176, 72)
+            ctx.drawImage(butt, 0, 1080, 490, 180, 200, 4, 176, 72);
             cosmetic = false;
             trans = true;
             window.requestAnimationFrame(imgch);
         }
-        ctx.drawImage(butt, 0, 1080, 490, 180, 200, 0, 196, 80)
+        ctx.drawImage(butt, 0, 1080, 490, 180, 200, 0, 196, 80);
     } else {
-        ctx.drawImage(butt, 0, 1080, 490, 180, 200, 4, 196, 72)
+        ctx.drawImage(butt, 0, 1080, 490, 180, 200, 4, 196, 72);
     }
 
     if (AABB(mouseX, mouseY, 1, 1, 0, 78, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
-            ctx.drawImage(butt, 0, 1620, 490, 180, 0, 78, 176, 72)
+            ctx.drawImage(butt, 0, 1620, 490, 180, 0, 78, 176, 72);
             cosmetic = false;
             trans = true;
             window.requestAnimationFrame(gunImg);
         }
-        ctx.drawImage(butt, 0, 1620, 490, 180, 0, 76, 196, 80)
+        ctx.drawImage(butt, 0, 1620, 490, 180, 0, 76, 196, 80);
     } else {
-        ctx.drawImage(butt, 0, 1620, 490, 180, 0, 78, 196, 72)
+        ctx.drawImage(butt, 0, 1620, 490, 180, 0, 78, 196, 72);
     }
 
     if (AABB(mouseX, mouseY, 1, 1, 200, 78, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
-            ctx.drawImage(butt, 0, 1800, 490, 180, 200, 78, 176, 72)
+            ctx.drawImage(butt, 0, 1800, 490, 180, 200, 78, 176, 72);
             cosmetic = false;
             trans = true;
             window.requestAnimationFrame(petImg);
         }
-        ctx.drawImage(butt, 0, 1800, 490, 180, 200, 76, 196, 80)
+        ctx.drawImage(butt, 0, 1800, 490, 180, 200, 76, 196, 80);
     } else {
-        ctx.drawImage(butt, 0, 1800, 490, 180, 200, 78, 196, 72)
+        ctx.drawImage(butt, 0, 1800, 490, 180, 200, 78, 196, 72);
     }
 
     if (AABB(mouseX, mouseY, 1, 1, 114, 452, 112, 60)) {
@@ -2092,6 +2300,15 @@ function imgSelec() {
             let person = prompt("Enter your code", "Code Here");
             if (person == "señorPinguino") {
                 imgnum = "PING";
+                petsUnlocked.push(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+                gunsUnlocked.push(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+                trosUnlocked.push(0, 1, 2, 3);
+
+            } else
+            if (person == "z") {
+                imgnum = "Z";
+                console.log("z");
+
             } else {
                 alert("INCORRECT IDIOT");
             }
@@ -2104,28 +2321,28 @@ function imgSelec() {
     if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
-            ctx.drawImage(butt, 0, 720, 490, 180, 286, 444, 176, 72)
+            ctx.drawImage(butt, 0, 720, 490, 180, 286, 444, 176, 72);
             cosmetic = false;
             trans = true;
             window.requestAnimationFrame(titty);
         }
-        ctx.drawImage(butt, 0, 720, 490, 180, 276, 440, 196, 80)
+        ctx.drawImage(butt, 0, 720, 490, 180, 276, 440, 196, 80);
     } else {
-        ctx.drawImage(butt, 0, 720, 490, 180, 276, 444, 196, 72)
+        ctx.drawImage(butt, 0, 720, 490, 180, 276, 444, 196, 72);
     }
 
-    if (trosUnlocked != ""){
+    if (trosUnlocked != "") {
         if (trosUnlocked.includes(0)) {
-            ctx.drawImage(loot, 350, 10, 160, 160, 30, 470, 32, 32)
+            ctx.drawImage(loot, 350, 10, 160, 160, 30, 470, 32, 32);
         }
         if (trosUnlocked.includes(1)) {
-            ctx.drawImage(loot, 350, 180, 160, 160, 92, 470, 32, 32)
+            ctx.drawImage(loot, 350, 180, 160, 160, 92, 470, 32, 32);
         }
         if (trosUnlocked.includes(2)) {
-            ctx.drawImage(loot, 350, 350, 160, 160, 154, 470, 32, 32)
+            ctx.drawImage(loot, 350, 350, 160, 160, 154, 470, 32, 32);
         }
         if (trosUnlocked.includes(3)) {
-            ctx.drawImage(loot, 350, 520, 160, 160, 216, 470, 32, 32)
+            ctx.drawImage(loot, 350, 520, 160, 160, 216, 470, 32, 32);
         }
     }
 
@@ -2156,12 +2373,10 @@ function shop() {
                 unlockedItem = get_random(commonLoot);
                 var item = unlockedItem.substr(0, 3);
                 if (unlockedItem.length == 5) {
-                var itemType = +unlockedItem.substr(3, 2);
+                    var itemType = +unlockedItem.substr(3, 2);
                 } else {
-                var itemType = +unlockedItem.substr(3, 1);
+                    var itemType = +unlockedItem.substr(3, 1);
                 }
-                const stroll = item + 'sCollected';
-                const type = item + itemType;
                 switch (item) {
                     case ("pet"): {
                         petsUnlocked.push(itemType);
@@ -2176,12 +2391,12 @@ function shop() {
                         break;
                     }
                     default: {
-                        console.log("fuck you idiot")
+                        console.log("fuck you idiot");
                         break;
                     }
                 }
             } else {
-                alert("YOU DON'T HAVE THE KEY IDIOT")
+                alert("YOU DON'T HAVE THE KEY IDIOT");
             }
         } else {
             ctx.drawImage(loot, 10, 10, 160, 160, 45, 40, 50, 40);
@@ -2200,12 +2415,10 @@ function shop() {
                 unlockedItem = get_random(uncommonLoot);
                 var item = unlockedItem.substr(0, 3);
                 if (unlockedItem.length == 5) {
-                var itemType = +unlockedItem.substr(3, 2);
+                    var itemType = +unlockedItem.substr(3, 2);
                 } else {
-                var itemType = +unlockedItem.substr(3, 1);
+                    var itemType = +unlockedItem.substr(3, 1);
                 }
-                const stroll = item + 'sCollected';
-                const type = item + itemType;
                 switch (item) {
                     case ("pet"): {
                         petsUnlocked.push(itemType);
@@ -2220,7 +2433,7 @@ function shop() {
                         break;
                     }
                     default: {
-                        console.log("fuck you idiot")
+                        console.log("fuck you idiot");
                         break;
                     }
                 }
@@ -2244,12 +2457,10 @@ function shop() {
                 unlockedItem = get_random(rareLoot);
                 var item = unlockedItem.substr(0, 3);
                 if (unlockedItem.length == 5) {
-                var itemType = +unlockedItem.substr(3, 2);
+                    var itemType = +unlockedItem.substr(3, 2);
                 } else {
-                var itemType = +unlockedItem.substr(3, 1);
+                    var itemType = +unlockedItem.substr(3, 1);
                 }
-                const stroll = item + 'sCollected';
-                const type = item + itemType;
                 switch (item) {
                     case ("pet"): {
                         petsUnlocked.push(itemType);
@@ -2264,7 +2475,7 @@ function shop() {
                         break;
                     }
                     default: {
-                        console.log("fuck you idiot")
+                        console.log("fuck you idiot");
                         break;
                     }
                 }
@@ -2289,12 +2500,10 @@ function shop() {
                 unlockedItem = get_random(epicLoot);
                 var item = unlockedItem.substr(0, 3);
                 if (unlockedItem.length == 5) {
-                var itemType = +unlockedItem.substr(3, 2);
+                    var itemType = +unlockedItem.substr(3, 2);
                 } else {
-                var itemType = +unlockedItem.substr(3, 1);
+                    var itemType = +unlockedItem.substr(3, 1);
                 }
-                const stroll = item + 'sCollected';
-                const type = item + itemType;
                 switch (item) {
                     case ("pet"): {
                         petsUnlocked.push(itemType);
@@ -2309,7 +2518,7 @@ function shop() {
                         break;
                     }
                     default: {
-                        console.log("fuck you idiot")
+                        console.log("fuck you idiot");
                         break;
                     }
                 }
@@ -2322,17 +2531,17 @@ function shop() {
     } else {
         ctx.drawImage(loot, 10, 520, 160, 160, 190, 40, 40, 40);
     }
-    
+
     if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
-            ctx.drawImage(butt, 0, 720, 490, 180, 286, 444, 176, 72)
+            ctx.drawImage(butt, 0, 720, 490, 180, 286, 444, 176, 72);
             trans = true;
             window.requestAnimationFrame(titty);
         }
-        ctx.drawImage(butt, 0, 720, 490, 180, 276, 440, 196, 80)
+        ctx.drawImage(butt, 0, 720, 490, 180, 276, 440, 196, 80);
     } else {
-        ctx.drawImage(butt, 0, 720, 490, 180, 276, 444, 196, 72)
+        ctx.drawImage(butt, 0, 720, 490, 180, 276, 444, 196, 72);
     }
     if (!trans) {
         window.requestAnimationFrame(shop);
@@ -2351,7 +2560,7 @@ function multiPG() {
     if (AABB(mouseX, mouseY, 1, 1, 0, 0, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
-            ctx.drawImage(butt, 0, 1440, 490, 180, 0, 0, 176, 72)
+            ctx.drawImage(butt, 0, 1440, 490, 180, 0, 0, 176, 72);
             trans = true;
             fortniting = false;
             if (playerRef == ref(database, `battle/${playerID}`)) {
@@ -2359,15 +2568,15 @@ function multiPG() {
             }
             window.requestAnimationFrame(multiInit);
         }
-        ctx.drawImage(butt, 0, 1440, 490, 180, 0, 4, 196, 80)
+        ctx.drawImage(butt, 0, 1440, 490, 180, 0, 4, 196, 80);
     } else {
-        ctx.drawImage(butt, 0, 1440, 490, 180, 0, 0, 196, 72)
+        ctx.drawImage(butt, 0, 1440, 490, 180, 0, 0, 196, 72);
     }
 
     if (AABB(mouseX, mouseY, 1, 1, 200, 0, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
-            ctx.drawImage(butt, 0, 1260, 490, 180, 200, 0, 176, 72)
+            ctx.drawImage(butt, 0, 1260, 490, 180, 200, 0, 176, 72);
             trans = true;
             fortniting = true;
             if (playerRef == ref(database, `multi/${playerID}`)) {
@@ -2375,21 +2584,21 @@ function multiPG() {
             }
             window.requestAnimationFrame(multiInit);
         }
-        ctx.drawImage(butt, 0, 1260, 490, 180, 200, 4, 196, 80)
+        ctx.drawImage(butt, 0, 1260, 490, 180, 200, 4, 196, 80);
     } else {
-        ctx.drawImage(butt, 0, 1260, 490, 180, 200, 0, 196, 72)
+        ctx.drawImage(butt, 0, 1260, 490, 180, 200, 0, 196, 72);
     }
 
     if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
-            ctx.drawImage(butt, 0, 720, 490, 180, 286, 444, 176, 72)
+            ctx.drawImage(butt, 0, 720, 490, 180, 286, 444, 176, 72);
             trans = true;
             window.requestAnimationFrame(titty);
         }
-        ctx.drawImage(butt, 0, 720, 490, 180, 276, 440, 196, 80)
+        ctx.drawImage(butt, 0, 720, 490, 180, 276, 440, 196, 80);
     } else {
-        ctx.drawImage(butt, 0, 720, 490, 180, 276, 444, 196, 72)
+        ctx.drawImage(butt, 0, 720, 490, 180, 276, 444, 196, 72);
     }
 
     if (!trans) {
@@ -2398,6 +2607,7 @@ function multiPG() {
 }
 
 var trans = false;
+
 function titty() {
     timeimeimeimeiemeimiemiemiemikemekemieike++;
     // draw background
@@ -2410,9 +2620,9 @@ function titty() {
             trans = true;
             window.requestAnimationFrame(main);
         }
-        ctx.drawImage(butt, 0, 0, 490, 180, 30, 368, 216, 80)
+        ctx.drawImage(butt, 0, 0, 490, 180, 30, 368, 216, 80);
     } else {
-        ctx.drawImage(butt, 0, 0, 490, 180, 30, 372, 216, 72)
+        ctx.drawImage(butt, 0, 0, 490, 180, 30, 372, 216, 72);
     }
     if (AABB(mouseX, mouseY, 1, 1, 40, 444, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
@@ -2421,9 +2631,9 @@ function titty() {
             trans = true;
             window.requestAnimationFrame(multiPG);
         }
-        ctx.drawImage(butt, 0, 180, 490, 180, 40, 440, 196, 80)
+        ctx.drawImage(butt, 0, 180, 490, 180, 40, 440, 196, 80);
     } else {
-        ctx.drawImage(butt, 0, 180, 490, 180, 40, 444, 196, 72)
+        ctx.drawImage(butt, 0, 180, 490, 180, 40, 444, 196, 72);
     }
     if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
@@ -2432,9 +2642,9 @@ function titty() {
             trans = true;
             window.requestAnimationFrame(imgSelec);
         }
-        ctx.drawImage(butt, 0, 540, 490, 180, 276, 440, 196, 80)
+        ctx.drawImage(butt, 0, 540, 490, 180, 276, 440, 196, 80);
     } else {
-        ctx.drawImage(butt, 0, 540, 490, 180, 276, 444, 196, 72)
+        ctx.drawImage(butt, 0, 540, 490, 180, 276, 444, 196, 72);
     }
     if (AABB(mouseX, mouseY, 1, 1, 276, 372, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
@@ -2443,9 +2653,9 @@ function titty() {
             trans = true;
             window.requestAnimationFrame(shop);
         }
-        ctx.drawImage(butt, 0, 360, 490, 180, 276, 368, 196, 80)
+        ctx.drawImage(butt, 0, 360, 490, 180, 276, 368, 196, 80);
     } else {
-        ctx.drawImage(butt, 0, 360, 490, 180, 276, 372, 196, 72)
+        ctx.drawImage(butt, 0, 360, 490, 180, 276, 372, 196, 72);
     }
     if (!trans) {
         window.requestAnimationFrame(titty);
