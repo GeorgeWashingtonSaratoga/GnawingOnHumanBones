@@ -701,7 +701,9 @@ function multi() {
     theme.play();
     ferment();
     aerobic();
-    drawBar();
+    if (fortniting == true) {
+      drawBar();
+    }
     if (!trans) {
         window.requestAnimationFrame(multi);
     }
