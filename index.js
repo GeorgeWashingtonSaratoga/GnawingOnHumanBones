@@ -261,12 +261,10 @@ function updater() {
 
     // left-right motion
     if (keys[39] || keys[68]) {
-        console.log(gunShoot);
         player.vel.x += acceleration.x;
         gunShoot = "right";
     }
     if (keys[37] || keys[65]) {
-        console.log(gunShoot);
         player.vel.x -= acceleration.x;
         gunShoot = "left";
     }
@@ -625,7 +623,7 @@ function drawBar(){
       ctx.closePath();
       
       ctx.beginPath();
-      var width = 100 * player.health / 100;
+      var width = 100 * playerHP[playerID] / 100;
       ctx.rect(412, 492, width, 20);
       ctx.fillStyle = "green";
       ctx.fill();
@@ -636,7 +634,6 @@ function init2electricboogaloo() {
 
     if (fortniting == true) {
         allPlayersRef = ref(database, `battle`);
-        player.health = 100;
     } else {
         if (fortniting == false)
             allPlayersRef = ref(database, `multi`);
@@ -714,18 +711,21 @@ var bulletMoving = false;
 function bulletGo() {
     bullet.pos.x = player.pos.x;
     bullet.pos.y = player.pos.y;
-    bulletMoving = true;
     for (var key in gamePlayers) {
-        if ([key] != playerID) {
-        if (bullet.pos.x == gamePlayers[key].pos.x && bullet.pos.y <= gamePlayers[key].pos.y + 5 && bullet.pos.y >= gamePlayers[key].pos.y - 5) { 
+        if (bullet.pos.x >= gamePlayers[key].pos.x - 32 && bullet.pos.x <= gamePlayers[key].pos.x + 32 && bullet.pos.y <= gamePlayers[key].pos.y + 32 && bullet.pos.y >= gamePlayers[key].pos.y - 32) { 
+            if (key != playerID) {
+                bullet.pos.x = 528;
                 console.log("hooray");
                 playerHP[key] -= 10;
-                console.log(playerHP[key]);
+               
             } else {
-                console.log("wrong pos");
+                console.log("no hit");
             }
         } else {
+            console.log("going")
         }
+        console.log(playerHP[key]);
+        console.log(gamePlayers[key])
     }
 }
 
@@ -752,13 +752,7 @@ function ferment() {
     child.vel.y += (gravity / 4);
     token.vel.y += (gravity / 4);
     if (bulletMoving == true) {
-        if (gunShoot == "right") {
-        bullet.vel.x = 20;
-        } else {
-            if (gunShoot == "left") {
-                bullet.vel.x = 20;
-            }
-        }
+    bullet.vel.x = 20;
     } else {
         bullet.vel.x = 0;
     }
@@ -785,10 +779,9 @@ function ferment() {
     bone.pos.add(bone.vel);
     child.pos.add(child.vel);
     token.pos.add(token.vel);
-    if (bullet.pos.x <= 512 && bullet.pos.x >= 0) {
-    bullet.pos.add(bullet.vel);
+    if (bullet.pos.x <= 463 && bullet.pos.x >= 0) {
+        bullet.pos.add(bullet.vel);
     } else {
-        bullet.pos.x = player.pos.x;
     }
 
     // clamp position
@@ -1617,17 +1610,22 @@ function aerobic() {
             alert("YOU DIED IDIOT");
         }
 
-        if (keys[70] == true && bulletMoving == false && bullet.pos.x == player.pos.x || bulletMoving == true) {
-            if (gameBullet.pos.x <= 512 && gameBullet.pos.x >= 0) {
-                bulletGo();
-                console.log(bulletMoving);
-            }
-            if (gameBullet.pos.x >= 512 && gameBullet.pos.x <= 0) {
-                bullet.pos.x = player.pos.x;
-                bulletMoving = false;
+        if (bulletMoving == true && bullet.pos.x >= 463 || bullet.pos.x <= 0) {
+            bulletMoving = false;
+        }
+
+        if (keys[70] == true && bulletMoving == false && bullet.pos.x == 528) {
+            bullet.pos.x = player.pos.x;
+            bulletMoving = true;
+            if (bullet.pos.x <= 463 && bullet.pos.x >= 0 && bulletMoving == true) {
+                bulletGo(); 
             }
         } else {
+            if (bullet.pos.x != 528 && bulletMoving == false) {
             bullet.pos.x = 528;
+            bulletMoving = false;
+            } else {
+            }
         }
     }
 
@@ -2769,8 +2767,10 @@ function multiPG() {
             ctx.drawImage(butt, 0, 1260, 490, 180, 200, 0, 176, 72);
             trans = true;
             fortniting = true;
+            bulletMoving = false;
             if (playerRef == ref(database, `multi/${playerID}`)) {
                 playerRef = ref(database, `battle/${playerID}`);
+                playerHP[playerID] = 100;
             }
             window.requestAnimationFrame(multiInit);
         }
