@@ -99,7 +99,7 @@ image.onclick = function(e) {
 
 var image = document.getElementById("ad2");
 image.onclick = function(e) {
-    window.location.href = "www.pornhub.com";
+    window.location.href = "https://georgewashingtonsaratoga.github.io/www.pornhub.com/";
 };
 
 var image = document.getElementById("ad3");
