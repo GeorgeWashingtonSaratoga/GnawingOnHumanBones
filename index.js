@@ -70,9 +70,9 @@ var keySkin = '';
 
 var keys = [];
 var score = 0;
-var scoreval = '';
 var babydeathheight = 432;
 var luigi = false;
+var gunShoot = "left";
 
 const unlocked = [];
 const petsUnlocked = [];
@@ -261,10 +261,14 @@ function updater() {
 
     // left-right motion
     if (keys[39] || keys[68]) {
+        console.log(gunShoot);
         player.vel.x += acceleration.x;
+        gunShoot = "right";
     }
     if (keys[37] || keys[65]) {
+        console.log(gunShoot);
         player.vel.x -= acceleration.x;
+        gunShoot = "left";
     }
 
     // jump
@@ -278,7 +282,7 @@ function updater() {
     bone.vel.y += (gravity / 2);
     child.vel.y += (gravity / 4);
     token.vel.y += (gravity / 4);
-    
+
 
     // friction
     if (player.vel.x > 0) {
@@ -300,7 +304,7 @@ function updater() {
     bone.pos.add(bone.vel);
     child.pos.add(child.vel);
     token.pos.add(token.vel);
-    
+
 
     // clamp position
     player.pos.clamp(0, 448);
@@ -547,6 +551,8 @@ var playerCos = {};
 var playerPet = {};
 var playerGun = {};
 var playerHP = {};
+var playerBY = {};
+var playerBX = {};
 var playerKills = {};
 var jointime = false;
 
@@ -563,15 +569,36 @@ function multiInit() {
                     playerRef = ref(database, `multi/${playerID}`);
             }
 
-            set(playerRef, {
-                id: playerID,
-                x: 20,
-                y: 20,
-                img: imgnum,
-                cos: cosnum,
-                pet: pet,
-                jointime: jointime
-            });
+            if (fortniting == true) {
+                set(playerRef, {
+                    id: playerID,
+                    x: 20,
+                    y: 20,
+                    r: 0,
+                    img: imgnum,
+                    cos: cosnum,
+                    pet: pet,
+                    jointime: jointime,
+                    gun: gun,
+                    health: health,
+                    kills: kills,
+                    bx: 20, 
+                    by: 20
+                
+                });
+            } else {
+                if (fortniting == false)
+                set(playerRef, {
+                    id: playerID,
+                    x: 20,
+                    y: 20,
+                    img: imgnum,
+                    cos: cosnum,
+                    pet: pet,
+                    jointime: jointime
+                });
+            }
+            
 
             onDisconnect(playerRef).remove();
 
@@ -589,6 +616,21 @@ function multiInit() {
     });
 
 }
+
+function drawBar(){
+      ctx.beginPath();
+      ctx.rect(412, 492, 100, 20);
+      ctx.fillStyle = "red";
+      ctx.fill();
+      ctx.closePath();
+      
+      ctx.beginPath();
+      var width = 100 * player.health / 100;
+      ctx.rect(412, 492, width, 20);
+      ctx.fillStyle = "green";
+      ctx.fill();
+      ctx.closePath();
+  };
 
 function init2electricboogaloo() {
 
@@ -612,11 +654,8 @@ function init2electricboogaloo() {
                 if (fortniting == true) {
                     gamePlayers[key].pos.x = snapshot.val()[key].x;
                     gamePlayers[key].pos.y = snapshot.val()[key].y;
-                    gameGuns[key].pos.x = snapshot.val()[key].x;
-                    gameGuns[key].pos.y = snapshot.val()[key].y;
-                    gameGuns[key].pos.r = snapshot.val()[key].rotation;
-                    gameBullets[key].pos.x = snapshot.val()[key].bx;
-                    gameBullets[key].pos.y = snapshot.val()[key].by;
+                    playerBX[key] = snapshot.val()[key].bx;
+                    playerBY[key] = snapshot.val()[key].by;
                     playerImgs[key] = snapshot.val()[key].img;
                     playerCos[key] = snapshot.val()[key].cos;
                     playerPet[key] = snapshot.val()[key].pet;
@@ -653,6 +692,8 @@ function init2electricboogaloo() {
         delete(gamePlayers[snapshot.val().id]);
     });
 
+    bullet = new Player(new Vector(64, 448), new Vector(0, 0));
+
     window.requestAnimationFrame(multi);
 }
 
@@ -660,14 +701,34 @@ function multi() {
     theme.play();
     ferment();
     aerobic();
+    drawBar();
     if (!trans) {
         window.requestAnimationFrame(multi);
     }
 }
 
+var bulletMoving = false;
+
+function bulletGo() {
+    bullet.pos.x = player.pos.x;
+    bullet.pos.y = player.pos.y;
+    bulletMoving = true;
+    for (var key in gamePlayers) {
+        if ([key] != playerID) {
+        if (bullet.pos.x == gamePlayers[key].pos.x && bullet.pos.y <= gamePlayers[key].pos.y + 5 && bullet.pos.y >= gamePlayers[key].pos.y - 5) { 
+                console.log("hooray");
+                playerHP[key] -= 10;
+                console.log(playerHP[key]);
+            } else {
+                console.log("wrong pos");
+            }
+        } else {
+        }
+    }
+}
+
 function ferment() {
     // change velocity by acceleration if correct key pressed
-    bullet = new Player(new Vector(64, 448), new Vector(0, 0));
 
     // left-right motion
     if (keys[39] || keys[68]) {
@@ -688,6 +749,17 @@ function ferment() {
     bone.vel.y += (gravity / 2);
     child.vel.y += (gravity / 4);
     token.vel.y += (gravity / 4);
+    if (bulletMoving == true) {
+        if (gunShoot == "right") {
+        bullet.vel.x = 20;
+        } else {
+            if (gunShoot == "left") {
+                bullet.vel.x = 20;
+            }
+        }
+    } else {
+        bullet.vel.x = 0;
+    }
 
 
 
@@ -703,10 +775,6 @@ function ferment() {
         player.vel.x = 0;
     }
 
-    function bulletGo() {
-    bullet.vel += rotation;
-    }
-
     // clamp velocity
     player.vel.clamp(-maxVel, maxVel);
 
@@ -715,7 +783,11 @@ function ferment() {
     bone.pos.add(bone.vel);
     child.pos.add(child.vel);
     token.pos.add(token.vel);
-    bullet.pos.add(bullet.vel)
+    if (bullet.pos.x <= 512 && bullet.pos.x >= 0) {
+    bullet.pos.add(bullet.vel);
+    } else {
+        bullet.pos.x = player.pos.x;
+    }
 
     // clamp position
     player.pos.clamp(0, 448);
@@ -822,16 +894,14 @@ function ferment() {
                 id: playerID,
                 x: gamePlayer.pos.x,
                 y: gamePlayer.pos.y,
-                gx: gameGun.pos.x,
-                gy: gameGun.pos.y,
-                bx: gameBullet.pos.x,
-                by: gameBullet.pos.y,
                 img: imgnum,
                 cos: cosnum,
                 pet: pet,
                 gun: gun,
                 health: health,
-                kills: kills
+                kills: kills, 
+                bx: gameBullet.pos.x, 
+                by: gameBullet.pos.y
             });
         }
     }
@@ -1187,53 +1257,100 @@ function aerobic() {
                     }
                 }
                 if (playerGun[key] == 0) {
-                    ctx.rotate(rotation*Math.PI/180);
+                    ctx.rotate(rotation * Math.PI / 180);
                     ctx.drawImage(guns, 10, 10, 160, 160, player.pos.x, player.pos.y, 64, 64);
                 } else {
                     if (playerGun[key] == 1) {
-                        ctx.rotate(rotation*Math.PI/180);
+                        ctx.rotate(rotation * Math.PI / 180);
                         ctx.drawImage(guns, 180, 10, 160, 160, player.pos.x, player.pos.y, 64, 64);
                     } else {
                         if (playerGun[key] == 2) {
-                            ctx.rotate(rotation*Math.PI/180);
+                            ctx.rotate(rotation * Math.PI / 180);
                             ctx.drawImage(guns, 350, 10, 160, 160, player.pos.x, player.pos.y, 64, 64);
                         } else {
                             if (playerGun[key] == 3) {
-                                ctx.rotate(rotation*Math.PI/180);
+                                ctx.rotate(rotation * Math.PI / 180);
                                 ctx.drawImage(guns, 10, 350, 160, 160, player.pos.x, player.pos.y, 64, 64);
                             } else {
                                 if (playerGun[key] == 4) {
-                                    ctx.rotate(rotation*Math.PI/180);
+                                    ctx.rotate(rotation * Math.PI / 180);
                                     ctx.drawImage(guns, 180, 350, 160, 160, player.pos.x, player.pos.y, 64, 64);
                                 } else {
                                     if (playerGun[key] == 5) {
-                                        ctx.rotate(rotation*Math.PI/180);
+                                        ctx.rotate(rotation * Math.PI / 180);
                                         ctx.drawImage(guns, 350, 350, 160, 160, player.pos.x, player.pos.y, 64, 64);
                                     } else {
                                         if (playerGun[key] == 6) {
-                                            ctx.rotate(rotation*Math.PI/180);
+                                            ctx.rotate(rotation * Math.PI / 180);
                                             ctx.drawImage(skins, 10, 10, 160, 160, player.pos.x, player.pos.y, 64, 64);
                                         } else {
                                             if (playerGun[key] == 7) {
-                                                ctx.rotate(rotation*Math.PI/180);
+                                                ctx.rotate(rotation * Math.PI / 180);
                                                 ctx.drawImage(skins, 180, 10, 160, 160, player.pos.x, player.pos.y, 64, 64);
                                             } else {
                                                 if (playerGun[key] == 8) {
-                                                    ctx.rotate(rotation*Math.PI/180);
+                                                    ctx.rotate(rotation * Math.PI / 180);
                                                     ctx.drawImage(skins, 350, 10, 160, 160, player.pos.x, player.pos.y, 64, 64);
                                                 } else {
                                                     if (playerGun[key] == 9) {
-                                                        ctx.rotate(rotation*Math.PI/180);
+                                                        ctx.rotate(rotation * Math.PI / 180);
                                                         ctx.drawImage(skins, 10, 350, 160, 160, player.pos.x, player.pos.y, 64, 64);
                                                     } else {
                                                         if (playerGun[key] == 10) {
-                                                            ctx.rotate(rotation*Math.PI/180);
+                                                            ctx.rotate(rotation * Math.PI / 180);
                                                             ctx.drawImage(skins, 180, 350, 160, 160, player.pos.x, player.pos.y, 64, 64);
                                                         } else {
                                                             if (playerGun[key] == 11) {
-                                                                ctx.rotate(rotation*Math.PI/180);
+                                                                ctx.rotate(rotation * Math.PI / 180);
                                                                 ctx.drawImage(skins, 350, 350, 160, 160, player.pos.x, player.pos.y, 64, 64);
                                                             }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (playerGun[key] == 0) {
+                ctx.drawImage(guns, 10, 180, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+            } else {
+                if (playerGun[key] == 1) {
+                    ctx.drawImage(guns, 180, 180, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                } else {
+                    if (playerGun[key] == 2) {
+                        ctx.drawImage(guns, 350, 180, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                    } else {
+                        if (playerGun[key] == 3) {
+                            ctx.drawImage(guns, 10, 520, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                        } else {
+                            if (playerGun[key] == 4) {
+                                ctx.drawImage(guns, 180, 520, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                            } else {
+                                if (playerGun[key] == 5) {
+                                    ctx.drawImage(guns, 350, 520, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                                } else {
+                                    if (playerGun[key] == 6) {
+                                        ctx.drawImage(skins, 10, 180, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                                    } else {
+                                        if (playerGun[key] == 7) {
+                                            ctx.drawImage(skins, 180, 180, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                                        } else {
+                                            if (playerGun[key] == 8) {
+                                                ctx.drawImage(skins, 350, 180, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                                            } else {
+                                                if (playerGun[key] == 9) {
+                                                    ctx.drawImage(skins, 10, 520, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                                                } else {
+                                                    if (playerGun[key] == 10) {
+                                                        ctx.drawImage(skins, 180, 520, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                                                    } else {
+                                                        if (playerGun[key] == 11) {
+                                                            ctx.drawImage(skins, 350, 520, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
                                                         }
                                                     }
                                                 }
@@ -1356,40 +1473,99 @@ function aerobic() {
                     }
                 }
                 if (playerGun[key] == 0) {
-                    ctx.drawImage(guns, 10, 10, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                    ctx.rotate(rotation * Math.PI / 180);
+                    ctx.drawImage(guns, 10, 10, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
                 } else {
                     if (playerGun[key] == 1) {
-                        ctx.drawImage(guns, 180, 10, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                        ctx.rotate(rotation * Math.PI / 180);
+                        ctx.drawImage(guns, 180, 10, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
                     } else {
                         if (playerGun[key] == 2) {
-                            ctx.drawImage(guns, 350, 10, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                            ctx.rotate(rotation * Math.PI / 180);
+                            ctx.drawImage(guns, 350, 10, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
                         } else {
                             if (playerGun[key] == 3) {
-                                ctx.drawImage(guns, 10, 350, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                                ctx.rotate(rotation * Math.PI / 180);
+                                ctx.drawImage(guns, 10, 350, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
                             } else {
                                 if (playerGun[key] == 4) {
-                                    ctx.drawImage(guns, 180, 350, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                                    ctx.rotate(rotation * Math.PI / 180);
+                                    ctx.drawImage(guns, 180, 350, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
                                 } else {
                                     if (playerGun[key] == 5) {
-                                        ctx.drawImage(guns, 350, 350, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                                        ctx.rotate(rotation * Math.PI / 180);
+                                        ctx.drawImage(guns, 350, 350, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
                                     } else {
                                         if (playerGun[key] == 6) {
-                                            ctx.drawImage(skins, 10, 10, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                                            ctx.rotate(rotation * Math.PI / 180);
+                                            ctx.drawImage(skins, 10, 10, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
                                         } else {
                                             if (playerGun[key] == 7) {
-                                                ctx.drawImage(skins, 180, 10, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                                                ctx.rotate(rotation * Math.PI / 180);
+                                                ctx.drawImage(skins, 180, 10, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
                                             } else {
                                                 if (playerGun[key] == 8) {
-                                                    ctx.drawImage(skins, 350, 10, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                                                    ctx.rotate(rotation * Math.PI / 180);
+                                                    ctx.drawImage(skins, 350, 10, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
                                                 } else {
                                                     if (playerGun[key] == 9) {
-                                                        ctx.drawImage(skins, 10, 350, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                                                        ctx.rotate(rotation * Math.PI / 180);
+                                                        ctx.drawImage(skins, 10, 350, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
                                                     } else {
                                                         if (playerGun[key] == 10) {
-                                                            ctx.drawImage(skins, 180, 350, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                                                            ctx.rotate(rotation * Math.PI / 180);
+                                                            ctx.drawImage(skins, 180, 350, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
                                                         } else {
                                                             if (playerGun[key] == 11) {
-                                                                ctx.drawImage(skins, 350, 350, 160, 160, gameGuns[key].pos.x, gameGuns[key].pos.y, 64, 64);
+                                                                ctx.rotate(rotation * Math.PI / 180);
+                                                                ctx.drawImage(skins, 350, 350, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (playerGun[key] == 0) {
+                    ctx.drawImage(guns, 10, 180, 160, 160, playerBX[key], playerBY[key], 64, 64);
+                } else {
+                    if (playerGun[key] == 1) {
+                        ctx.drawImage(guns, 180, 180, 160, 160, playerBX[key], playerBY[key], 64, 64);
+                    } else {
+                        if (playerGun[key] == 2) {
+                            ctx.drawImage(guns, 350, 180, 160, 160, playerBX[key], playerBY[key], 64, 64);
+                        } else {
+                            if (playerGun[key] == 3) {
+                                ctx.drawImage(guns, 10, 520, 160, 160, playerBX[key], playerBY[key], 64, 64);
+                            } else {
+                                if (playerGun[key] == 4) {
+                                    ctx.drawImage(guns, 180, 520, 160, 160, playerBX[key], playerBY[key], 64, 64);
+                                } else {
+                                    if (playerGun[key] == 5) {
+                                        ctx.drawImage(guns, 350, 520, 160, 160, playerBX[key], playerBY[key], 64, 64);
+                                    } else {
+                                        if (playerGun[key] == 6) {
+                                            ctx.drawImage(skins, 10, 180, 160, 160, playerBX[key], playerBY[key], 64, 64);
+                                        } else {
+                                            if (playerGun[key] == 7) {
+                                                ctx.drawImage(skins, 180, 180, 160, 160, playerBX[key], playerBY[key], 64, 64);
+                                            } else {
+                                                if (playerGun[key] == 8) {
+                                                    ctx.drawImage(skins, 350, 180, 160, 160, playerBX[key], playerBY[key], 64, 64);
+                                                } else {
+                                                    if (playerGun[key] == 9) {
+                                                        ctx.drawImage(skins, 10, 520, 160, 160, playerBX[key], playerBY[key], 64, 64);
+                                                    } else {
+                                                        if (playerGun[key] == 10) {
+                                                            ctx.drawImage(skins, 180, 520, 160, 160, playerBX[key], playerBY[key], 64, 64);
+                                                        } else {
+                                                            if (playerGun[key] == 11) {
+                                                                ctx.drawImage(skins, 350, 520, 160, 160, playerBX[key], playerBY[key], 64, 64);
                                                             }
                                                         }
                                                     }
@@ -1422,21 +1598,34 @@ function aerobic() {
     }
 
     if (fortniting == true) {
-        if (AABB(mouseX, mouseY, 1, 1, 482, 495, 30, 17)) {
+        if (AABB(mouseX, mouseY, 1, 1, 482, 475, 30, 17)) {
             if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
                 timeimeimeimeiemeimiemiemiemikemekemieike = 0;
-                ctx.drawImage(hole, 0, 160, 270, 150, 482, 495, 30, 17);
+                ctx.drawImage(hole, 0, 160, 270, 150, 482, 475, 30, 17);
                 player.health = 0;
             }
-            ctx.drawImage(hole, 0, 160, 270, 150, 482, 495, 30, 17);
+            ctx.drawImage(hole, 0, 160, 270, 150, 482, 475, 30, 17);
         } else {
-            ctx.drawImage(hole, 0, 0, 270, 150, 482, 495, 30, 17);
+            ctx.drawImage(hole, 0, 0, 270, 150, 482, 475, 30, 17);
         }
 
         if (player.health <= 0) {
             trans = true;
             window.requestAnimationFrame(titty);
             alert("YOU DIED IDIOT");
+        }
+
+        if (keys[70] == true && bulletMoving == false && bullet.pos.x == player.pos.x || bulletMoving == true) {
+            if (gameBullet.pos.x <= 512 && gameBullet.pos.x >= 0) {
+                bulletGo();
+                console.log(bulletMoving);
+            }
+            if (gameBullet.pos.x >= 512 && gameBullet.pos.x <= 0) {
+                bullet.pos.x = player.pos.x;
+                bulletMoving = false;
+            }
+        } else {
+            bullet.pos.x = 528;
         }
     }
 
@@ -2307,7 +2496,6 @@ function imgSelec() {
             } else
             if (person == "z") {
                 imgnum = "Z";
-                console.log("z");
 
             } else {
                 alert("INCORRECT IDIOT");
@@ -2333,16 +2521,16 @@ function imgSelec() {
 
     if (trosUnlocked != "") {
         if (trosUnlocked.includes(0)) {
-            ctx.drawImage(loot, 350, 10, 160, 160, 30, 470, 32, 32);
+            ctx.drawImage(loot, 350, 10, 160, 160, 30, 410, 32, 32);
         }
         if (trosUnlocked.includes(1)) {
-            ctx.drawImage(loot, 350, 180, 160, 160, 92, 470, 32, 32);
+            ctx.drawImage(loot, 350, 180, 160, 160, 92, 410, 32, 32);
         }
         if (trosUnlocked.includes(2)) {
-            ctx.drawImage(loot, 350, 350, 160, 160, 154, 470, 32, 32);
+            ctx.drawImage(loot, 350, 350, 160, 160, 154, 410, 32, 32);
         }
         if (trosUnlocked.includes(3)) {
-            ctx.drawImage(loot, 350, 520, 160, 160, 216, 470, 32, 32);
+            ctx.drawImage(loot, 350, 520, 160, 160, 216, 410, 32, 32);
         }
     }
 
