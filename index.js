@@ -1261,7 +1261,7 @@ function aerobic() {
                                                                         ctx.drawImage(devSkin, 0, 0, 160, 160, player.pos.x, player.pos.y, 64, 64);
                                                                     } else
                                                                     if (playerImgs[key] == "Z") {
-                                                                        ctx.drawImage(z, 0, 0, 160, 160, player.pos.x, player.pos.y, 64, 64);
+                                                                        ctx.drawImage(z, 0, 0, 320, 320, player.pos.x, player.pos.y, 64, 64);
                                                                     } else {
                                                                         ctx.drawImage(spirtImg, 700, 700, 320, 320, player.pos.x, player.pos.y, 64, 64);
                                                                     }
@@ -1477,7 +1477,7 @@ function aerobic() {
                                                                         ctx.drawImage(devSkin, 0, 0, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
                                                                     } else
                                                                     if (playerImgs[key] == "Z") {
-                                                                        ctx.drawImage(z, 0, 0, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
+                                                                        ctx.drawImage(z, 0, 0, 320, 320, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
                                                                     } else {
                                                                         ctx.drawImage(spirtImg, 700, 700, 320, 320, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
                                                                     }
