@@ -16,7 +16,8 @@ import {
     onValue,
     onChildAdded,
     onChildRemoved,
-    goOffline
+    goOffline,
+    goOnline
 } from "https://www.gstatic.com/firebasejs/9.17.0/firebase-database.js";
 
 // import { query, limitToLast } from "firebase/database";
@@ -73,6 +74,9 @@ var succ = document.getElementById('succ');
 
 var cosmetic = false;
 var keySkin = '';
+
+
+var buttox = false;
 
 var keys = [];
 var score = 0;
@@ -793,10 +797,18 @@ function multi() {
     aerobic();
     if (fortniting == true) {
       drawBar();
+      drawKills();
     }
     if (!trans) {
         window.requestAnimationFrame(multi);
     }
+}
+
+function drawKills() {
+    ctx.beginPath();
+    ctx.font = "24px Arial";
+    ctx.fillStyle = "#0095DD";
+    ctx.fillText(`Kills: ${kills}`, 8, 40);
 }
 
 var bulletMoving = false;
@@ -811,9 +823,15 @@ function ferment() {
 
     // left-right motion
     if (keys[39] || keys[68]) {
+        if (bulletMoving == false) {
+            buttox = false; 
+        }
         player.vel.x += acceleration.x;
     }
     if (keys[37] || keys[65]) {
+        if (bulletMoving == false) {
+            buttox = true; 
+        }
         player.vel.x -= acceleration.x;
     }
 
@@ -829,7 +847,12 @@ function ferment() {
     child.vel.y += (gravity / 4);
     token.vel.y += (gravity / 4);
     if (bulletMoving == true) {
-    bullet.vel.x = 20;
+        if (buttox == false)
+            bullet.vel.x = 20;
+            else {
+                if (buttox == true)
+                bullet.vel.x = -20;
+            }
     } else {
         bullet.vel.x = 0;
     }
@@ -965,7 +988,7 @@ function ferment() {
                 id: playerID,
                 x: gamePlayer.pos.x,
                 y: gamePlayer.pos.y,
-                img: imgnum,
+                //img: imgnum,
                 cos: cosnum,
                 pet: pet,
                 gun: gun,
@@ -1327,6 +1350,7 @@ function aerobic() {
                         }
                     }
                 }
+                if (fortniting == true) {
                 if (playerGun[key] == 0) {
                     ctx.rotate(rotation * Math.PI / 180);
                     ctx.drawImage(guns, 10, 10, 160, 160, player.pos.x, player.pos.y, 64, 64);
@@ -1387,6 +1411,8 @@ function aerobic() {
                     }
                 }
             }
+            }
+            if (fortniting == true) {
             if (playerGun[key] == 0) {
                 ctx.drawImage(guns, 10, 180, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
             } else {
@@ -1434,6 +1460,7 @@ function aerobic() {
                     }
                 }
             }
+        }
 
             if (key != playerID) {
                 if (playerImgs[key] == 4) {
@@ -1656,11 +1683,14 @@ function aerobic() {
         drawScore();
     }
 
+    
+
     if (AABB(mouseX, mouseY, 1, 1, 316, 4, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
             ctx.drawImage(butt, 0, 720, 490, 180, 316, 4, 176, 72);
             trans = true;
+            goOffline(database);
             window.requestAnimationFrame(titty);
         }
         ctx.drawImage(butt, 0, 720, 490, 180, 316, 0, 196, 80);
@@ -1684,7 +1714,7 @@ function aerobic() {
             trans = true;
             window.requestAnimationFrame(titty);
             alert("YOU DIED IDIOT");
-            goOffline(database)
+            goOffline(database);
             player.health = 100;
         }
 
@@ -1709,14 +1739,15 @@ function aerobic() {
             for (var key in gamePlayers) {
                 if (bullet.pos.x >= gamePlayers[key].pos.x - 32 && bullet.pos.x <=  gamePlayers[key].pos.x + 32 && bullet.pos.y <= gamePlayers[key].pos.y + 32 && bullet.pos.y >= gamePlayers[key].pos.y - 32 && timeimeimeimeiemeimiemiemiemikemekemieike >= 20) { 
                     if (key != playerID) {
-                        console.log(playerID);
-                        console.log(key);
                         var mewhen = ref(database, `battle/${key}`);
-                        console.log(mewhen);
                         bullet.pos.x = 528;
                         console.log("hooray");
                         var newheath = gameHealths[key] - 10;
-                        console.log(newheath);
+                        if (newheath == 0) {
+                            update (playerRef, {
+                                kills: kills += 1
+                            })
+                        }
                         if (gun == 0 || gun == 1 || gun == 2 || gun == 3 || gun == 6 || gun == 7 || gun == 8 || gun == 9) {
                         update(mewhen, {
                             health: newheath
@@ -1741,20 +1772,17 @@ function aerobic() {
                             trans = true;
                             window.requestAnimationFrame(titty);
                             alert("YOU DIED IDIOT");
-                            goOffline(database)
+                            goOffline(database);
                             health = 100;
                         }
-                        console.log(health)
-                        console.log(key);
                         timeimeimeimeiemeimiemiemiemikemekemieike = 0;
-                        console.log(newheath);
                     } else {
                     }
                 } else {
                 }
             }
         }
-    }
+    } 
 
 }
 
@@ -2878,9 +2906,11 @@ function multiPG() {
             ctx.drawImage(butt, 0, 1440, 490, 180, 0, 0, 176, 72);
             trans = true;
             fortniting = false;
+            goOnline(database);
             if (playerRef == ref(database, `battle/${playerID}`)) {
                 playerRef = ref(database, `multi/${playerID}`);
             }
+            bullet.pos.x = 528;
             console.log(fortniting)
             window.requestAnimationFrame(multiInit);
         }
@@ -2896,6 +2926,7 @@ function multiPG() {
             trans = true;
             fortniting = true;
             bulletMoving = false;
+            goOnline(database);
             if (playerRef == ref(database, `multi/${playerID}`)) {
                 playerRef = ref(database, `battle/${playerID}`);
                 enemyRef[key] = ref(database, `battle/${key}`);
