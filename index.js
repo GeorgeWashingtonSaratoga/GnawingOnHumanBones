@@ -15,8 +15,14 @@ import {
     onDisconnect,
     onValue,
     onChildAdded,
-    onChildRemoved
+    onChildRemoved,
+    goOffline
 } from "https://www.gstatic.com/firebasejs/9.17.0/firebase-database.js";
+
+// import { query, limitToLast } from "firebase/database";
+
+// const db = getDatabase();
+// const battleCritterRef = query(ref(db, 'battle'), orderByChild(key), limitToLast(1));
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -262,11 +268,9 @@ function updater() {
     // left-right motion
     if (keys[39] || keys[68]) {
         player.vel.x += acceleration.x;
-        gunShoot = "right";
     }
     if (keys[37] || keys[65]) {
         player.vel.x -= acceleration.x;
-        gunShoot = "left";
     }
 
     // jump
@@ -385,6 +389,58 @@ function updater() {
     }
 }
 
+function updaterLeg() {
+    // change velocity by acceleration if correct key pressed
+
+    // left-right motion
+    if (keys[39] || keys[68]) {
+        player.vel.x += acceleration.x;
+    }
+    if (keys[37] || keys[65]) {
+        player.vel.x -= acceleration.x;
+    }
+
+    // jump
+    if ((keys[38] || keys[87]) && onGround) {
+        player.vel.y = -acceleration.y;
+        onGround = false;
+    }
+
+    // gravity
+    player.vel.y += gravity;
+
+    // friction
+    if (player.vel.x > 0) {
+        player.vel.x -= friction;
+    }
+    if (player.vel.x < 0) {
+        player.vel.x += friction;
+    }
+
+    if (Math.abs(player.vel.x) < friction + error) {
+        player.vel.x = 0;
+    }
+
+    // clamp velocity
+    player.vel.clamp(-maxVel, maxVel);
+
+    // change position by velocity
+    player.pos.add(player.vel);
+ 
+
+
+    // clamp position
+    player.pos.clamp(0, 448);
+
+    if (player.pos.y == 448) {
+        onGround = true;
+    }
+
+
+
+    friction = 0.9;
+}
+
 function AABB(x1, y1, w1, h1, x2, y2, w2, h2) {
     if ((x1 >= x2 && x1 <= x2 + w2 && y1 >= y2 && y1 <= y2 + h2) ||
         (x1 + w1 >= x2 && x1 + w1 <= x2 + w2 && y1 >= y2 && y1 <= y2 + h2) ||
@@ -482,6 +538,27 @@ function draw() {
 
 }
 
+function drawLeg() {
+    trans = true;
+    // draw background
+    ctx.drawImage(spirtImg, 700, 20, 650, 650, 0, 0, 512, 512);
+    // draw player
+
+    ctx.drawImage(legacyP, 0, 0, 320, 320, player.pos.x, player.pos.y, 64, 64);
+
+    if (AABB(mouseX, mouseY, 1, 1, 316, 4, 196, 72)) {
+        if (mouseDown) {
+            timeimeimeimeiemeimiemiemiemikemekemieike = 0;
+            ctx.drawImage(butt, 0, 720, 490, 180, 316, 4, 176, 72);
+            trans = false;
+            window.requestAnimationFrame(titty);
+        }
+        ctx.drawImage(butt, 0, 720, 490, 180, 316, 0, 196, 80);
+    } else {
+        ctx.drawImage(butt, 0, 720, 490, 180, 316, 4, 196, 72);
+    }
+}
+
 function drawScore() {
     ctx.beginPath();
     ctx.font = "24px Arial";
@@ -501,6 +578,16 @@ function main() {
         window.requestAnimationFrame(win);
     }
 
+}
+
+function legacy(){
+    updaterLeg();
+    drawLeg(); 
+    if (trans == false) {
+        window.requestAnimationFrame(titty);
+    } else {
+        window.requestAnimationFrame(legacy);
+    }
 }
 
 function win() {
@@ -543,6 +630,8 @@ var gameGuns = {};
 var gameGun;
 var gameBullets = {};
 var gameBullet;
+
+var gameHealths = {};
 
 var playerImgs = {};
 var playerCos = {};
@@ -659,6 +748,7 @@ function init2electricboogaloo() {
                     playerGun[key] = snapshot.val()[key].gun;
                     playerHP[key] = snapshot.val()[key].health;
                     playerKills[key] = snapshot.val()[key].kills;
+                    gameHealths[key] = snapshot.val()[key].health;
                 }
             }
         }
@@ -673,6 +763,7 @@ function init2electricboogaloo() {
             gamePlayers[addedPlayer.id] = gamePlayer;
             gameGuns[addedPlayer.id] = gameGun;
             gameBullets[addedPlayer.id] = gameBullet;
+            gameHealths[addedPlayer.id] = addedPlayer.health;
             jointime = Date.now();
 
             update(playerRef, {
@@ -711,22 +802,6 @@ var bulletMoving = false;
 function bulletGo() {
     bullet.pos.x = player.pos.x;
     bullet.pos.y = player.pos.y;
-    for (var key in gamePlayers) {
-        if (bullet.pos.x >= gamePlayers[key].pos.x - 32 && bullet.pos.x <= gamePlayers[key].pos.x + 32 && bullet.pos.y <= gamePlayers[key].pos.y + 32 && bullet.pos.y >= gamePlayers[key].pos.y - 32) { 
-            if (key != playerID) {
-                bullet.pos.x = 528;
-                console.log("hooray");
-                playerHP[key] -= 10;
-               
-            } else {
-                console.log("no hit");
-            }
-        } else {
-            console.log("going")
-        }
-        console.log(playerHP[key]);
-        console.log(gamePlayers[key])
-    }
 }
 
 function ferment() {
@@ -882,7 +957,6 @@ function ferment() {
             cos: cosnum,
             pet: pet
         });
-
     } else {
         if (fortniting == true) {
             update(playerRef, {
@@ -893,7 +967,7 @@ function ferment() {
                 cos: cosnum,
                 pet: pet,
                 gun: gun,
-                health: health,
+                // health: health,
                 kills: kills, 
                 bx: gameBullet.pos.x, 
                 by: gameBullet.pos.y
@@ -1604,10 +1678,12 @@ function aerobic() {
             ctx.drawImage(hole, 0, 0, 270, 150, 482, 475, 30, 17);
         }
 
-        if (player.health <= 0) {
+        if (playerHP[playerID] <= 0) {
             trans = true;
             window.requestAnimationFrame(titty);
             alert("YOU DIED IDIOT");
+            goOffline(database)
+            player.health = 100;
         }
 
         if (bulletMoving == true && bullet.pos.x >= 463 || bullet.pos.x <= 0) {
@@ -1625,6 +1701,55 @@ function aerobic() {
             bullet.pos.x = 528;
             bulletMoving = false;
             } else {
+
+            }
+
+            for (var key in gamePlayers) {
+                if (bullet.pos.x >= gamePlayers[key].pos.x - 32 && bullet.pos.x <=  gamePlayers[key].pos.x + 32 && bullet.pos.y <= gamePlayers[key].pos.y + 32 && bullet.pos.y >= gamePlayers[key].pos.y - 32 && timeimeimeimeiemeimiemiemiemikemekemieike >= 20) { 
+                    if (key != playerID) {
+                        console.log(playerID);
+                        console.log(key);
+                        var mewhen = ref(database, `battle/${key}`);
+                        console.log(mewhen);
+                        bullet.pos.x = 528;
+                        console.log("hooray");
+                        var newheath = gameHealths[key] - 10;
+                        console.log(newheath);
+                        if (gun == 0 || gun == 1 || gun == 2 || gun == 3 || gun == 6 || gun == 7 || gun == 8 || gun == 9) {
+                        update(mewhen, {
+                            health: newheath
+                        });
+                        } else {
+                            if (gun == 4 || gun == 10) {
+                                update(mewhen, {
+                                    img: Math.floor(Math.random() * 13),
+                                    health: newheath
+                                });
+                                console.log(playerImgs[playerID]);
+                            } else {
+                                if (gun == 5 || gun == 11) {
+                                    update(mewhen, {
+                                        health: newheath,
+                                        score: score -= 15
+                                    });
+                                }
+                            }
+                        }   
+                        if (playerHP[playerID] <= 0) {
+                            trans = true;
+                            window.requestAnimationFrame(titty);
+                            alert("YOU DIED IDIOT");
+                            goOffline(database)
+                            health = 100;
+                        }
+                        console.log(health)
+                        console.log(key);
+                        timeimeimeimeiemeimiemiemiemikemekemieike = 0;
+                        console.log(newheath);
+                    } else {
+                    }
+                } else {
+                }
             }
         }
     }
@@ -2754,6 +2879,7 @@ function multiPG() {
             if (playerRef == ref(database, `battle/${playerID}`)) {
                 playerRef = ref(database, `multi/${playerID}`);
             }
+            console.log(fortniting)
             window.requestAnimationFrame(multiInit);
         }
         ctx.drawImage(butt, 0, 1440, 490, 180, 0, 4, 196, 80);
@@ -2770,6 +2896,7 @@ function multiPG() {
             bulletMoving = false;
             if (playerRef == ref(database, `multi/${playerID}`)) {
                 playerRef = ref(database, `battle/${playerID}`);
+                enemyRef[key] = ref(database, `battle/${key}`);
                 playerHP[playerID] = 100;
             }
             window.requestAnimationFrame(multiInit);
@@ -2777,6 +2904,18 @@ function multiPG() {
         ctx.drawImage(butt, 0, 1260, 490, 180, 200, 4, 196, 80);
     } else {
         ctx.drawImage(butt, 0, 1260, 490, 180, 200, 0, 196, 72);
+    }
+
+    if (AABB(mouseX, mouseY, 1, 1, 0, 92, 196, 72)) {
+        if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
+            timeimeimeimeiemeimiemiemiemikemekemieike = 0;
+            ctx.drawImage(legacyButt, 0, 0, 490, 180, 0, 92, 176, 72);
+            trans = true;
+            window.requestAnimationFrame(legacy);
+        }
+        ctx.drawImage(legacyButt, 0, 0, 490, 180, 0, 96, 196, 80);
+    } else {
+        ctx.drawImage(legacyButt, 0, 0, 490, 180, 0, 92, 196, 72);
     }
 
     if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
