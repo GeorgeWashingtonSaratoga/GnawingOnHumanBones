@@ -704,6 +704,8 @@ function multiInit() {
 
 }
 
+var legacyButt = document.getElementById("legacyButt");
+
 function drawBar(){
       ctx.beginPath();
       ctx.rect(412, 492, 100, 20);
