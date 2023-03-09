@@ -1412,7 +1412,7 @@ function aerobic() {
                 }
             }
             }
-            if (fortniting == true) {
+            
             if (playerGun[key] == 0) {
                 ctx.drawImage(guns, 10, 180, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
             } else {
@@ -1459,7 +1459,6 @@ function aerobic() {
                         }
                     }
                 }
-            }
         }
 
             if (key != playerID) {
@@ -1570,6 +1569,7 @@ function aerobic() {
                         }
                     }
                 }
+                if (fortniting == true) {
                 if (playerGun[key] == 0) {
                     ctx.rotate(rotation * Math.PI / 180);
                     ctx.drawImage(guns, 10, 10, 160, 160, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
@@ -1629,6 +1629,8 @@ function aerobic() {
                         }
                     }
                 }
+                }
+                if (fortniting == true) {
                 if (playerGun[key] == 0) {
                     ctx.drawImage(guns, 10, 180, 160, 160, playerBX[key], playerBY[key], 64, 64);
                 } else {
@@ -1676,6 +1678,7 @@ function aerobic() {
                         }
                     }
                 }
+              }
             }
         }
 
