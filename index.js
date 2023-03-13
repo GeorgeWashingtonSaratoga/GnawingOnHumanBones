@@ -2908,12 +2908,14 @@ function multiPG() {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
             ctx.drawImage(butt, 0, 1440, 490, 180, 0, 0, 176, 72);
             trans = true;
-            fortniting = false;
+            if (fortniting == true) {
+                fortniting = false;
+                bullet.pos.x = 528;
+            }
             goOnline(database);
             if (playerRef == ref(database, `battle/${playerID}`)) {
                 playerRef = ref(database, `multi/${playerID}`);
             }
-            bullet.pos.x = 528;
             console.log(fortniting)
             window.requestAnimationFrame(multiInit);
         }
