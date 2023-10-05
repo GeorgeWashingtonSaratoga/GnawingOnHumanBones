@@ -67,9 +67,6 @@ window.addEventListener("mouseup", function(event) {
     mouseDown = false;
 });
 
-
-var switcheeroo = false;
-var upCount = 0;
 var theme = document.createElement('audio');
 var cronch = document.getElementById('crunch');
 var splat = document.getElementById('splat');
@@ -106,13 +103,13 @@ var gun = 0;
 var health = 100;
 var kills = 0;
 
-var ad1 = document.getElementById("ad1");
-ad1.onclick = function(e) {
+var image = document.getElementById("ad1");
+image.onclick = function(e) {
     window.location.href = "https://georgewashingtonsaratoga.github.io/sillysite/";
 };
 
-var ad2 = document.getElementById("ad2");
-ad2.onclick = function(e) {
+var image = document.getElementById("ad2");
+image.onclick = function(e) {
     window.location.href = "https://georgewashingtonsaratoga.github.io/www.pornhub.com/";
 };
 
@@ -128,7 +125,6 @@ theme.loop = true;
 
 window.addEventListener("keydown", function(event) {
     keys[event.keyCode] = true;
-
 }, false);
 window.addEventListener("keyup", function(event) {
     keys[event.keyCode] = false;
@@ -147,7 +143,6 @@ var hole = document.getElementById("hole");
 var z = document.getElementById("z");
 var kije = document.getElementById("kije");
 var cards = document.getElementById("cards");
-
 
 // define vector class
 class Vector {
@@ -275,55 +270,7 @@ var winned = false;
 var deadBabieX = [];
 
 function updater() {
-    console.log(upCount)
     // change velocity by acceleration if correct key pressed
-    if (upCount <= 1300) {
-        upCount += 1;
-    } else {
-        upCount = 0;
-        if (switcheeroo == true){
-            switcheeroo = false;
-            ad1.height = 512;
-            ad1.width = 205;
-            ad2.height = 512;
-            ad2.width = 205;
-            ad4.height = 0;
-            ad4.width = 0;
-            ad5.height = 0;
-            ad5.width = 0;
-            var ad1 = document.getElementById("ad1");
-            ad1.onclick = function(e) {
-                window.location.href = "https://georgewashingtonsaratoga.github.io/sillysite/";
-            };
-
-            var ad2 = document.getElementById("ad2");
-            ad2.onclick = function(e) {
-                window.location.href = "https://georgewashingtonsaratoga.github.io/www.pornhub.com/";
-            };
-        } else {
-            switcheeroo = true;
-            ad4.height = 512;
-            ad4.width = 205;
-            ad5.height = 512;
-            ad5.width = 205;
-            ad1.height = 0;
-            ad1.width = 0;
-            ad2.height = 0;
-            ad2.width = 0;
-            var ad4 = document.getElementById("ad4");
-            ad4.onclick = function(e) {
-                window.location.href = "https://georgewashingtonsaratoga.github.io/flavoursite/";
-            };
-
-            var ad5 = document.getElementById("ad5");
-            ad5.onclick = function(e) {
-                window.location.href = "https://twitter.com/MinionRunHacks/status/1616460910910140419";
-            };
-        }
-    }
-    console.log(upCount)
-    
-
 
     // left-right motion
     if (keys[39] || keys[68]) {
@@ -1044,11 +991,11 @@ function ferment() {
                 id: playerID,
                 x: gamePlayer.pos.x,
                 y: gamePlayer.pos.y,
-                //img: imgnum,
+                img: imgnum,
                 cos: cosnum,
                 pet: pet,
                 gun: gun,
-                // health: health,
+                health: health,
                 kills: kills, 
                 bx: gameBullet.pos.x, 
                 by: gameBullet.pos.y
@@ -1200,7 +1147,7 @@ function aerobic() {
             }
 
             if (key != playerID && playerPet != "") {
-                if (player.pos.x >= 256) {
+                if (gamePlayers[key].pos.x >= 256) {
                     if (playerPet[key] == 1) {
                         ctx.drawImage(pets, 180, 10, 160, 160, gamePlayers[key].pos.x - 32, 480, 32, 32);
                     } else {
@@ -1476,43 +1423,44 @@ function aerobic() {
                     }
                 }
             }
-        }
             
-            if (playerGun[key] == 0) {
-                ctx.drawImage(guns, 10, 180, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
-            } else {
-                if (playerGun[key] == 1) {
-                    ctx.drawImage(guns, 180, 180, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+            if (fortniting == true) {
+                if (playerGun[key] == 0) {
+                    ctx.drawImage(guns, 10, 180, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
                 } else {
-                    if (playerGun[key] == 2) {
-                        ctx.drawImage(guns, 350, 180, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                    if (playerGun[key] == 1) {
+                        ctx.drawImage(guns, 180, 180, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
                     } else {
-                        if (playerGun[key] == 3) {
-                            ctx.drawImage(guns, 10, 520, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                        if (playerGun[key] == 2) {
+                            ctx.drawImage(guns, 350, 180, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
                         } else {
-                            if (playerGun[key] == 4) {
-                                ctx.drawImage(guns, 180, 520, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                            if (playerGun[key] == 3) {
+                                ctx.drawImage(guns, 10, 520, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
                             } else {
-                                if (playerGun[key] == 5) {
-                                    ctx.drawImage(guns, 350, 520, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                                if (playerGun[key] == 4) {
+                                    ctx.drawImage(guns, 180, 520, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
                                 } else {
-                                    if (playerGun[key] == 6) {
-                                        ctx.drawImage(skins, 10, 180, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                                    if (playerGun[key] == 5) {
+                                        ctx.drawImage(guns, 350, 520, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
                                     } else {
-                                        if (playerGun[key] == 7) {
-                                            ctx.drawImage(skins, 180, 180, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                                        if (playerGun[key] == 6) {
+                                            ctx.drawImage(skins, 10, 180, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
                                         } else {
-                                            if (playerGun[key] == 8) {
-                                                ctx.drawImage(skins, 350, 180, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                                            if (playerGun[key] == 7) {
+                                                ctx.drawImage(skins, 180, 180, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
                                             } else {
-                                                if (playerGun[key] == 9) {
-                                                    ctx.drawImage(skins, 10, 520, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                                                if (playerGun[key] == 8) {
+                                                    ctx.drawImage(skins, 350, 180, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
                                                 } else {
-                                                    if (playerGun[key] == 10) {
-                                                        ctx.drawImage(skins, 180, 520, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                                                    if (playerGun[key] == 9) {
+                                                        ctx.drawImage(skins, 10, 520, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
                                                     } else {
-                                                        if (playerGun[key] == 11) {
-                                                            ctx.drawImage(skins, 350, 520, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                                                        if (playerGun[key] == 10) {
+                                                            ctx.drawImage(skins, 180, 520, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                                                        } else {
+                                                            if (playerGun[key] == 11) {
+                                                                ctx.drawImage(skins, 350, 520, 160, 160, bullet.pos.x, bullet.pos.y, 64, 64);
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -1524,9 +1472,10 @@ function aerobic() {
                         }
                     }
                 }
-        }
+            }
+            }
 
-            if (key != playerID) {
+            if (key != playerID && allPlayersRef[key] == playerRef) {
                 if (playerImgs[key] == 4) {
                     ctx.drawImage(spirtImg, 1040, 1720, 320, 320, gamePlayers[key].pos.x, gamePlayers[key].pos.y, 64, 64);
                 } else {
@@ -1768,6 +1717,7 @@ function aerobic() {
             ctx.drawImage(butt, 0, 720, 490, 180, 316, 4, 176, 72);
             trans = true;
             goOffline(database);
+            console.log(playerRef);
             window.requestAnimationFrame(titty);
         }
         ctx.drawImage(butt, 0, 720, 490, 180, 316, 0, 196, 80);
@@ -1792,6 +1742,7 @@ function aerobic() {
             window.requestAnimationFrame(titty);
             alert("YOU DIED IDIOT");
             goOffline(database);
+            console.log(playerRef);
             player.health = 100;
         }
 
@@ -1850,6 +1801,7 @@ function aerobic() {
                             window.requestAnimationFrame(titty);
                             alert("YOU DIED IDIOT");
                             goOffline(database);
+                            console.log(playerRef);
                             health = 100;
                         }
                         timeimeimeimeiemeimiemiemiemikemekemieike = 0;
@@ -2064,10 +2016,10 @@ function imgch() {
 
     if (AABB(mouseX, mouseY, 5, 5, 20, 50, 20, 20) && skinsUnlocked.includes("KIJE")) {
         if (mouseDown) {
-            ctx.drawImage(kije, 0, 0, 160, 160, 25, 50, 10, 20);
+            ctx.drawImage(kije, 0, 0, 160, 160, 35, 50, 10, 20);
             imgnum = 16;
         } else {
-            ctx.drawImage(kije, 0, 0, 160, 160, 15, 50, 30, 20);
+            ctx.drawImage(kije, 0, 0, 160, 160, 5, 50, 30, 20);
         }
     } else {
         if (!skinsUnlocked.includes("KIJE")) {
@@ -2080,10 +2032,10 @@ function imgch() {
 
     if (AABB(mouseX, mouseY, 5, 5, 50, 50, 20, 20) && skinsUnlocked.includes("CARDS")) {
         if (mouseDown) {
-            ctx.drawImage(cards, 0, 0, 160, 160, 55, 50, 10, 20);
+            ctx.drawImage(cards, 0, 0, 160, 160, 65, 50, 10, 20);
             imgnum = 17;
         } else {
-            ctx.drawImage(cards, 0, 0, 160, 160, 45, 50, 30, 20);
+            ctx.drawImage(cards, 0, 0, 160, 160, 35, 50, 30, 20);
         }
     } else {
         if (!skinsUnlocked.includes("CARDS")) {
@@ -2093,7 +2045,6 @@ function imgch() {
             ctx.drawImage(cards, 0, 0, 160, 160, 50, 50, 20, 20);
         }
     }
-
 
     if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
@@ -2106,6 +2057,8 @@ function imgch() {
     } else {
         ctx.drawImage(butt, 0, 720, 490, 180, 276, 444, 196, 72);
     }
+
+    
 
     if (!cosmetic) {
         window.requestAnimationFrame(imgch);
@@ -2900,7 +2853,6 @@ function shop() {
                         break;
                     }
                     default: {
-                        console.log("fuck you idiot");
                         break;
                     }
                 }
@@ -2942,7 +2894,6 @@ function shop() {
                         break;
                     }
                     default: {
-                        console.log("fuck you idiot");
                         break;
                     }
                 }
@@ -2984,7 +2935,6 @@ function shop() {
                         break;
                     }
                     default: {
-                        console.log("fuck you idiot");
                         break;
                     }
                 }
@@ -3027,7 +2977,6 @@ function shop() {
                         break;
                     }
                     default: {
-                        console.log("fuck you idiot");
                         break;
                     }
                 }
@@ -3072,8 +3021,8 @@ function multiPG() {
             ctx.drawImage(butt, 0, 1440, 490, 180, 0, 0, 176, 72);
             trans = true;
             if (fortniting == true) {
-                fortniting = false;
                 bullet.pos.x = 528;
+                fortniting = false;
             }
             goOnline(database);
             if (playerRef == ref(database, `battle/${playerID}`)) {
