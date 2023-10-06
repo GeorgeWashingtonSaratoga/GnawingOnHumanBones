@@ -85,7 +85,6 @@ var keys = [];
 var score = 0;
 var babydeathheight = 432;
 var luigi = false;
-var gunShoot = "left";
 
 const unlocked = [];
 const petsUnlocked = [];
@@ -138,6 +137,8 @@ var spirtImg = document.getElementById("spirt");
 var cosm = document.getElementById("cosm");
 var loot = document.getElementById("loot");
 var butt = document.getElementById("butt");
+var saveButt = document.getElementById("saveButt");
+var loadButt = document.getElementById("loadButt");
 var pets = document.getElementById("pets");
 var guns = document.getElementById("guns");
 var skins = document.getElementById("skins");
@@ -147,7 +148,6 @@ var hole = document.getElementById("hole");
 var z = document.getElementById("z");
 var kije = document.getElementById("kije");
 var cards = document.getElementById("cards");
-
 
 // define vector class
 class Vector {
@@ -283,14 +283,14 @@ function updater() {
         upCount = 0;
         if (switcheeroo == true){
             switcheeroo = false;
-            ad1.height = 512;
-            ad1.width = 205;
-            ad2.height = 512;
-            ad2.width = 205;
-            ad4.height = 0;
-            ad4.width = 0;
-            ad5.height = 0;
-            ad5.width = 0;
+            document.getElementById("ad1").height = "512";
+            document.getElementById("ad1").width = "205";
+            document.getElementById("ad2").height = "512";
+            document.getElementById("ad2").width = "205";
+            document.getElementById("ad4").height = "0";
+            document.getElementById("ad4").width = "0";
+            document.getElementById("ad5").height = "0";
+            document.getElementById("ad5").width = "0";
             var ad1 = document.getElementById("ad1");
             ad1.onclick = function(e) {
                 window.location.href = "https://georgewashingtonsaratoga.github.io/sillysite/";
@@ -302,17 +302,17 @@ function updater() {
             };
         } else {
             switcheeroo = true;
-            ad4.height = 512;
-            ad4.width = 205;
-            ad5.height = 512;
-            ad5.width = 205;
-            ad1.height = 0;
-            ad1.width = 0;
-            ad2.height = 0;
-            ad2.width = 0;
+            document.getElementById("ad4").height = "512";
+            document.getElementById("ad4").width = "205";
+            document.getElementById("ad5").height = "512";
+            document.getElementById("ad5").width = "205";
+            document.getElementById("ad1").height = "0";
+            document.getElementById("ad1").width = "0";
+            document.getElementById("ad2").height = "0";
+            document.getElementById("ad2").width = "0";
             var ad4 = document.getElementById("ad4");
             ad4.onclick = function(e) {
-                window.location.href = "https://georgewashingtonsaratoga.github.io/flavoursite/";
+                window.location.href = "https://georgewashingtonsaratoga.github.io/bugJuic/";
             };
 
             var ad5 = document.getElementById("ad5");
@@ -324,13 +324,17 @@ function updater() {
     console.log(upCount)
     
 
-
     // left-right motion
     if (keys[39] || keys[68]) {
         player.vel.x += acceleration.x;
     }
     if (keys[37] || keys[65]) {
         player.vel.x -= acceleration.x;
+    }
+
+    //dev
+    if (keys[220]) {
+        score = 6901;
     }
 
     // jump
@@ -451,6 +455,51 @@ function updater() {
 
 function updaterLeg() {
     // change velocity by acceleration if correct key pressed
+    if (upCount <= 1300) {
+        upCount += 1;
+    } else {
+        upCount = 0;
+        if (switcheeroo == true){
+            switcheeroo = false;
+            document.getElementById("ad1").height = "512";
+            document.getElementById("ad1").width = "205";
+            document.getElementById("ad2").height = "512";
+            document.getElementById("ad2").width = "205";
+            document.getElementById("ad4").height = "0";
+            document.getElementById("ad4").width = "0";
+            document.getElementById("ad5").height = "0";
+            document.getElementById("ad5").width = "0";
+            var ad1 = document.getElementById("ad1");
+            ad1.onclick = function(e) {
+                window.location.href = "https://georgewashingtonsaratoga.github.io/sillysite/";
+            };
+
+            var ad2 = document.getElementById("ad2");
+            ad2.onclick = function(e) {
+                window.location.href = "https://georgewashingtonsaratoga.github.io/www.pornhub.com/";
+            };
+        } else {
+            switcheeroo = true;
+            document.getElementById("ad4").height = "512";
+            document.getElementById("ad4").width = "205";
+            document.getElementById("ad5").height = "512";
+            document.getElementById("ad5").width = "205";
+            document.getElementById("ad1").height = "0";
+            document.getElementById("ad1").width = "0";
+            document.getElementById("ad2").height = "0";
+            document.getElementById("ad2").width = "0";
+            var ad4 = document.getElementById("ad4");
+            ad4.onclick = function(e) {
+                window.location.href = "https://georgewashingtonsaratoga.github.io/bugJuic/";
+            };
+
+            var ad5 = document.getElementById("ad5");
+            ad5.onclick = function(e) {
+                window.location.href = "https://twitter.com/MinionRunHacks/status/1616460910910140419";
+            };
+        }
+    }
+    console.log(upCount)
 
     // left-right motion
     if (keys[39] || keys[68]) {
@@ -654,27 +703,36 @@ function win() {
     // draw background
     ctx.drawImage(spirtImg, 700, 1040, 650, 650, 0, 0, 512, 512);
 
-    if (keys[32] == true) {
-        luigi = true;
-        score = 0;
-        scoreval = '';
-        deadBabieX = [];
-        babyDeathAnim = [0, 5];
-        winned = false;
-        tChild = 0;
-        friction = 0.9;
-        onGround = true;
-        player = new Player(new Vector(64, 448), new Vector(0, 0));
-        bone = new Player(new Vector(-9001, -9001), new Vector(0, 0));
-        child = new Player(new Vector(-9002, -9001), new Vector(0, 0));
-        token = new Player(new Vector(-9002, -9001), new Vector(0, 0));
-        acceleration = new Vector(2, 15);
-        window.requestAnimationFrame(titty);
-        alert("You can now play as Luigi");
-        document.body.style.cursor = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAD2UExURb0AAAAAABQAAGVlZdnZ2RoaGsttbcvLy70AAL0AAAAAAAAAAL0AAL0AAL0AAL0AAAAAAAAAAAAAAAAAAL0AAL0AAL0AAAAAAAAAAAAAAAAAAKkAABkAAAAAAAAAALoAAGgAAAAAAAAAAAAAANgAAL0AAMoAAMwAAAAAAP8AAL0AAL0AAL0AABoaGhoaGh0dHXR0dOjo6NnZ2b0BAb6+vr+/v8LCwtbW1tnZ2dnZ2b0AANnY2Nra2tvb29nZ2dnZ2dnZ2b0AAL0AANnZ2dnZ2dnZ2dnZ2dnZ2dnZ2b0AAL4AAKcAABYAAKYAAAAAANra2tnZ2f///1PVeSUAAABJdFJOUwAAAAAAAAAAHODgHAQZOeTkORkExub7/ebGG/vk4x/kNzfiHhviHRkdAh0fGx7i5jkZBAQd4f3mxhnhBDnk5jkcHhob++ThH+OiMhG4AAAAAWJLR0RRlGl8KgAAAAd0SU1FB+cCAg4qJTmtLxQAAAC1SURBVBjTVczZAoFAGEDhHyPCVKisWUr2fV8jskxC7/80TN3kXH4XBwAgzhL76SSSIRpACnM8BSGdyXqARUkm9svJ5QtFCnFOIoTYpbLwVioUWF7+AanW6nlVo0D82EZRVYKgN5NKAGRJbLWDwHO4owWB7UL4D/QehDRFbUcQAv/Qh+hgOBpPph5IHJ4xsfliuVpvEGy3uoiB2W32h49rHE9gmuY5BeiyNizXta438EP3h+v3BTe6JdaFCh7FAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIzLTAyLTAyVDE0OjQyOjM3KzAwOjAwZEL5EgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMy0wMi0wMlQxNDo0MjozNyswMDowMBUfQa4AAAAodEVYdGRhdGU6dGltZXN0YW1wADIwMjMtMDItMDJUMTQ6NDI6MzcrMDA6MDBCCmBxAAAAAElFTkSuQmCC), auto";
+    if (AABB(mouseX, mouseY, 1, 1, 316, 4, 196, 72)) {
+        if (mouseDown) {
+            timeimeimeimeiemeimiemiemiemikemekemieike = 0;
+            ctx.drawImage(butt, 0, 720, 490, 180, 316, 4, 176, 72);
+            trans = false;
+            luigi = true;
+            score = 0;
+            scoreval = '';
+            deadBabieX = [];
+            babyDeathAnim = [0, 5];
+            winned = false;
+            tChild = 0;
+            friction = 0.9;
+            onGround = true;
+            player = new Player(new Vector(64, 448), new Vector(0, 0));
+            bone = new Player(new Vector(-9001, -9001), new Vector(0, 0));
+            child = new Player(new Vector(-9002, -9001), new Vector(0, 0));
+            token = new Player(new Vector(-9002, -9001), new Vector(0, 0));
+            acceleration = new Vector(2, 15);
+            document.body.style.cursor = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAD2UExURb0AAAAAABQAAGVlZdnZ2RoaGsttbcvLy70AAL0AAAAAAAAAAL0AAL0AAL0AAL0AAAAAAAAAAAAAAAAAAL0AAL0AAL0AAAAAAAAAAAAAAAAAAKkAABkAAAAAAAAAALoAAGgAAAAAAAAAAAAAANgAAL0AAMoAAMwAAAAAAP8AAL0AAL0AAL0AABoaGhoaGh0dHXR0dOjo6NnZ2b0BAb6+vr+/v8LCwtbW1tnZ2dnZ2b0AANnY2Nra2tvb29nZ2dnZ2dnZ2b0AAL0AANnZ2dnZ2dnZ2dnZ2dnZ2dnZ2b0AAL4AAKcAABYAAKYAAAAAANra2tnZ2f///1PVeSUAAABJdFJOUwAAAAAAAAAAHODgHAQZOeTkORkExub7/ebGG/vk4x/kNzfiHhviHRkdAh0fGx7i5jkZBAQd4f3mxhnhBDnk5jkcHhob++ThH+OiMhG4AAAAAWJLR0RRlGl8KgAAAAd0SU1FB+cCAg4qJTmtLxQAAAC1SURBVBjTVczZAoFAGEDhHyPCVKisWUr2fV8jskxC7/80TN3kXH4XBwAgzhL76SSSIRpACnM8BSGdyXqARUkm9svJ5QtFCnFOIoTYpbLwVioUWF7+AanW6nlVo0D82EZRVYKgN5NKAGRJbLWDwHO4owWB7UL4D/QehDRFbUcQAv/Qh+hgOBpPph5IHJ4xsfliuVpvEGy3uoiB2W32h49rHE9gmuY5BeiyNizXta438EP3h+v3BTe6JdaFCh7FAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIzLTAyLTAyVDE0OjQyOjM3KzAwOjAwZEL5EgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMy0wMi0wMlQxNDo0MjozNyswMDowMBUfQa4AAAAodEVYdGRhdGU6dGltZXN0YW1wADIwMjMtMDItMDJUMTQ6NDI6MzcrMDA6MDBCCmBxAAAAAElFTkSuQmCC), auto";
+            winned = false;
+            window.requestAnimationFrame(titty);
+            alert("You can now play as Luigi!");
+        }
+        ctx.drawImage(butt, 0, 720, 490, 180, 316, 0, 196, 80);
     } else {
+        ctx.drawImage(butt, 0, 720, 490, 180, 316, 4, 196, 72);
         window.requestAnimationFrame(win);
     }
+
 }
 
 var allPlayersRef;
@@ -734,16 +792,17 @@ function multiInit() {
                 
                 });
             } else {
-                if (fortniting == false)
-                set(playerRef, {
-                    id: playerID,
-                    x: 20,
-                    y: 20,
-                    img: imgnum,
-                    cos: cosnum,
-                    pet: pet,
-                    jointime: jointime
-                });
+                    if (fortniting == false) {
+                        set(playerRef, {
+                            id: playerID,
+                            x: 20,
+                            y: 20,
+                            img: imgnum,
+                            cos: cosnum,
+                            pet: pet,
+                            jointime: jointime
+                        });
+                }
             }
             
 
@@ -876,6 +935,51 @@ function bulletGo() {
 
 function ferment() {
     // change velocity by acceleration if correct key pressed
+    if (upCount <= 1300) {
+        upCount += 1;
+    } else {
+        upCount = 0;
+        if (switcheeroo == true){
+            switcheeroo = false;
+            document.getElementById("ad1").height = "512";
+            document.getElementById("ad1").width = "205";
+            document.getElementById("ad2").height = "512";
+            document.getElementById("ad2").width = "205";
+            document.getElementById("ad4").height = "0";
+            document.getElementById("ad4").width = "0";
+            document.getElementById("ad5").height = "0";
+            document.getElementById("ad5").width = "0";
+            var ad1 = document.getElementById("ad1");
+            ad1.onclick = function(e) {
+                window.location.href = "https://georgewashingtonsaratoga.github.io/sillysite/";
+            };
+
+            var ad2 = document.getElementById("ad2");
+            ad2.onclick = function(e) {
+                window.location.href = "https://georgewashingtonsaratoga.github.io/www.pornhub.com/";
+            };
+        } else {
+            switcheeroo = true;
+            document.getElementById("ad4").height = "512";
+            document.getElementById("ad4").width = "205";
+            document.getElementById("ad5").height = "512";
+            document.getElementById("ad5").width = "205";
+            document.getElementById("ad1").height = "0";
+            document.getElementById("ad1").width = "0";
+            document.getElementById("ad2").height = "0";
+            document.getElementById("ad2").width = "0";
+            var ad4 = document.getElementById("ad4");
+            ad4.onclick = function(e) {
+                window.location.href = "https://georgewashingtonsaratoga.github.io/bugJuic/";
+            };
+
+            var ad5 = document.getElementById("ad5");
+            ad5.onclick = function(e) {
+                window.location.href = "https://twitter.com/MinionRunHacks/status/1616460910910140419";
+            };
+        }
+    }
+    console.log(upCount)
 
     // left-right motion
     if (keys[39] || keys[68]) {
@@ -1037,18 +1141,18 @@ function ferment() {
             img: imgnum,
             cos: cosnum,
             pet: pet
-        });
+        })
     } else {
         if (fortniting == true) {
             update(playerRef, {
                 id: playerID,
                 x: gamePlayer.pos.x,
                 y: gamePlayer.pos.y,
-                //img: imgnum,
+                img: imgnum,
                 cos: cosnum,
                 pet: pet,
                 gun: gun,
-                // health: health,
+                health: health,
                 kills: kills, 
                 bx: gameBullet.pos.x, 
                 by: gameBullet.pos.y
@@ -1780,8 +1884,12 @@ function aerobic() {
             if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
                 timeimeimeimeiemeimiemiemiemikemekemieike = 0;
                 ctx.drawImage(hole, 0, 160, 270, 150, 482, 475, 30, 17);
-                player.health = 0;
-            }
+                trans = true;
+                window.requestAnimationFrame(titty);
+                alert("YOU DIED YOURSELF IDIOT");
+                goOffline(database);
+                player.health = 100;
+                }
             ctx.drawImage(hole, 0, 160, 270, 150, 482, 475, 30, 17);
         } else {
             ctx.drawImage(hole, 0, 0, 270, 150, 482, 475, 30, 17);
@@ -1887,7 +1995,7 @@ function imgch() {
         ctx.drawImage(spirtImg, 700, 700, 320, 320, 20, 20, 20, 20);
     }
 
-    if (AABB(mouseX, mouseY, 5, 5, 50, 20, 20, 20)) {
+    if (AABB(mouseX, mouseY, 5, 5, 50, 20, 20, 20) && luigi == true) {
         if (mouseDown) {
             ctx.drawImage(spirtImg, 20, 1720, 320, 320, 55, 20, 10, 20);
             imgnum = 1;
@@ -1895,7 +2003,12 @@ function imgch() {
             ctx.drawImage(spirtImg, 20, 1720, 320, 320, 45, 20, 30, 20);
         }
     } else {
-        ctx.drawImage(spirtImg, 20, 1720, 320, 320, 50, 20, 20, 20);
+        if (luigi != true) {
+            ctx.drawImage(spirtImg, 20, 1720, 320, 320, 50, 20, 20, 20);
+            ctx.drawImage(lock, 10, 10, 160, 160, 50, 20, 20, 20);
+        } else {
+            ctx.drawImage(spirtImg, 20, 1720, 320, 320, 50, 20, 20, 20);
+        }
     }
 
     if (AABB(mouseX, mouseY, 5, 5, 80, 20, 20, 20)) {
@@ -2093,6 +2206,7 @@ function imgch() {
             ctx.drawImage(cards, 0, 0, 160, 160, 50, 50, 20, 20);
         }
     }
+    console.log(imgnum)
 
 
     if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
@@ -2314,6 +2428,8 @@ function petImg() {
         }
     }
 
+    console.log(pet)
+
     if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
@@ -2531,6 +2647,7 @@ function gunImg() {
             ctx.drawImage(skins, 350, 350, 160, 160, 350, 20, 20, 20);
         }
     }
+    console.log(gun)
 
     if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
@@ -2698,6 +2815,9 @@ function imgcos() {
     } else {
         ctx.drawImage(cosm, 340, 1030, 160, 160, 350, 20, 20, 20);
     }
+
+    
+    console.log(cosnum)
 
     if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
@@ -3187,9 +3307,52 @@ function titty() {
     } else {
         ctx.drawImage(butt, 0, 360, 490, 180, 276, 372, 196, 72);
     }
+    if (AABB(mouseX, mouseY, 1, 1, 479, 496, 33, 16)) {
+        if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
+            timeimeimeimeiemeimiemiemiemikemekemieike = 0;
+            imgnum = localStorage.getItem('imgnum');
+            cosnum = localStorage.getItem('cosnum');
+            pet = localStorage.getItem('pet');
+            gun = localStorage.getItem('gun');
+            kills = localStorage.getItem('kills');
+            skinsUnlocked.length = 0;
+            skinsUnlocked.push(localStorage.getItem('skinsUnlocked'));
+            unlocked.length = 0;
+            unlocked.push(localStorage.getItem('unlocked'));
+            trosUnlocked.length = 0;
+            trosUnlocked.push(localStorage.getItem('trosUnlocked'));
+            gunsUnlocked.length = 0;
+            gunsUnlocked.push(localStorage.getItem('gunsUnlocked'));
+            petsUnlocked.length = 0;
+            petsUnlocked.push(localStorage.getItem('petsUnlocked'));
+        }
+        ctx.drawImage(loadButt, 0, 0, 330, 160, 479, 496, 33, 20);
+    } else {
+        ctx.drawImage(loadButt, 0, 0, 330, 160, 479, 498, 33, 16);
+    }
+    if (AABB(mouseX, mouseY, 1, 1, 479, 478, 33, 16)) {
+        if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
+            timeimeimeimeiemeimiemiemiemikemekemieike = 0;
+            localStorage.setItem('skinsUnlocked', skinsUnlocked);
+            localStorage.setItem('unlocked', unlocked);
+            localStorage.setItem('trosUnlocked', trosUnlocked)
+            localStorage.setItem('gunsUnlocked', gunsUnlocked)
+            localStorage.setItem('petsUnlocked', petsUnlocked);
+            localStorage.setItem('cosnum', cosnum);
+            localStorage.setItem('gun', gun)
+            localStorage.setItem('imgnum', imgnum);
+            localStorage.setItem('pet', pet);
+        }
+        ctx.drawImage(saveButt, 0, 0, 330, 160, 479, 478, 33, 20);
+    } else {
+        ctx.drawImage(saveButt, 0, 0, 330, 160, 479, 480, 33, 16);
+    }
+
     if (!trans) {
         window.requestAnimationFrame(titty);
     }
+
+    
 }
 
 // request anim frame
