@@ -275,7 +275,6 @@ var winned = false;
 var deadBabieX = [];
 
 function updater() {
-    console.log(upCount)
     // change velocity by acceleration if correct key pressed
     if (upCount <= 1300) {
         upCount += 1;
@@ -321,7 +320,6 @@ function updater() {
             };
         }
     }
-    console.log(upCount)
     
 
     // left-right motion
@@ -499,7 +497,6 @@ function updaterLeg() {
             };
         }
     }
-    console.log(upCount)
 
     // left-right motion
     if (keys[39] || keys[68]) {
@@ -792,17 +789,16 @@ function multiInit() {
                 
                 });
             } else {
-                    if (fortniting == false) {
-                        set(playerRef, {
-                            id: playerID,
-                            x: 20,
-                            y: 20,
-                            img: imgnum,
-                            cos: cosnum,
-                            pet: pet,
-                            jointime: jointime
-                        });
-                }
+                if (fortniting == false)
+                set(playerRef, {
+                    id: playerID,
+                    x: 20,
+                    y: 20,
+                    img: imgnum,
+                    cos: cosnum,
+                    pet: pet,
+                    jointime: jointime
+                });
             }
             
 
@@ -979,7 +975,6 @@ function ferment() {
             };
         }
     }
-    console.log(upCount)
 
     // left-right motion
     if (keys[39] || keys[68]) {
@@ -1148,11 +1143,11 @@ function ferment() {
                 id: playerID,
                 x: gamePlayer.pos.x,
                 y: gamePlayer.pos.y,
-                img: imgnum,
+                //img: imgnum,
                 cos: cosnum,
                 pet: pet,
                 gun: gun,
-                health: health,
+                //health: health,
                 kills: kills, 
                 bx: gameBullet.pos.x, 
                 by: gameBullet.pos.y
