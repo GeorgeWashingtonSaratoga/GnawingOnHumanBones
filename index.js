@@ -3337,6 +3337,7 @@ function titty() {
             localStorage.setItem('gun', gun)
             localStorage.setItem('imgnum', imgnum);
             localStorage.setItem('pet', pet);
+            localStorage.setItem('kills', kills);
         }
         ctx.drawImage(saveButt, 0, 0, 330, 160, 479, 478, 33, 20);
     } else {
