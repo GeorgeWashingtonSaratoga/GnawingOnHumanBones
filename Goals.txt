@@ -1,0 +1,5 @@
+BUG REPORTER:
+Players in one gamemode can appear in another gamemode if the player has switched gamemodes
+
+LIKELY CAUSES:
+player ref is not updated properly
