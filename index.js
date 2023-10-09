@@ -148,6 +148,7 @@ var hole = document.getElementById("hole");
 var z = document.getElementById("z");
 var kije = document.getElementById("kije");
 var cards = document.getElementById("cards");
+var scar = document.getElementById("scar");
 
 // define vector class
 class Vector {
@@ -199,6 +200,9 @@ var bone = new Player(new Vector(-9001, -9001), new Vector(0, 0));
 
 // init child at (-9001, -9001) with velocity vector (0, 0)
 var child = new Player(new Vector(-9002, -9001), new Vector(0, 0));
+
+// init carcass at (-9001, -9001) with velocity vector (0, 0)
+var carcass = new Player(new Vector(-9002, -9001), new Vector(0, 0));
 
 // init token at (-9001, -9001) with velocity vector (0, 0)
 var token = new Player(new Vector(-9002, -9001), new Vector(0, 0));
@@ -261,7 +265,6 @@ function dropKey() {
                     keySkin = "epic";
                 } else {
                     keySkin = "NULL";
-                    console.log("error: null-skin");
                 }
             }
         }
@@ -269,10 +272,12 @@ function dropKey() {
 }
 
 var tChild = 0;
+var tCarcass = 0;
 
 var winned = false;
 
 var deadBabieX = [];
+var deadCarcassX = [];
 
 function updater() {
     // change velocity by acceleration if correct key pressed
@@ -564,6 +569,52 @@ function death(t) {
     babyDeathAnim = [child.pos.x, Math.floor(t / 10)];
 }
 
+var deathAnim = [0, 5];
+
+    function battleDeath(t, subject) {
+        deathAnim = [subject, Math.floor(t / 10)];
+    }
+
+    function drawBattleDeath() {
+        switch (deathAnim[1]) {
+            case 0: {
+                ctx.drawImage(scar, 10, 10, 320, 320, deathAnim[0], 373, 128, 128);
+                break;
+            }
+            case 1: {
+                ctx.drawImage(scar, 340, 10, 320, 320, deathAnim[0], 373, 128, 128);
+                break;
+            }
+            case 2: {
+                ctx.drawImage(scar, 670, 10, 320, 320, deathAnim[0], 373, 128, 128);
+                break;
+            }
+            case 3: {
+                ctx.drawImage(scar, 1000, 10, 320, 320, deathAnim[0], 373, 128, 128);
+                break;
+            }
+            case 4: {
+                ctx.drawImage(scar, 10, 330, 320, 320, deathAnim[0], 368, 128, 128);
+                break;
+            }
+            case 5: {
+                ctx.drawImage(scar, 340, 330, 320, 320, deathAnim[0], 368, 128, 128);
+                break;
+            }
+            case 6: {
+                ctx.drawImage(scar, 670, 330, 320, 320, deathAnim[0], 368, 128, 128);
+                break;
+            }
+            case 7: {
+                ctx.drawImage(scar, 1000, 330, 320, 320, deathAnim[0], 368, 128, 128);
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
+
 function drawDeath() {
     switch (babyDeathAnim[1]) {
         case 0: {
@@ -595,6 +646,8 @@ function drawDeath() {
     }
 }
 
+
+
 function draw() {
     // draw background
     ctx.drawImage(spirtImg, 700, 20, 650, 650, 0, 0, 512, 512);
@@ -625,10 +678,16 @@ function draw() {
 
     // dead baby anim
     drawDeath();
+    //dead people anim
+    drawBattleDeath();
 
     // draw dead babies
     for (var i = 0; i < deadBabieX.length; i++) {
         ctx.drawImage(spirtImg, 360, 700, 320, 320, deadBabieX[i], babydeathheight, 64, 64);
+    }
+    //draw dead people
+    for (var i = 0; i < deadCarcassX.length; i++) {
+        ctx.drawImage(spirtImg, 360, 700, 320, 320, deadCarcassX[i], babydeathheight, 64, 64);
     }
 
     // draw player
@@ -704,10 +763,9 @@ function win() {
         if (mouseDown) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
             ctx.drawImage(butt, 0, 720, 490, 180, 316, 4, 176, 72);
-            trans = false;
+            trans = true;
             luigi = true;
             score = 0;
-            scoreval = '';
             deadBabieX = [];
             babyDeathAnim = [0, 5];
             winned = false;
@@ -719,12 +777,14 @@ function win() {
             child = new Player(new Vector(-9002, -9001), new Vector(0, 0));
             token = new Player(new Vector(-9002, -9001), new Vector(0, 0));
             acceleration = new Vector(2, 15);
-            document.body.style.cursor = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAD2UExURb0AAAAAABQAAGVlZdnZ2RoaGsttbcvLy70AAL0AAAAAAAAAAL0AAL0AAL0AAL0AAAAAAAAAAAAAAAAAAL0AAL0AAL0AAAAAAAAAAAAAAAAAAKkAABkAAAAAAAAAALoAAGgAAAAAAAAAAAAAANgAAL0AAMoAAMwAAAAAAP8AAL0AAL0AAL0AABoaGhoaGh0dHXR0dOjo6NnZ2b0BAb6+vr+/v8LCwtbW1tnZ2dnZ2b0AANnY2Nra2tvb29nZ2dnZ2dnZ2b0AAL0AANnZ2dnZ2dnZ2dnZ2dnZ2dnZ2b0AAL4AAKcAABYAAKYAAAAAANra2tnZ2f///1PVeSUAAABJdFJOUwAAAAAAAAAAHODgHAQZOeTkORkExub7/ebGG/vk4x/kNzfiHhviHRkdAh0fGx7i5jkZBAQd4f3mxhnhBDnk5jkcHhob++ThH+OiMhG4AAAAAWJLR0RRlGl8KgAAAAd0SU1FB+cCAg4qJTmtLxQAAAC1SURBVBjTVczZAoFAGEDhHyPCVKisWUr2fV8jskxC7/80TN3kXH4XBwAgzhL76SSSIRpACnM8BSGdyXqARUkm9svJ5QtFCnFOIoTYpbLwVioUWF7+AanW6nlVo0D82EZRVYKgN5NKAGRJbLWDwHO4owWB7UL4D/QehDRFbUcQAv/Qh+hgOBpPph5IHJ4xsfliuVpvEGy3uoiB2W32h49rHE9gmuY5BeiyNizXta438EP3h+v3BTe6JdaFCh7FAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIzLTAyLTAyVDE0OjQyOjM3KzAwOjAwZEL5EgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMy0wMi0wMlQxNDo0MjozNyswMDowMBUfQa4AAAAodEVYdGRhdGU6dGltZXN0YW1wADIwMjMtMDItMDJUMTQ6NDI6MzcrMDA6MDBCCmBxAAAAAElFTkSuQmCC), auto";
             winned = false;
             window.requestAnimationFrame(titty);
             alert("You can now play as Luigi!");
+            document.body.style.cursor = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAD2UExURb0AAAAAABQAAGVlZdnZ2RoaGsttbcvLy70AAL0AAAAAAAAAAL0AAL0AAL0AAL0AAAAAAAAAAAAAAAAAAL0AAL0AAL0AAAAAAAAAAAAAAAAAAKkAABkAAAAAAAAAALoAAGgAAAAAAAAAAAAAANgAAL0AAMoAAMwAAAAAAP8AAL0AAL0AAL0AABoaGhoaGh0dHXR0dOjo6NnZ2b0BAb6+vr+/v8LCwtbW1tnZ2dnZ2b0AANnY2Nra2tvb29nZ2dnZ2dnZ2b0AAL0AANnZ2dnZ2dnZ2dnZ2dnZ2dnZ2b0AAL4AAKcAABYAAKYAAAAAANra2tnZ2f///1PVeSUAAABJdFJOUwAAAAAAAAAAHODgHAQZOeTkORkExub7/ebGG/vk4x/kNzfiHhviHRkdAh0fGx7i5jkZBAQd4f3mxhnhBDnk5jkcHhob++ThH+OiMhG4AAAAAWJLR0RRlGl8KgAAAAd0SU1FB+cCAg4qJTmtLxQAAAC1SURBVBjTVczZAoFAGEDhHyPCVKisWUr2fV8jskxC7/80TN3kXH4XBwAgzhL76SSSIRpACnM8BSGdyXqARUkm9svJ5QtFCnFOIoTYpbLwVioUWF7+AanW6nlVo0D82EZRVYKgN5NKAGRJbLWDwHO4owWB7UL4D/QehDRFbUcQAv/Qh+hgOBpPph5IHJ4xsfliuVpvEGy3uoiB2W32h49rHE9gmuY5BeiyNizXta438EP3h+v3BTe6JdaFCh7FAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIzLTAyLTAyVDE0OjQyOjM3KzAwOjAwZEL5EgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMy0wMi0wMlQxNDo0MjozNyswMDowMBUfQa4AAAAodEVYdGRhdGU6dGltZXN0YW1wADIwMjMtMDItMDJUMTQ6NDI6MzcrMDA6MDBCCmBxAAAAAElFTkSuQmCC), auto";
+        } else {
+            ctx.drawImage(butt, 0, 720, 490, 180, 316, 0, 196, 80);
+            window.requestAnimationFrame(win);
         }
-        ctx.drawImage(butt, 0, 720, 490, 180, 316, 0, 196, 80);
     } else {
         ctx.drawImage(butt, 0, 720, 490, 180, 316, 4, 196, 72);
         window.requestAnimationFrame(win);
@@ -990,6 +1050,8 @@ function ferment() {
         player.vel.x -= acceleration.x;
     }
 
+
+
     // jump
     if ((keys[38] || keys[87]) && onGround) {
         player.vel.y = -acceleration.y;
@@ -1062,7 +1124,21 @@ function ferment() {
         }
     }
 
-
+    if (keys[192]) {
+        var ranPos = Math.floor(Math.random(64, 448));
+                if (tCarcass < 80) {
+                    if (tCarcass == 0) {
+                        splat.play();
+                    }
+                    tCarcass++;
+                    battleDeath(tCarcass, ranPos);
+                } else {
+                    console.log("what")
+                    tCarcass = 0;
+                    deathAnim = [0, 5];
+                    deadCarcassX.push(ranPos);
+        }
+    }
 
     if (token.pos.y >= 448 && score >= 3450 && allowKeyFall == true) {
         dropKey();
@@ -1073,6 +1149,7 @@ function ferment() {
 
     if (player.pos.y == 448) {
         onGround = true;
+        
     }
 
     if (AABB(player.pos.x, player.pos.y, 64, 64, bone.pos.x, bone.pos.y, 64, 64)) {
@@ -1188,16 +1265,24 @@ function aerobic() {
                 }
             }
         }
+        //dead people anim
+        drawBattleDeath();
         // dead baby anim
         drawDeath();
 
-
+        //draw dead people
+        for (var i = 0; i < deadCarcassX.length; i++) {
+            ctx.drawImage(spirtImg, 360, 700, 320, 320, deadCarcassX[i], babydeathheight, 64, 64);
+        }
         // draw dead babies
         for (var i = 0; i < deadBabieX.length; i++) {
             ctx.drawImage(spirtImg, 360, 700, 320, 320, deadBabieX[i], babydeathheight, 64, 64);
         }
 
         for (var key in gamePlayers) {
+            if (key != playerID && gamePlayers[key].health <= 0) {
+                console.log("why now")
+            }
             if (key == playerID && playerPet != "") {
                 if (player.pos.x >= 256) {
                     if (playerPet[key] == 1) {
@@ -1890,6 +1975,11 @@ function aerobic() {
             ctx.drawImage(hole, 0, 0, 270, 150, 482, 475, 30, 17);
         }
 
+        if (score < 0) {
+            playerHP[playerID] = 0;
+            score = 0;
+        }
+
         if (playerHP[playerID] <= 0) {
             trans = true;
             window.requestAnimationFrame(titty);
@@ -1921,7 +2011,6 @@ function aerobic() {
                     if (key != playerID) {
                         var mewhen = ref(database, `battle/${key}`);
                         bullet.pos.x = 528;
-                        console.log("hooray");
                         var newheath = gameHealths[key] - 10;
                         if (newheath == 0) {
                             update (playerRef, {
@@ -1938,7 +2027,6 @@ function aerobic() {
                                     img: Math.floor(Math.random() * 13),
                                     health: newheath
                                 });
-                                console.log(playerImgs[playerID]);
                             } else {
                                 if (gun == 5 || gun == 11) {
                                     update(mewhen, {
@@ -2201,7 +2289,6 @@ function imgch() {
             ctx.drawImage(cards, 0, 0, 160, 160, 50, 50, 20, 20);
         }
     }
-    console.log(imgnum)
 
 
     if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
@@ -2423,7 +2510,6 @@ function petImg() {
         }
     }
 
-    console.log(pet)
 
     if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
@@ -2642,7 +2728,6 @@ function gunImg() {
             ctx.drawImage(skins, 350, 350, 160, 160, 350, 20, 20, 20);
         }
     }
-    console.log(gun)
 
     if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
@@ -2811,9 +2896,6 @@ function imgcos() {
         ctx.drawImage(cosm, 340, 1030, 160, 160, 350, 20, 20, 20);
     }
 
-    
-    console.log(cosnum)
-
     if (AABB(mouseX, mouseY, 1, 1, 276, 444, 196, 72)) {
         if (mouseDown && timeimeimeimeiemeimiemiemiemikemekemieike > 40) {
             timeimeimeimeiemeimiemiemiemikemekemieike = 0;
@@ -2905,6 +2987,7 @@ function imgSelec() {
                 gunsUnlocked.push(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
                 trosUnlocked.push(0, 1, 2, 3);
                 skinsUnlocked.push("Z", "KIJE", "CARDS")
+                luigi = true;
                 if (!skinsUnlocked.includes("PING")) {
                     skinsUnlocked.push("PING")
                     alert("YOU UNLOCKED THE 'Señor Pinguino' SKIN");
@@ -3015,7 +3098,6 @@ function shop() {
                         break;
                     }
                     default: {
-                        console.log("fuck you idiot");
                         break;
                     }
                 }
@@ -3057,7 +3139,6 @@ function shop() {
                         break;
                     }
                     default: {
-                        console.log("fuck you idiot");
                         break;
                     }
                 }
@@ -3099,7 +3180,6 @@ function shop() {
                         break;
                     }
                     default: {
-                        console.log("fuck you idiot");
                         break;
                     }
                 }
@@ -3142,7 +3222,6 @@ function shop() {
                         break;
                     }
                     default: {
-                        console.log("fuck you idiot");
                         break;
                     }
                 }
@@ -3194,7 +3273,6 @@ function multiPG() {
             if (playerRef == ref(database, `battle/${playerID}`)) {
                 playerRef = ref(database, `multi/${playerID}`);
             }
-            console.log(fortniting)
             window.requestAnimationFrame(multiInit);
         }
         ctx.drawImage(butt, 0, 1440, 490, 180, 0, 4, 196, 80);
